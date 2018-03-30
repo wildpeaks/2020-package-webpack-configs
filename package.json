@@ -1,7 +1,7 @@
 {
   "name": "@wildpeaks/webpack-config-web",
-  "version": "1.0.0-alpha0",
-  "description": "Webpack base config for Web",
+  "version": "1.0.0-alpha1",
+  "description": "Webpack base config generator for Web apps",
   "author": "Cecile Muller",
   "license": "MIT",
   "eslintConfig": {
@@ -37,7 +37,6 @@
     "ts-loader": "4.1.0",
     "ts-node": "5.0.1",
     "url-loader": "1.0.1",
-    "webpack": "4.3.0",
     "webpack-subresource-integrity": "1.1.0-rc.4"
   },
   "devDependencies": {
@@ -47,9 +46,11 @@
     "jasmine": "3.1.0",
     "puppeteer": "1.2.0",
     "rimraf": "2.6.2",
-    "typescript": "2.8.1"
+    "typescript": "2.8.1",
+    "webpack": "4.3.0"
   },
   "peerDependencies": {
-    "typescript": "*"
+    "typescript": "*",
+    "webpack": "*"
   }
 }
