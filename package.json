@@ -1,5 +1,4 @@
 {
-  "private": true,
   "name": "@wildpeaks/webpack-config-web",
   "version": "1.0.0-alpha0",
   "description": "Webpack base config for Web",
