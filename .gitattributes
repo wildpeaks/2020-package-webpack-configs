@@ -1,0 +1,17 @@
+* -text
+
+.editorconfig   text
+.gitattributes  text
+.gitignore      text
+LICENSE         text
+*.md            text
+*.js            text
+*.ts            text
+*.json          text
+*.yml           text
+*.svg           text
+
+*.jpg           binary
+*.png           binary
+*.gif           binary
+*.woff          binary
