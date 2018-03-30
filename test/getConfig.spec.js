@@ -81,7 +81,7 @@ it('Basic', async() => {
 			'myapp.js.map'
 		]
 	);
-	const browser = await puppeteer.launch();
+	const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
 	try {
 		const page = await browser.newPage();
 		await page.goto('http://localhost:8888/');
