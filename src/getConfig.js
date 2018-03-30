@@ -18,15 +18,15 @@ function getRegex(extensions){
 /**
  * @typedef GetConfigOptions
  * @property {Object} entry Webpack entries
+ * @property {String} rootFolder Absolute path to the rroot context folder
+ * @property {String} outputFolder Absolute path to the folder where files are emitted
  * @property {Boolean} minify `true` to minify CSS/JS and use SRI hashes, `false` otherwise
  * @property {Number} port Port for Webpack Dev Server
- * @property {String} outputFolder Absolute path to the folder where files are emitted
- * @property {String} rootFolder Absolute path to the rroot context folder
  * @property {Object} cssVariables CSS Variables, e.g. `{themeBackground: 'rebeccapurple'}`
  * @property {String[]} browsers Target browsers for CSS Autoprefixer
- * @property {String[]} copyAssets File extensions of files to just copy as-is
- * @property {String[]} embedAssets File extensions of files to embed as base64 (if small enough) or just copy as-is (if large)
  * @property {String[]} embedLimit Filesize limit to embed assets
+ * @property {String[]} embedExtensions File extensions of files to embed as base64 (if small enough) or just copy as-is (if large)
+ * @property {String[]} copyExtensions File extensions of files to just copy as-is
  */
 
 /**
@@ -42,9 +42,9 @@ module.exports = function getConfig({
 	port = 8000,
 	cssVariables = {},
 	browsers = ['last 2 versions', 'ie >= 11'],
-	embedAssets = ['jpg', 'png', 'gif', 'svg'],
-	copyAssets = ['woff'],
-	embedLimit = 5000
+	embedLimit = 5000,
+	embedExtensions = ['jpg', 'png', 'gif', 'svg'],
+	copyExtensions = ['woff']
 } = {}){
 	const loaders = [
 		//region Typescript
@@ -96,9 +96,9 @@ module.exports = function getConfig({
 		//endregion
 	];
 	//region Images
-	if (embedAssets.length > 0){
+	if (embedExtensions.length > 0){
 		loaders.push({
-			test: getRegex(embedAssets),
+			test: getRegex(embedExtensions),
 			use: {
 				loader: 'url-loader',
 				options: {
@@ -110,9 +110,9 @@ module.exports = function getConfig({
 	}
 	//endregion
 	//region Other assets
-	if (copyAssets.length > 0){
+	if (copyExtensions.length > 0){
 		loaders.push({
-			test: getRegex(copyAssets),
+			test: getRegex(copyExtensions),
 			use: {
 				loader: 'url-loader',
 				options: {
