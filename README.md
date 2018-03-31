@@ -3,26 +3,169 @@
 [![Greenkeeper badge](https://badges.greenkeeper.io/wildpeaks/package-webpack-config-web.svg)](https://greenkeeper.io/)
 [![Build Status](https://travis-ci.org/wildpeaks/package-webpack-config-web.svg?branch=master)](https://travis-ci.org/wildpeaks/package-webpack-config-web)
 
-Generates a **Webpack config** for Web applications written in *Typescript*.
+Generates a **Webpack 4 config** for Web applications written in *Typescript*.
 
-Install:
 
-	npm install @wildpeaks/webpack-config-web --save
+-------------------------------------------------------------------------------
+
+## Usage example
+
+package.json
+
+	"scripts": {
+		"dev": "webpack --mode development",
+		"build": "webpack --mode production",
+		"watch": "webpack-dev-server"
+	},
+	"dependencies": {
+		"@wildpeaks/webpack-config-web": "1.0.0-alpha1",
+		"typescript": "2.8.1",
+		"webpack": "4.4.1",
+		"webpack-cli": "2.0.13"
+	}
+
+webpack.config.js
+
+	'use strict';
+	const {join} = require('path');
+	const getConfig = require('@wildpeaks/webpack-config-web');
+
+	module.exports = function(_env, {mode = 'production'} = {}){
+		return getConfig({
+			entry: {
+				myapp: './src/myapp.ts'
+			},
+			rootFolder: __dirname,
+			outputFolder: join(__dirname, 'dist'),
+			minify: (mode === 'production')
+		});
+	};
+
 
 -------------------------------------------------------------------------------
 
 ## Parameters
 
-	@property {Object} entry Webpack entries
-	@property {String} rootFolder Absolute path to the rroot context folder
-	@property {String} outputFolder Absolute path to the folder where files are emitted
-	@property {Boolean} minify `true` to minify CSS/JS and use SRI hashes, `false` otherwise
-	@property {Number} port Port for Webpack Dev Server
-	@property {Object} cssVariables CSS Variables, e.g. `{themeBackground: 'rebeccapurple'}`
-	@property {String[]} browsers Target browsers for CSS Autoprefixer
-	@property {String[]} embedLimit Filesize limit to embed assets
-	@property {String[]} embedExtensions File extensions of files to embed as base64 (if small enough) or just copy as-is (if large)
-	@property {String[]} copyExtensions File extensions of files to just copy as-is
+
+---
+### `entry`: Object
+
+Webpack entries.
+
+Default: `{}`
+
+Example:
+
+	{
+		app1: './src/entry1.ts',
+		app2: './src/entry2.ts',
+		app3: './src/entry3.ts'
+	}
+
+
+---
+### `rootFolder`: String
+
+Absolute path to the root context folder.
+
+Default: `""`
+
+Example: `"C:/Example"`
+
+
+---
+### `outputFolder`: String
+
+Absolute path to the folder where files are emitted.
+See ["output.path" in Webpack Documentation](https://webpack.js.org/configuration/output/#output-path).
+
+Default: `""`
+
+Example: `"C:/Example/output"`
+
+
+---
+### `publicPath`: String
+
+Path prepended to url references.
+See ["publicPath" in Webpack Documentation](https://webpack.js.org/guides/public-path/).
+
+Default: `"/"`
+
+Example: `"/mysite/"`
+
+
+---
+### `minify`: Boolean
+
+Default: `false`.
+
+When `true`, the CSS and JS files are minified, and the HTML pageript tags have
+[Subresource Integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity) hashes.
+
+
+---
+### `port`: Number
+
+Port for Webpack Dev Server.
+
+Default: `8000`.
+
+See ["devServer.port" in Webpack Documentation](https://webpack.js.org/configuration/dev-server/#devserver-port).
+
+
+---
+### `cssVariables`: Object
+
+CSS Variables, e.g. `{themeBackground: 'rebeccapurple'}`.
+
+Default: `{}`.
+
+See ["customProperties" in CSSNext Documentation](http://cssnext.io/usage/#features).
+
+
+---
+### `browsers`: String[]
+
+Target browsers for CSS Autoprefixer.
+
+Default: `["last 2 versions", "ie >= 11"]`.
+
+See ["browsers" in CSSNext Documentation](http://cssnext.io/usage/#browsers).
+
+
+---
+### `embedLimit`: String[]
+
+Filesize limit to embed assets.
+
+Default: `5000`.
+
+See ["limit" in url-loader Documentation](https://github.com/webpack-contrib/url-loader#limit)
+
+
+---
+### `embedExtensions`: String[]
+
+File extensions of files to embed as base64 (if small enough) or just copy as-is (if large).
+
+Default: `["jpg", "png", "gif", "svg"]`.
+
+
+---
+### `copyExtensions`: String[]
+
+File extensions of files to just copy as-is.
+
+Default: `["woff"]`.
+
+
+---
+### `assetsRelativePath`: String
+
+Relative path to copy files to.
+
+Default: `"assets/"`
 
 
 -------------------------------------------------------------------------------

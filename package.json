@@ -1,7 +1,7 @@
 {
   "name": "@wildpeaks/webpack-config-web",
-  "version": "1.0.0-alpha0",
-  "description": "Webpack base config for Web",
+  "version": "1.0.0-alpha1",
+  "description": "Webpack base config generator for Web apps",
   "author": "Cecile Muller",
   "license": "MIT",
   "eslintConfig": {
@@ -12,7 +12,7 @@
     "src"
   ],
   "scripts": {
-    "test": "jasmine test/getConfig.spec.js"
+    "test": "jasmine test/*.spec.js"
   },
   "repository": "https://github.com/wildpeaks/package-webpack-config-web",
   "keywords": [
@@ -27,9 +27,9 @@
   "dependencies": {
     "clean-webpack-plugin": "0.1.19",
     "css-loader": "0.28.11",
-    "mini-css-extract-plugin": "0.3.0",
     "file-loader": "1.1.11",
     "html-webpack-plugin": "3.1.0",
+    "mini-css-extract-plugin": "0.4.0",
     "postcss-cssnext": "3.1.0",
     "postcss-loader": "2.1.3",
     "source-map-loader": "0.2.3",
@@ -37,7 +37,6 @@
     "ts-loader": "4.1.0",
     "ts-node": "5.0.1",
     "url-loader": "1.0.1",
-    "webpack": "4.3.0",
     "webpack-subresource-integrity": "1.1.0-rc.4"
   },
   "devDependencies": {
@@ -46,10 +45,13 @@
     "express": "4.16.3",
     "jasmine": "3.1.0",
     "puppeteer": "1.2.0",
+    "recursive-readdir": "2.2.2",
     "rimraf": "2.6.2",
-    "typescript": "2.8.1"
+    "typescript": "2.8.1",
+    "webpack": "4.4.1"
   },
   "peerDependencies": {
-    "typescript": "*"
+    "typescript": "*",
+    "webpack": "*"
   }
 }

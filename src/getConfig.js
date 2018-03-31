@@ -1,6 +1,7 @@
 /* eslint-env node */
 'use strict';
-const {basename, join} = require('path');
+const {strictEqual} = require('assert');
+const {basename, join, isAbsolute} = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const SriPlugin = require('webpack-subresource-integrity');
@@ -15,11 +16,13 @@ function getRegex(extensions){
 	return new RegExp('\\.(' + extensions.join('|') + ')$'); // eslint-disable-line prefer-template
 }
 
+
 /**
  * @typedef GetConfigOptions
  * @property {Object} entry Webpack entries
  * @property {String} rootFolder Absolute path to the rroot context folder
  * @property {String} outputFolder Absolute path to the folder where files are emitted
+ * @property {String} publicPath Path prepended to url references, e.g. `/` or `/mysite/`
  * @property {Boolean} minify `true` to minify CSS/JS and use SRI hashes, `false` otherwise
  * @property {Number} port Port for Webpack Dev Server
  * @property {Object} cssVariables CSS Variables, e.g. `{themeBackground: 'rebeccapurple'}`
@@ -27,6 +30,7 @@ function getRegex(extensions){
  * @property {String[]} embedLimit Filesize limit to embed assets
  * @property {String[]} embedExtensions File extensions of files to embed as base64 (if small enough) or just copy as-is (if large)
  * @property {String[]} copyExtensions File extensions of files to just copy as-is
+ * @property {String} assetsRelativePath File extensions of files to just copy as-is
  */
 
 /**
@@ -38,14 +42,44 @@ module.exports = function getConfig({
 	entry = {application: './src/index.ts'},
 	rootFolder = '',
 	outputFolder = '',
+	publicPath = '/',
 	minify = true,
 	port = 8000,
 	cssVariables = {},
 	browsers = ['last 2 versions', 'ie >= 11'],
 	embedLimit = 5000,
 	embedExtensions = ['jpg', 'png', 'gif', 'svg'],
-	copyExtensions = ['woff']
+	copyExtensions = ['woff'],
+	assetsRelativePath = 'assets/'
 } = {}){
+	strictEqual(entry === null, false, '"entry" should not be null');
+	strictEqual(typeof entry, 'object', '"entry" should be an Object');
+	strictEqual(typeof rootFolder, 'string', '"rootFolder" should be a String');
+	strictEqual(typeof outputFolder, 'string', '"outputFolder" should be a String');
+	strictEqual(typeof publicPath, 'string', '"publicPath" should be a String');
+	strictEqual(typeof minify, 'boolean', '"minify" should be a Boolean');
+	strictEqual(typeof port, 'number', '"port" should be a Number');
+	strictEqual(isNaN(port), false, '"port" must not be NaN');
+	strictEqual(port > 0, true, '"port" should be a positive number');
+	strictEqual(cssVariables === null, false, '"cssVariables" should not be null');
+	strictEqual(typeof cssVariables, 'object', '"cssVariables" should be an Object');
+	strictEqual(Array.isArray(browsers), true, '"browsers" should be an Array');
+	strictEqual(browsers.length > 0, true, '"browsers" should not be empty');
+	strictEqual(typeof embedLimit, 'number', '"embedLimit" should be a Number');
+	strictEqual(isNaN(embedLimit), false, '"embedLimit" must not be NaN');
+	strictEqual(Array.isArray(embedExtensions), true, '"embedExtensions" should be an Array');
+	strictEqual(Array.isArray(copyExtensions), true, '"copyExtensions" should be an Array');
+	strictEqual(typeof assetsRelativePath, 'string', '"assetsRelativePath" should be a String');
+	if (!isAbsolute(rootFolder)){
+		throw new Error('"rootFolder" should be an absolute path');
+	}
+	if (!isAbsolute(outputFolder)){
+		throw new Error('"outputFolder" should be an absolute path');
+	}
+	if ((assetsRelativePath !== '') && !assetsRelativePath.endsWith('/')){
+		throw new Error('"assetsRelativePath" must end with "/" when not empty');
+	}
+
 	const loaders = [
 		//region Typescript
 		{
@@ -103,7 +137,7 @@ module.exports = function getConfig({
 				loader: 'url-loader',
 				options: {
 					limit: embedLimit,
-					name: minify ? 'assets/[hash].[name].[ext]' : 'assets/[name].[ext]'
+					name: minify ? `${assetsRelativePath}[hash].[name].[ext]` : `${assetsRelativePath}[name].[ext]`
 				}
 			}
 		});
@@ -114,10 +148,9 @@ module.exports = function getConfig({
 		loaders.push({
 			test: getRegex(copyExtensions),
 			use: {
-				loader: 'url-loader',
+				loader: 'file-loader',
 				options: {
-					limit: 0,
-					name: minify ? 'assets/[hash].[name].[ext]' : 'assets/[name].[ext]'
+					name: minify ? `${assetsRelativePath}[hash].[name].[ext]` : `${assetsRelativePath}[name].[ext]`
 				}
 			}
 		});
@@ -136,7 +169,7 @@ module.exports = function getConfig({
 		//region Output
 		output: {
 			path: outputFolder,
-			publicPath: '/',
+			publicPath,
 			crossOriginLoading: 'anonymous',
 			filename: minify ? '[hash].[name].js' : '[name].js',
 			chunkFilename: minify ? '[hash].chunk.[id].js' : 'chunk.[id].js'
@@ -147,7 +180,7 @@ module.exports = function getConfig({
 			port,
 			compress: true,
 			contentBase: outputFolder,
-			publicPath: '/',
+			publicPath,
 			historyApiFallback: false,
 			clientLogLevel: 'none',
 			stats: 'errors-only'
@@ -166,7 +199,7 @@ module.exports = function getConfig({
 				chunkFilename: '[id].css'
 			}),
 			new HtmlWebpackPlugin({
-				hash: true,
+				hash: !minify,
 				filename: 'index.html'
 			}),
 			new SriPlugin({
