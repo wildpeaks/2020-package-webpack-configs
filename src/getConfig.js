@@ -107,6 +107,7 @@ module.exports = function getConfig({
 				{
 					loader: 'css-loader',
 					options: {
+						minimize: minify,
 						modules: true
 					}
 				},
@@ -173,6 +174,13 @@ module.exports = function getConfig({
 			crossOriginLoading: 'anonymous',
 			filename: minify ? '[hash].[name].js' : '[name].js',
 			chunkFilename: minify ? '[hash].chunk.[id].js' : 'chunk.[id].js'
+		},
+		//endregion
+		//region Minification
+		optimization: {
+			minimize: minify,
+			nodeEnv: minify ? 'production' : 'development',
+			concatenateModules: true
 		},
 		//endregion
 		//region Dev Server
