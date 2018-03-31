@@ -8,13 +8,22 @@ const rreaddir = require('recursive-readdir');
 const webpack = require('webpack');
 const puppeteer = require('puppeteer');
 const getConfig = require('..');
-
-
 const rootFolder = join(__dirname, 'fixtures');
 const outputFolder = join(__dirname, '../out');
-
 let app;
 let server;
+
+
+/**
+ * @param {Number} duration
+ */
+function sleep(duration){
+	return new Promise(resolve => {
+		setTimeout(() => {
+			resolve();
+		}, duration);
+	});
+}
 
 
 /**
@@ -34,21 +43,19 @@ function compile(config){
 
 
 /**
- * @param {String} fixtureFilename
+ * @param {Object} options
+ * @returns {String[]}
  */
-async function testFixture(options, expectedFiles){
+async function testFixture(options){
 	const config = getConfig(options);
 	expect(typeof options).toBe('object');
 
 	const stats = await compile(config);
 	expect(stats.compilation.errors).toEqual([]);
 
-	// const actualFiles = readdirSync(outputFolder, 'utf8');
-	// const actualFiles = await rreaddir(outputFolder);
 	let actualFiles = await rreaddir(outputFolder);
 	actualFiles = actualFiles.map(filepath => relative(outputFolder, filepath).replace(/\\/g, '/'));
-
-	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+	return actualFiles;
 }
 
 
@@ -74,21 +81,21 @@ beforeEach(done => {
 
 
 it('Basic', async() => {
-	await testFixture(
-		{
-			rootFolder,
-			outputFolder,
-			entry: {
-				myapp: './basic/myapp.ts'
-			},
-			minify: false
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		entry: {
+			myapp: './basic/myapp.ts'
 		},
-		[
-			'index.html',
-			'myapp.js',
-			'myapp.js.map'
-		]
-	);
+		minify: false
+	});
+	const expectedFiles = [
+		'index.html',
+		'myapp.js',
+		'myapp.js.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
 	const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
 	try {
 		const page = await browser.newPage();
@@ -100,7 +107,64 @@ it('Basic', async() => {
 				return '#hello not found';
 			}
 			if (el.innerText !== 'Hello World'){
-				return 'Bad #hello.innerText';
+				return 'Bad #hello.innerText: ' + el.innerText;
+			}
+			return 'ok';
+			/* eslint-enable */
+		});
+		expect(found).toBe('ok', 'DOM tests');
+	} finally {
+		await browser.close();
+	}
+});
+
+
+it('Minify', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		entry: {
+			myapp: './basic/myapp.ts'
+		},
+		minify: true
+	});
+	const expectedFiles = [
+		'index.html',
+		'17d5bc3eeea7558f5ac5.myapp.js',
+		'17d5bc3eeea7558f5ac5.myapp.js.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+	try {
+		const page = await browser.newPage();
+		await page.goto('http://localhost:8888/');
+		const found = await page.evaluate(() => {
+			/* eslint-disable */
+			var el0 = document.getElementById('hello');
+			if (typeof el0 === 'undefined'){
+				return '#hello not found';
+			}
+			if (el0.innerText !== 'Hello World'){
+				return 'Bad #hello.innerText: ' + el0.innerText;
+			}
+
+			var scripts = document.getElementsByTagName('script');
+			if (scripts.length === 0){
+				return 'script not found';
+			}
+			var el1 = scripts.item(0);
+			var src = el1.getAttribute('src');
+			var crossorigin = el1.getAttribute('crossorigin');
+			var integrity = el1.getAttribute('integrity');
+			if (src !== '/17d5bc3eeea7558f5ac5.myapp.js'){
+				return 'Bad script.src: ' + src;
+			}
+			if (crossorigin !== 'anonymous'){
+				return 'Bad script.crossorigin: ' + crossorigin;
+			}
+			if (!integrity.includes('sha256-') && !integrity.includes('sha384-')){
+				return 'Bad script.integrity: ' + integrity;
 			}
 			return 'ok';
 			/* eslint-enable */
@@ -113,21 +177,21 @@ it('Basic', async() => {
 
 
 it('Local Modules', async() => {
-	await testFixture(
-		{
-			rootFolder,
-			outputFolder,
-			entry: {
-				myapp: './local-modules/myapp.ts'
-			},
-			minify: false
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		entry: {
+			myapp: './local-modules/myapp.ts'
 		},
-		[
-			'index.html',
-			'myapp.js',
-			'myapp.js.map'
-		]
-	);
+		minify: false
+	});
+	const expectedFiles = [
+		'index.html',
+		'myapp.js',
+		'myapp.js.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
 	const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
 	try {
 		const page = await browser.newPage();
@@ -139,7 +203,7 @@ it('Local Modules', async() => {
 				return '#hello not found';
 			}
 			if (el.innerText !== 'Hello 100123'){
-				return 'Bad #hello.innerText';
+				return 'Bad #hello.innerText: ' + el.innerText;
 			}
 			return 'ok';
 			/* eslint-enable */
@@ -152,23 +216,23 @@ it('Local Modules', async() => {
 
 
 it('CSS', async() => {
-	await testFixture(
-		{
-			rootFolder,
-			outputFolder,
-			entry: {
-				myapp: './css/myapp.ts'
-			},
-			minify: false
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		entry: {
+			myapp: './css/myapp.ts'
 		},
-		[
-			'index.html',
-			'myapp.css',
-			'myapp.css.map',
-			'myapp.js',
-			'myapp.js.map'
-		]
-	);
+		minify: false
+	});
+	const expectedFiles = [
+		'index.html',
+		'myapp.css',
+		'myapp.css.map',
+		'myapp.js',
+		'myapp.js.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
 	const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
 	try {
 		const page = await browser.newPage();
@@ -194,29 +258,29 @@ it('CSS', async() => {
 
 
 it('Assets', async() => {
-	await testFixture(
-		{
-			rootFolder,
-			outputFolder,
-			entry: {
-				myapp: './assets/myapp.ts'
-			},
-			minify: false,
-			embedLimit: 5000,
-			embedExtensions: ['jpg', 'png'],
-			copyExtensions: ['gif'], // no files copied ???
-			assetsRelativePath: 'myimages/'
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		entry: {
+			myapp: './assets/myapp.ts'
 		},
-		[
-			'index.html',
-			'myapp.js',
-			'myapp.js.map',
-			'myimages/large.jpg',
-			'myimages/large.png',
-			'myimages/small.gif',
-			'myimages/large.gif'
-		]
-	);
+		minify: false,
+		embedLimit: 5000,
+		embedExtensions: ['jpg', 'png'],
+		copyExtensions: ['gif'],
+		assetsRelativePath: 'myimages/'
+	});
+	const expectedFiles = [
+		'index.html',
+		'myapp.js',
+		'myapp.js.map',
+		'myimages/large.jpg',
+		'myimages/large.png',
+		'myimages/small.gif',
+		'myimages/large.gif'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
 	const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
 	try {
 		const page = await browser.newPage();
@@ -261,6 +325,48 @@ it('Assets', async() => {
 			}
 			if (img5 !== '/myimages/large.gif'){
 				return 'Wrong url for #images.childNodes[5]: ' + img5;
+			}
+			return 'ok';
+			/* eslint-enable */
+		});
+		expect(found).toBe('ok', 'DOM tests');
+	} finally {
+		await browser.close();
+	}
+});
+
+
+it('Chunks', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		entry: {
+			myapp: './chunks/myapp.ts'
+		},
+		minify: false
+	});
+	const expectedFiles = [
+		'index.html',
+		'myapp.js',
+		'myapp.js.map',
+		'chunk.0.js',
+		'chunk.0.js.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+	try {
+		const page = await browser.newPage();
+		await page.goto('http://localhost:8888/');
+		await sleep(50);
+		const found = await page.evaluate(() => {
+			/* eslint-disable */
+			var el = document.getElementById('hello');
+			if (typeof el === 'undefined'){
+				return '#hello not found';
+			}
+			if (el.innerText !== 'Delayed 100123'){
+				return 'Bad #hello.innerText: ' + el.innerText;
 			}
 			return 'ok';
 			/* eslint-enable */
