@@ -27,6 +27,7 @@ function getRegex(extensions){
  * @property {String[]} embedLimit Filesize limit to embed assets
  * @property {String[]} embedExtensions File extensions of files to embed as base64 (if small enough) or just copy as-is (if large)
  * @property {String[]} copyExtensions File extensions of files to just copy as-is
+ * @property {String} assetsRelativePath File extensions of files to just copy as-is
  */
 
 /**
@@ -44,7 +45,8 @@ module.exports = function getConfig({
 	browsers = ['last 2 versions', 'ie >= 11'],
 	embedLimit = 5000,
 	embedExtensions = ['jpg', 'png', 'gif', 'svg'],
-	copyExtensions = ['woff']
+	copyExtensions = ['woff'],
+	assetsRelativePath = 'assets/'
 } = {}){
 	const loaders = [
 		//region Typescript
@@ -103,7 +105,7 @@ module.exports = function getConfig({
 				loader: 'url-loader',
 				options: {
 					limit: embedLimit,
-					name: minify ? 'assets/[hash].[name].[ext]' : 'assets/[name].[ext]'
+					name: minify ? `${assetsRelativePath}[hash].[name].[ext]` : `${assetsRelativePath}[name].[ext]`
 				}
 			}
 		});
@@ -114,10 +116,9 @@ module.exports = function getConfig({
 		loaders.push({
 			test: getRegex(copyExtensions),
 			use: {
-				loader: 'url-loader',
+				loader: 'file-loader',
 				options: {
-					limit: 0,
-					name: minify ? 'assets/[hash].[name].[ext]' : 'assets/[name].[ext]'
+					name: minify ? `${assetsRelativePath}[hash].[name].[ext]` : `${assetsRelativePath}[name].[ext]`
 				}
 			}
 		});
