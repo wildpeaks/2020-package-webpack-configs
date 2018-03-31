@@ -66,12 +66,14 @@ module.exports = function getConfig({
 	strictEqual(Array.isArray(embedExtensions), true, '"embedExtensions" should be an Array');
 	strictEqual(Array.isArray(copyExtensions), true, '"copyExtensions" should be an Array');
 	strictEqual(typeof assetsRelativePath, 'string', '"assetsRelativePath" should be a String');
-
 	if (!isAbsolute(rootFolder)){
 		throw new Error('"rootFolder" should be an absolute path');
 	}
 	if (!isAbsolute(outputFolder)){
 		throw new Error('"outputFolder" should be an absolute path');
+	}
+	if ((assetsRelativePath !== '') && !assetsRelativePath.endsWith('/')){
+		throw new Error('"assetsRelativePath" must end with "/" when not empty');
 	}
 
 	const loaders = [
