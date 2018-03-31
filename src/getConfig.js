@@ -59,6 +59,7 @@ module.exports = function getConfig({
 	strictEqual(typeof publicPath, 'string', '"publicPath" should be a String');
 	strictEqual(typeof minify, 'boolean', '"minify" should be a Boolean');
 	strictEqual(typeof port, 'number', '"port" should be a Number');
+	strictEqual(port > 0, true, '"port" should be a positive number');
 	strictEqual(typeof cssVariables, 'object', '"cssVariables" should be an Object');
 	strictEqual(Array.isArray(browsers), true, '"browsers" should be an Array');
 	strictEqual(typeof embedLimit, 'number', '"embedLimit" should be a Number');
