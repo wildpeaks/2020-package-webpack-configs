@@ -16,6 +16,7 @@ Install:
 	@property {Object} entry Webpack entries
 	@property {String} rootFolder Absolute path to the rroot context folder
 	@property {String} outputFolder Absolute path to the folder where files are emitted
+	@property {String} publicPath Relative path prepended to urls, e.g. `/` or `/mysite/`
 	@property {Boolean} minify `true` to minify CSS/JS and use SRI hashes, `false` otherwise
 	@property {Number} port Port for Webpack Dev Server
 	@property {Object} cssVariables CSS Variables, e.g. `{themeBackground: 'rebeccapurple'}`
@@ -23,6 +24,7 @@ Install:
 	@property {String[]} embedLimit Filesize limit to embed assets
 	@property {String[]} embedExtensions File extensions of files to embed as base64 (if small enough) or just copy as-is (if large)
 	@property {String[]} copyExtensions File extensions of files to just copy as-is
+	@property {String} assetsRelativePath File extensions of files to just copy as-is
 
 
 -------------------------------------------------------------------------------

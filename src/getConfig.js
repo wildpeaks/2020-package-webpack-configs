@@ -20,6 +20,7 @@ function getRegex(extensions){
  * @property {Object} entry Webpack entries
  * @property {String} rootFolder Absolute path to the rroot context folder
  * @property {String} outputFolder Absolute path to the folder where files are emitted
+ * @property {String} publicPath Relative path prepended to urls, e.g. `/` or `/mysite/`
  * @property {Boolean} minify `true` to minify CSS/JS and use SRI hashes, `false` otherwise
  * @property {Number} port Port for Webpack Dev Server
  * @property {Object} cssVariables CSS Variables, e.g. `{themeBackground: 'rebeccapurple'}`
@@ -39,6 +40,7 @@ module.exports = function getConfig({
 	entry = {application: './src/index.ts'},
 	rootFolder = '',
 	outputFolder = '',
+	publicPath = '/',
 	minify = true,
 	port = 8000,
 	cssVariables = {},
@@ -137,7 +139,7 @@ module.exports = function getConfig({
 		//region Output
 		output: {
 			path: outputFolder,
-			publicPath: '/',
+			publicPath,
 			crossOriginLoading: 'anonymous',
 			filename: minify ? '[hash].[name].js' : '[name].js',
 			chunkFilename: minify ? '[hash].chunk.[id].js' : 'chunk.[id].js'
@@ -148,7 +150,7 @@ module.exports = function getConfig({
 			port,
 			compress: true,
 			contentBase: outputFolder,
-			publicPath: '/',
+			publicPath,
 			historyApiFallback: false,
 			clientLogLevel: 'none',
 			stats: 'errors-only'
