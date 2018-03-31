@@ -12,7 +12,7 @@
     "src"
   ],
   "scripts": {
-    "test": "jasmine test/getConfig.spec.js"
+    "test": "jasmine test/*.spec.js"
   },
   "repository": "https://github.com/wildpeaks/package-webpack-config-web",
   "keywords": [
