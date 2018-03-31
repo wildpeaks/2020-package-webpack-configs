@@ -52,6 +52,7 @@ module.exports = function getConfig({
 	copyExtensions = ['woff'],
 	assetsRelativePath = 'assets/'
 } = {}){
+	strictEqual(entry !== null, true, '"entry" should not be null');
 	strictEqual(typeof entry, 'object', '"entry" should be an Object');
 	strictEqual(typeof rootFolder, 'string', '"rootFolder" should be a String');
 	strictEqual(typeof outputFolder, 'string', '"outputFolder" should be a String');
