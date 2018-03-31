@@ -199,7 +199,7 @@ module.exports = function getConfig({
 				chunkFilename: '[id].css'
 			}),
 			new HtmlWebpackPlugin({
-				hash: true,
+				hash: !minify,
 				filename: 'index.html'
 			}),
 			new SriPlugin({
