@@ -203,6 +203,7 @@ module.exports = function getConfig({
 		//region Input
 		target: 'web',
 		devtool: 'source-map',
+		mode: minify ? 'production' : 'development',
 		resolve: {
 			extensions: ['.ts', '.js']
 		},
