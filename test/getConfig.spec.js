@@ -1,7 +1,7 @@
 /* eslint-env node, jasmine */
 'use strict';
 const {join, relative} = require('path');
-const {mkdirSync} = require('fs');
+const {readFileSync, mkdirSync} = require('fs');
 const express = require('express');
 const rimraf = require('rimraf');
 const rreaddir = require('recursive-readdir');
@@ -101,73 +101,15 @@ it('Basic', async() => {
 		const page = await browser.newPage();
 		await page.goto('http://localhost:8888/');
 		const found = await page.evaluate(() => {
-			/* eslint-disable */
-			var el = document.getElementById('hello');
+			/* global document */
+			const el = document.getElementById('hello');
 			if (typeof el === 'undefined'){
 				return '#hello not found';
 			}
 			if (el.innerText !== 'Hello World'){
-				return 'Bad #hello.innerText: ' + el.innerText;
+				return `Bad #hello.innerText: ${el.innerText}`;
 			}
 			return 'ok';
-			/* eslint-enable */
-		});
-		expect(found).toBe('ok', 'DOM tests');
-	} finally {
-		await browser.close();
-	}
-});
-
-
-it('Minify', async() => {
-	const actualFiles = await testFixture({
-		rootFolder,
-		outputFolder,
-		entry: {
-			myapp: './basic/myapp.ts'
-		},
-		minify: true
-	});
-	const expectedFiles = [
-		'index.html',
-		'17d5bc3eeea7558f5ac5.myapp.js',
-		'17d5bc3eeea7558f5ac5.myapp.js.map'
-	];
-	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
-
-	const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
-	try {
-		const page = await browser.newPage();
-		await page.goto('http://localhost:8888/');
-		const found = await page.evaluate(() => {
-			/* eslint-disable */
-			var el0 = document.getElementById('hello');
-			if (typeof el0 === 'undefined'){
-				return '#hello not found';
-			}
-			if (el0.innerText !== 'Hello World'){
-				return 'Bad #hello.innerText: ' + el0.innerText;
-			}
-
-			var scripts = document.getElementsByTagName('script');
-			if (scripts.length === 0){
-				return 'script not found';
-			}
-			var el1 = scripts.item(0);
-			var src = el1.getAttribute('src');
-			var crossorigin = el1.getAttribute('crossorigin');
-			var integrity = el1.getAttribute('integrity');
-			if (src !== '/17d5bc3eeea7558f5ac5.myapp.js'){
-				return 'Bad script.src: ' + src;
-			}
-			if (crossorigin !== 'anonymous'){
-				return 'Bad script.crossorigin: ' + crossorigin;
-			}
-			if (!integrity.includes('sha256-') && !integrity.includes('sha384-')){
-				return 'Bad script.integrity: ' + integrity;
-			}
-			return 'ok';
-			/* eslint-enable */
 		});
 		expect(found).toBe('ok', 'DOM tests');
 	} finally {
@@ -197,16 +139,15 @@ it('Local Modules', async() => {
 		const page = await browser.newPage();
 		await page.goto('http://localhost:8888/');
 		const found = await page.evaluate(() => {
-			/* eslint-disable */
-			var el = document.getElementById('hello');
+			/* global document */
+			const el = document.getElementById('hello');
 			if (typeof el === 'undefined'){
 				return '#hello not found';
 			}
 			if (el.innerText !== 'Hello 100123'){
-				return 'Bad #hello.innerText: ' + el.innerText;
+				return `Bad #hello.innerText: ${el.innerText}`;
 			}
 			return 'ok';
-			/* eslint-enable */
 		});
 		expect(found).toBe('ok', 'DOM tests');
 	} finally {
@@ -238,17 +179,17 @@ it('CSS', async() => {
 		const page = await browser.newPage();
 		await page.goto('http://localhost:8888/');
 		const found = await page.evaluate(() => {
-			/* eslint-disable */
-			var el = document.getElementById('hello');
+			/* global document */
+			/* global window */
+			const el = document.getElementById('hello');
 			if (typeof el === 'undefined'){
 				return '#hello not found';
 			}
-			var computed = getComputedStyle(el);
+			const computed = window.getComputedStyle(el);
 			if (computed.getPropertyValue('color') !== 'rgb(0, 128, 0)'){
 				return 'Bad color';
 			}
 			return 'ok';
-			/* eslint-enable */
 		});
 		expect(found).toBe('ok', 'DOM tests');
 	} finally {
@@ -286,48 +227,47 @@ it('Assets', async() => {
 		const page = await browser.newPage();
 		await page.goto('http://localhost:8888/');
 		const found = await page.evaluate(() => {
-			/* eslint-disable */
-			var container = document.getElementById('images');
+			/* global document */
+			const container = document.getElementById('images');
 			if (typeof container === 'undefined'){
 				return '#images not found';
 			}
 			if (container.childNodes.length !== 6){
-				return 'Wrong #images.childNodes.length: ' + container.childNodes.length;
+				return `Wrong #images.childNodes.length: ${container.childNodes.length}`;
 			}
-			for (var i = 0; i < 6; i++){
-				var img = container.childNodes[i];
+			for (let i = 0; i < 6; i++){
+				const img = container.childNodes[i];
 				if (img.nodeName !== 'IMG'){
-					return '#images.childNodes[' + i + '] isn\'t an image: ' + img.nodeName;
+					return `#images.childNodes[${i}] isn't an image: ${img.nodeName}`;
 				}
 			}
 
-			var img0 = container.childNodes[0].getAttribute('src');
-			var img1 = container.childNodes[1].getAttribute('src');
-			var img2 = container.childNodes[2].getAttribute('src');
-			var img3 = container.childNodes[3].getAttribute('src');
-			var img4 = container.childNodes[4].getAttribute('src');
-			var img5 = container.childNodes[5].getAttribute('src');
+			const img0 = container.childNodes[0].getAttribute('src');
+			const img1 = container.childNodes[1].getAttribute('src');
+			const img2 = container.childNodes[2].getAttribute('src');
+			const img3 = container.childNodes[3].getAttribute('src');
+			const img4 = container.childNodes[4].getAttribute('src');
+			const img5 = container.childNodes[5].getAttribute('src');
 
 			if (!img0.startsWith('data:image/jpeg;base64')){
-				return '#images.childNodes[0] is not a base64 embed: ' + img0;
+				return `#images.childNodes[0] is not a base64 embed: ${img0}`;
 			}
 			if (!img2.startsWith('data:image/png;base64')){
-				return '#images.childNodes[2] is not a base64 embed: ' + img2;
+				return `#images.childNodes[2] is not a base64 embed: ${img2}`;
 			}
 			if (img1 !== '/myimages/large.jpg'){
-				return 'Wrong url for #images.childNodes[1]: ' + img1;
+				return `Wrong url for #images.childNodes[1]: ${img1}`;
 			}
 			if (img3 !== '/myimages/large.png'){
-				return 'Wrong url for #images.childNodes[3]: ' + img3;
+				return `Wrong url for #images.childNodes[3]: ${img3}`;
 			}
 			if (img4 !== '/myimages/small.gif'){
-				return 'Wrong url for #images.childNodes[4]: ' + img4;
+				return `Wrong url for #images.childNodes[4]: ${img4}`;
 			}
 			if (img5 !== '/myimages/large.gif'){
-				return 'Wrong url for #images.childNodes[5]: ' + img5;
+				return `Wrong url for #images.childNodes[5]: ${img5}`;
 			}
 			return 'ok';
-			/* eslint-enable */
 		});
 		expect(found).toBe('ok', 'DOM tests');
 	} finally {
@@ -360,16 +300,102 @@ it('Chunks', async() => {
 		await page.goto('http://localhost:8888/');
 		await sleep(50);
 		const found = await page.evaluate(() => {
-			/* eslint-disable */
-			var el = document.getElementById('hello');
+			/* global document */
+			const el = document.getElementById('hello');
 			if (typeof el === 'undefined'){
 				return '#hello not found';
 			}
 			if (el.innerText !== 'Delayed 100123'){
-				return 'Bad #hello.innerText: ' + el.innerText;
+				return `Bad #hello.innerText: ${el.innerText}`;
 			}
 			return 'ok';
-			/* eslint-enable */
+		});
+		expect(found).toBe('ok', 'DOM tests');
+	} finally {
+		await browser.close();
+	}
+});
+
+
+it('Minify', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		entry: {
+			myapp: './css/myapp.ts'
+		},
+		minify: true
+	});
+
+	let hash = '';
+	for (const actualFile of actualFiles){
+		const regex = /^([^\.]+)\.myapp\.js$/;
+		const matches = regex.exec(actualFile);
+		if (matches){
+			hash = matches[1];
+			break;
+		}
+	}
+	expect(hash).not.toBe('', 'Hash not found');
+
+	const expectedFiles = [
+		'index.html',
+		`${hash}.myapp.css`,
+		`${hash}.myapp.css.map`,
+		`${hash}.myapp.js`,
+		`${hash}.myapp.js.map`
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const cssRaw = readFileSync(join(outputFolder, `${hash}.myapp.css`), 'utf8');
+	if (/^.([^{}]+){color:green}/.exec(cssRaw) === null){
+		throw new Error('CSS is not minified');
+	}
+
+	const jsRaw = readFileSync(join(outputFolder, `${hash}.myapp.js`), 'utf8');
+	expect(jsRaw.startsWith('!function(e){'), true, 'JS not minified');
+
+	const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+	try {
+		const page = await browser.newPage();
+		await page.goto('http://localhost:8888/');
+		const found = await page.evaluate(() => {
+			/* global document */
+			const el0 = document.getElementById('hello');
+			if (typeof el0 === 'undefined'){
+				return '#hello not found';
+			}
+			if (el0.innerText !== 'Hello World'){
+				return `Bad #hello.innerText: ${el0.innerText}`;
+			}
+
+			const el1 = document.querySelector('script');
+			if (el1 === null){
+				return 'No script';
+			}
+			const jsCrossorigin = el1.getAttribute('crossorigin');
+			const jsIntegrity = el1.getAttribute('integrity');
+			if (jsCrossorigin !== 'anonymous'){
+				return `Bad script.crossorigin: ${jsCrossorigin}`;
+			}
+			if (!jsIntegrity.includes('sha256-') && !jsIntegrity.includes('sha384-')){
+				return `Bad script.integrity: ${jsIntegrity}`;
+			}
+
+			const el2 = document.querySelector('link[rel="stylesheet"]');
+			if (el2 === null){
+				return 'No stylesheet';
+			}
+			const cssCrossorigin = el2.getAttribute('crossorigin');
+			const cssIntegrity = el2.getAttribute('integrity');
+			if (cssCrossorigin !== 'anonymous'){
+				return `Bad link.crossorigin: ${cssCrossorigin}`;
+			}
+			if (!cssIntegrity.includes('sha256-') && !cssIntegrity.includes('sha384-')){
+				return `Bad link.integrity: ${cssIntegrity}`;
+			}
+
+			return 'ok';
 		});
 		expect(found).toBe('ok', 'DOM tests');
 	} finally {
