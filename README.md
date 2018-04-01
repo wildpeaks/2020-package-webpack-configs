@@ -21,7 +21,8 @@ package.json
 		"@wildpeaks/webpack-config-web": "1.0.0-alpha3",
 		"typescript": "2.8.1",
 		"webpack": "4.4.1",
-		"webpack-cli": "2.0.13"
+		"webpack-cli": "2.0.13",
+		"webpack-dev-server": "3.1.1"
 	}
 
 webpack.config.js
