@@ -80,6 +80,7 @@ module.exports = function getConfig({
 		throw new Error('"assetsRelativePath" must end with "/" when not empty');
 	}
 
+	//region Loaders
 	const loaders = [
 		//region Typescript
 		{
@@ -130,6 +131,47 @@ module.exports = function getConfig({
 		}
 		//endregion
 	];
+	//endregion
+
+	//region Plugins
+	const plugins = [
+		new CleanWebpackPlugin([
+			basename(outputFolder)
+		], {
+			root: join(outputFolder, '..'),
+			verbose: false
+		}),
+		new MiniCssExtractPlugin({
+			filename: minify ? '[hash].[name].css' : '[name].css',
+			chunkFilename: '[id].css'
+		}),
+		new SriPlugin({
+			hashFuncNames: ['sha256', 'sha384'],
+			enabled: minify
+		})
+	];
+	const ids = Object.keys(entry);
+	if (ids.length === 1){
+		plugins.push(
+			new HtmlWebpackPlugin({
+				hash: !minify,
+				filename: 'index.html'
+			})
+		);
+	} else {
+		// https://github.com/jantimon/html-webpack-plugin/issues/218
+		ids.forEach(entryId => {
+			plugins.push(
+				new HtmlWebpackPlugin({
+					hash: !minify,
+					chunks: [entryId],
+					filename: `${entryId}.html`
+				})
+			);
+		});
+	}
+	//endregion
+
 	//region Images
 	if (embedExtensions.length > 0){
 		loaders.push({
@@ -194,32 +236,9 @@ module.exports = function getConfig({
 			stats: 'errors-only'
 		},
 		//endregion
-		//region Plugins
-		plugins: [
-			new CleanWebpackPlugin([
-				basename(outputFolder)
-			], {
-				root: join(outputFolder, '..'),
-				verbose: false
-			}),
-			new MiniCssExtractPlugin({
-				filename: minify ? '[hash].[name].css' : '[name].css',
-				chunkFilename: '[id].css'
-			}),
-			new HtmlWebpackPlugin({
-				hash: !minify,
-				filename: 'index.html'
-			}),
-			new SriPlugin({
-				hashFuncNames: ['sha256', 'sha384'],
-				enabled: minify
-			})
-		],
-		//endregion
-		//region Loaders
+		plugins,
 		module: {
 			rules: loaders
 		}
-		//endregion
 	};
 };
