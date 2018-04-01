@@ -18,7 +18,7 @@ package.json
 		"watch": "webpack-dev-server"
 	},
 	"dependencies": {
-		"@wildpeaks/webpack-config-web": "1.0.0-alpha3",
+		"@wildpeaks/webpack-config-web": "1.0.0-alpha4",
 		"typescript": "2.8.1",
 		"webpack": "4.4.1",
 		"webpack-cli": "2.0.13",
