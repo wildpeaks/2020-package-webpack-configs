@@ -74,10 +74,8 @@ afterAll(done => {
 
 beforeEach(done => {
 	rimraf(outputFolder, () => {
-		setTimeout(() => {
-			mkdirSync(outputFolder);
-			done();
-		}, 50);
+		mkdirSync(outputFolder);
+		done();
 	});
 });
 
@@ -328,19 +326,33 @@ it('Minify', async() => {
 		},
 		minify: true
 	});
+
+	let hash = '';
+	for (const actualFile of actualFiles){
+		const regex = /^([^\.]+)\.myapp\.js$/;
+		const matches = regex.exec(actualFile);
+		if (matches){
+			hash = matches[1];
+			break;
+		}
+	}
+	expect(hash).not.toBe('', 'Hash not found');
+
 	const expectedFiles = [
 		'index.html',
-		'6ac083f8f7ac3d5a7c95.myapp.css',
-		'6ac083f8f7ac3d5a7c95.myapp.css.map',
-		'6ac083f8f7ac3d5a7c95.myapp.js',
-		'6ac083f8f7ac3d5a7c95.myapp.js.map'
+		`${hash}.myapp.css`,
+		`${hash}.myapp.css.map`,
+		`${hash}.myapp.js`,
+		`${hash}.myapp.js.map`
 	];
 	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
 
-	const cssRaw = readFileSync(join(outputFolder, `6ac083f8f7ac3d5a7c95.myapp.css`), 'utf8');
-	expect(cssRaw.startsWith('._11R8tFIZnfk4aMR46TKsu_{color:green}'), true, 'CSS not minified');
+	const cssRaw = readFileSync(join(outputFolder, `${hash}.myapp.css`), 'utf8');
+	if (/^.([^{}]+){color:green}/.exec(cssRaw) === null){
+		throw new Error('CSS is not minified');
+	}
 
-	const jsRaw = readFileSync(join(outputFolder, `6ac083f8f7ac3d5a7c95.myapp.js`), 'utf8');
+	const jsRaw = readFileSync(join(outputFolder, `${hash}.myapp.js`), 'utf8');
 	expect(jsRaw.startsWith('!function(e){'), true, 'JS not minified');
 
 	const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
@@ -361,12 +373,8 @@ it('Minify', async() => {
 			if (el1 === null){
 				return 'No script';
 			}
-			const jsSrc = el1.getAttribute('src');
 			const jsCrossorigin = el1.getAttribute('crossorigin');
 			const jsIntegrity = el1.getAttribute('integrity');
-			if (jsSrc !== '/6ac083f8f7ac3d5a7c95.myapp.js'){
-				return `Bad script.src: ${jsSrc}`;
-			}
 			if (jsCrossorigin !== 'anonymous'){
 				return `Bad script.crossorigin: ${jsCrossorigin}`;
 			}
@@ -378,12 +386,8 @@ it('Minify', async() => {
 			if (el2 === null){
 				return 'No stylesheet';
 			}
-			const cssHref = el2.getAttribute('href');
 			const cssCrossorigin = el2.getAttribute('crossorigin');
 			const cssIntegrity = el2.getAttribute('integrity');
-			if (cssHref !== '/6ac083f8f7ac3d5a7c95.myapp.css'){
-				return `Bad link.href: ${cssHref}`;
-			}
 			if (cssCrossorigin !== 'anonymous'){
 				return `Bad link.crossorigin: ${cssCrossorigin}`;
 			}
