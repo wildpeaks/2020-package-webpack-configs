@@ -118,6 +118,98 @@ it('Basic', async() => {
 });
 
 
+it('Multiple independant entries', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		entry: {
+			app1: './multiple/app1.ts',
+			app2: './multiple/app2.ts',
+			app3: './multiple/app3.ts'
+		},
+		minify: false
+	});
+	const expectedFiles = [
+		'app1.html',
+		'app1.css',
+		'app1.css.map',
+		'app1.js',
+		'app1.js.map',
+		'app2.html',
+		'app2.css',
+		'app2.css.map',
+		'app2.js',
+		'app2.js.map',
+		'app3.html',
+		'app3.css',
+		'app3.css.map',
+		'app3.js',
+		'app3.js.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	let browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+	try {
+		const page = await browser.newPage();
+		await page.goto(`http://localhost:8888/app1.html`);
+		const found = await page.evaluate(() => {
+			/* global document */
+			const el = document.getElementById('hello');
+			if (typeof el === 'undefined'){
+				return '#hello not found';
+			}
+			if (el.innerText !== `APP 1`){
+				return `Bad #hello.innerText: ${el.innerText}`;
+			}
+			return 'ok';
+		});
+		expect(found).toBe('ok', `DOM tests for app1`);
+	} finally {
+		await browser.close();
+	}
+
+	browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+	try {
+		const page = await browser.newPage();
+		await page.goto(`http://localhost:8888/app2.html`);
+		const found = await page.evaluate(() => {
+			/* global document */
+			const el = document.getElementById('hello');
+			if (typeof el === 'undefined'){
+				return '#hello not found';
+			}
+			if (el.innerText !== `APP 2`){
+				return `Bad #hello.innerText: ${el.innerText}`;
+			}
+			return 'ok';
+		});
+		expect(found).toBe('ok', `DOM tests for app2`);
+	} finally {
+		await browser.close();
+	}
+
+	browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+	try {
+		const page = await browser.newPage();
+		await page.goto(`http://localhost:8888/app3.html`);
+		const found = await page.evaluate(() => {
+			/* global document */
+			const el = document.getElementById('hello');
+			if (typeof el === 'undefined'){
+				return '#hello not found';
+			}
+			if (el.innerText !== `APP 3`){
+				return `Bad #hello.innerText: ${el.innerText}`;
+			}
+			return 'ok';
+		});
+		expect(found).toBe('ok', `DOM tests for app3`);
+	} finally {
+		await browser.close();
+	}
+});
+
+
 it('Local Modules', async() => {
 	const actualFiles = await testFixture({
 		rootFolder,
