@@ -74,8 +74,10 @@ afterAll(done => {
 
 beforeEach(done => {
 	rimraf(outputFolder, () => {
-		mkdirSync(outputFolder);
-		done();
+		setTimeout(() => {
+			mkdirSync(outputFolder);
+			done();
+		}, 50);
 	});
 });
 
