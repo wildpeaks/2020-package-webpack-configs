@@ -13,12 +13,11 @@ Generates a **Webpack 4 config** for Web applications written in *Typescript*.
 package.json
 
 	"scripts": {
-		"dev": "webpack --mode development",
 		"build": "webpack --mode production",
-		"watch": "webpack-dev-server"
+		"watch": "webpack-dev-server --mode development"
 	},
 	"dependencies": {
-		"@wildpeaks/webpack-config-web": "1.0.0-alpha4",
+		"@wildpeaks/webpack-config-web": "1.0.0-alpha5",
 		"typescript": "2.8.1",
 		"webpack": "4.4.1",
 		"webpack-cli": "2.0.13",
@@ -31,7 +30,7 @@ webpack.config.js
 	const {join} = require('path');
 	const getConfig = require('@wildpeaks/webpack-config-web');
 
-	module.exports = function(_env, {mode = 'production'} = {}){
+	module.exports = function(_env, {mode = 'production'} = {}) {
 		return getConfig({
 			entry: {
 				myapp: './src/myapp.ts'
