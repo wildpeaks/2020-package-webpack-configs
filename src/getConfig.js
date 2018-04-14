@@ -31,6 +31,8 @@ function getRegex(extensions){
  * @property {String[]} embedExtensions File extensions of files to embed as base64 (if small enough) or just copy as-is (if large)
  * @property {String[]} copyExtensions File extensions of files to just copy as-is
  * @property {String} assetsRelativePath File extensions of files to just copy as-is
+ * @property {Boolean} sourcemaps `true` to generate sourcemaps for scripts & stylesheets, `false` to skip them
+ * @property {Boolean} skipPostprocess `true` for the lightweight config (for tests), `false` for the whole config
  */
 
 /**
@@ -50,7 +52,9 @@ module.exports = function getConfig({
 	embedLimit = 5000,
 	embedExtensions = ['jpg', 'png', 'gif', 'svg'],
 	copyExtensions = ['woff'],
-	assetsRelativePath = 'assets/'
+	assetsRelativePath = 'assets/',
+	sourcemaps = true,
+	skipPostprocess = false
 } = {}){
 	strictEqual(entry === null, false, '"entry" should not be null');
 	strictEqual(typeof entry, 'object', '"entry" should be an Object');
@@ -70,6 +74,8 @@ module.exports = function getConfig({
 	strictEqual(Array.isArray(embedExtensions), true, '"embedExtensions" should be an Array');
 	strictEqual(Array.isArray(copyExtensions), true, '"copyExtensions" should be an Array');
 	strictEqual(typeof assetsRelativePath, 'string', '"assetsRelativePath" should be a String');
+	strictEqual(typeof sourcemaps, 'boolean', '"sourcemaps" should be a Boolean');
+	strictEqual(typeof skipPostprocess, 'boolean', '"skipPostprocess" should be a Boolean');
 	if (!isAbsolute(rootFolder)){
 		throw new Error('"rootFolder" should be an absolute path');
 	}
@@ -80,95 +86,145 @@ module.exports = function getConfig({
 		throw new Error('"assetsRelativePath" must end with "/" when not empty');
 	}
 
-	//region Loaders
-	const loaders = [
-		//region Typescript
-		{
-			enforce: 'pre',
-			test: /\.(ts|js)?$/,
-			use: 'source-map-loader'
+	const loaders = [];
+	const plugins = [];
+	//region Base Config
+	const config = {
+		//region Input
+		target: 'web',
+		devtool: sourcemaps ? 'source-map' : false,
+		mode: minify ? 'production' : 'development',
+		resolve: {
+			extensions: ['.ts', '.js']
 		},
-		{
-			test: /\.(ts|js)$/,
-			use: [
-				{
-					loader: 'ts-loader',
-					options: {
-						transpileOnly: true
-					}
-				}
-			]
+		context: rootFolder,
+		entry,
+		//endregion
+		//region Output
+		output: {
+			path: outputFolder,
+			publicPath,
+			filename: minify ? '[hash].[name].js' : '[name].js',
+			chunkFilename: minify ? '[hash].chunk.[id].js' : 'chunk.[id].js'
 		},
 		//endregion
-		//region CSS
-		{
-			test: /\.css$/,
-			use: [
-				MiniCssExtractPlugin.loader,
-				{
-					loader: 'css-loader',
-					options: {
-						minimize: minify,
-						modules: true
-					}
-				},
-				{
-					loader: 'postcss-loader',
-					options: {
-						plugins: [
-							cssnext({
-								browsers,
-								features: {
-									customProperties: {
-										variables: cssVariables
-									}
-								}
-							})
-						]
-					}
-				}
-			]
+		//region Minification
+		optimization: {
+			minimize: minify,
+			nodeEnv: minify ? 'production' : 'development',
+			concatenateModules: true
 		}
 		//endregion
-	];
+	};
 	//endregion
 
-	//region Plugins
-	const plugins = [
-		new CleanWebpackPlugin([
-			basename(outputFolder)
-		], {
-			root: join(outputFolder, '..'),
-			verbose: false
-		}),
-		new MiniCssExtractPlugin({
-			filename: minify ? '[hash].[name].css' : '[name].css',
-			chunkFilename: '[id].css'
-		}),
-		new SriPlugin({
-			hashFuncNames: ['sha256', 'sha384'],
-			enabled: minify
-		})
-	];
-	const ids = Object.keys(entry);
-	if (ids.length === 1){
+	//region Reset the output
+	if (!skipPostprocess){
 		plugins.push(
-			new HtmlWebpackPlugin({
-				hash: !minify,
-				filename: 'index.html'
+			new CleanWebpackPlugin([
+				basename(outputFolder)
+			], {
+				root: join(outputFolder, '..'),
+				verbose: false
 			})
 		);
-	} else {
-		// https://github.com/jantimon/html-webpack-plugin/issues/218
-		ids.forEach(entryId => {
+	}
+	//endregion
+
+	//region HTML
+	if (!skipPostprocess){
+		const ids = Object.keys(entry);
+		if (ids.length === 1){
 			plugins.push(
 				new HtmlWebpackPlugin({
 					hash: !minify,
-					chunks: [entryId],
-					filename: `${entryId}.html`
+					filename: 'index.html'
 				})
 			);
+		} else {
+			ids.forEach(entryId => {
+				plugins.push(
+					new HtmlWebpackPlugin({
+						hash: !minify,
+						chunks: [entryId],
+						filename: `${entryId}.html`
+					})
+				);
+			});
+		}
+		//endregion
+	}
+	//endregion
+
+	//region Subressource Integrity
+	if (!skipPostprocess){
+		config.output.crossOriginLoading = 'anonymous';
+		plugins.push(
+			new SriPlugin({
+				hashFuncNames: ['sha256', 'sha384'],
+				enabled: minify
+			})
+		);
+	}
+	//endregion
+
+	//region Typescript
+	if (sourcemaps){
+		loaders.push({
+			enforce: 'pre',
+			test: /\.(ts|js)?$/,
+			use: 'source-map-loader'
 		});
+	}
+	loaders.push({
+		test: /\.(ts|js)$/,
+		use: [
+			{
+				loader: 'ts-loader',
+				options: {
+					transpileOnly: true
+				}
+			}
+		]
+	});
+	//endregion
+
+	//region CSS
+	loaders.push({
+		test: /\.css$/,
+		use: [
+			MiniCssExtractPlugin.loader,
+			{
+				loader: 'css-loader',
+				options: {
+					minimize: minify,
+					modules: true
+				}
+			},
+			{
+				loader: 'postcss-loader',
+				options: {
+					plugins: [
+						cssnext({
+							browsers,
+							features: {
+								customProperties: {
+									variables: cssVariables
+								}
+							}
+						})
+					]
+				}
+			}
+		]
+	});
+	if (!skipPostprocess){
+		plugins.push(
+			new MiniCssExtractPlugin({
+				filename: minify ? '[hash].[name].css' : '[name].css',
+				chunkFilename: '[id].css'
+			})
+		);
 	}
 	//endregion
 
@@ -186,7 +242,8 @@ module.exports = function getConfig({
 		});
 	}
 	//endregion
-	//region Other assets
+
+	//region Raw assets
 	if (copyExtensions.length > 0){
 		loaders.push({
 			test: getRegex(copyExtensions),
@@ -199,35 +256,10 @@ module.exports = function getConfig({
 		});
 	}
 	//endregion
-	return {
-		//region Input
-		target: 'web',
-		devtool: 'source-map',
-		mode: minify ? 'production' : 'development',
-		resolve: {
-			extensions: ['.ts', '.js']
-		},
-		context: rootFolder,
-		entry,
-		//endregion
-		//region Output
-		output: {
-			path: outputFolder,
-			publicPath,
-			crossOriginLoading: 'anonymous',
-			filename: minify ? '[hash].[name].js' : '[name].js',
-			chunkFilename: minify ? '[hash].chunk.[id].js' : 'chunk.[id].js'
-		},
-		//endregion
-		//region Minification
-		optimization: {
-			minimize: minify,
-			nodeEnv: minify ? 'production' : 'development',
-			concatenateModules: true
-		},
-		//endregion
-		//region Dev Server
-		devServer: {
+
+	//region Dev Server
+	if (!skipPostprocess){
+		config.devServer = {
 			port,
 			compress: true,
 			contentBase: outputFolder,
@@ -235,11 +267,13 @@ module.exports = function getConfig({
 			historyApiFallback: false,
 			clientLogLevel: 'none',
 			stats: 'errors-only'
-		},
-		//endregion
-		plugins,
-		module: {
-			rules: loaders
-		}
+		};
+	}
+	//endregion
+
+	config.plugins = plugins;
+	config.module = {
+		rules: loaders
 	};
+	return config;
 };
