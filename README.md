@@ -17,7 +17,7 @@ package.json
 		"watch": "webpack-dev-server --mode development"
 	},
 	"dependencies": {
-		"@wildpeaks/webpack-config-web": "1.0.0-alpha5",
+		"@wildpeaks/webpack-config-web": "1.0.0-alpha6",
 		"typescript": "2.8.1",
 		"webpack": "4.4.1",
 		"webpack-cli": "2.0.13",
@@ -166,6 +166,22 @@ Default: `["woff"]`.
 Relative path to copy files to.
 
 Default: `"assets/"`
+
+
+---
+### `sourcemaps`: Boolean
+
+Use `true` to **generate sourcemaps** for scripts & stylesheets, `false` to skip them.
+
+Default: `true`
+
+
+---
+### `skipPostprocess`: Boolean
+
+Use `true` for the lightweight config (for tests), `false` for the whole config.
+
+Default: `false`
 
 
 -------------------------------------------------------------------------------

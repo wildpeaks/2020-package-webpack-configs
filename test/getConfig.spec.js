@@ -494,3 +494,78 @@ it('Minify', async() => {
 		await browser.close();
 	}
 });
+
+
+it('Skip Postprocessing', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		entry: {
+			myapp: './css/myapp.ts'
+		},
+		minify: false,
+		skipPostprocess: true
+	});
+
+	const expectedFiles = [
+		'myapp.js',
+		'myapp.js.map',
+		'myapp.css',
+		'myapp.css.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+});
+
+
+it('Enable sourcemaps', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		entry: {
+			myapp: './css/myapp.ts'
+		},
+		minify: false,
+		sourcemaps: true
+	});
+
+	const expectedFiles = [
+		'index.html',
+		'myapp.js',
+		'myapp.js.map',
+		'myapp.css',
+		'myapp.css.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const cssRaw = readFileSync(join(outputFolder, 'myapp.css'), 'utf8');
+	expect(cssRaw.endsWith('/*# sourceMappingURL=myapp.css.map*/')).toBe(true, 'CSS has the sourcemap');
+
+	const jsRaw = readFileSync(join(outputFolder, 'myapp.js'), 'utf8');
+	expect(jsRaw.endsWith('//# sourceMappingURL=myapp.js.map')).toBe(true, 'JS has the sourcemap');
+});
+
+
+it('Disable sourcemaps', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		entry: {
+			myapp: './css/myapp.ts'
+		},
+		minify: false,
+		sourcemaps: false
+	});
+
+	const expectedFiles = [
+		'index.html',
+		'myapp.js',
+		'myapp.css'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const cssRaw = readFileSync(join(outputFolder, 'myapp.css'), 'utf8');
+	expect(cssRaw.endsWith('/*# sourceMappingURL=myapp.css.map*/')).toBe(false, 'CSS has no sourcemap');
+
+	const jsRaw = readFileSync(join(outputFolder, 'myapp.js'), 'utf8');
+	expect(jsRaw.endsWith('//# sourceMappingURL=myapp.js.map')).toBe(false, 'JS has no sourcemap');
+});
