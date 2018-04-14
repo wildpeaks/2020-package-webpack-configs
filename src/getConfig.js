@@ -218,14 +218,12 @@ module.exports = function getConfig({
 			}
 		]
 	});
-	if (!skipPostprocess){
-		plugins.push(
-			new MiniCssExtractPlugin({
-				filename: minify ? '[hash].[name].css' : '[name].css',
-				chunkFilename: '[id].css'
-			})
-		);
-	}
+	plugins.push(
+		new MiniCssExtractPlugin({
+			filename: minify ? '[hash].[name].css' : '[name].css',
+			chunkFilename: '[id].css'
+		})
+	);
 	//endregion
 
 	//region Images
