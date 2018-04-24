@@ -48,7 +48,7 @@ module.exports = function getConfig({
 	minify = true,
 	port = 8000,
 	cssVariables = {},
-	browsers = ['last 2 versions', 'ie >= 11'],
+	browsers = ['>0.25%', 'ie >= 11'],
 	embedLimit = 5000,
 	embedExtensions = ['jpg', 'png', 'gif', 'svg'],
 	copyExtensions = ['woff'],
