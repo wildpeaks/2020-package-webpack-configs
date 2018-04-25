@@ -569,3 +569,60 @@ it('Disable sourcemaps', async() => {
 	const jsRaw = readFileSync(join(outputFolder, 'myapp.js'), 'utf8');
 	expect(jsRaw.endsWith('//# sourceMappingURL=myapp.js.map')).toBe(false, 'JS has no sourcemap');
 });
+
+
+it('Polyfills', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		entry: {
+			myapp: './polyfills/myapp.ts'
+		},
+		minify: false,
+		sourcemaps: false,
+		polyfills: [
+			'module-polyfill',
+			'./polyfills/vanilla-polyfill.js',
+			'./polyfills/typescript-polyfill.ts'
+		]
+	});
+
+	const expectedFiles = [
+		'index.html',
+		'myapp.js'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+	try {
+		const page = await browser.newPage();
+		await page.goto('http://localhost:8888/');
+		const found = await page.evaluate(() => {
+			/* global document */
+			/* global window */
+			const el = document.getElementById('hello');
+			if (typeof el === 'undefined'){
+				return '#hello not found';
+			}
+			if (el.innerText !== 'Hello World'){
+				return `Bad #hello.innerText: ${el.innerText}`;
+			}
+			if (typeof window.EXAMPLE_FAKE_POLYFILL !== 'undefined'){
+				return 'Fake polyfill exists';
+			}
+			if (window.EXAMPLE_VANILLA_POLYFILL !== 'ok'){ // compiled fine, yet this is not defined ???
+				return 'Missing vanilla polyfill';
+			}
+			if (window.EXAMPLE_TYPESCRIPT_POLYFILL !== 'ok'){
+				return 'Missing typescript polyfill';
+			}
+			if (window.EXAMPLE_MODULE_POLYFILL !== 'ok'){
+				return 'Missing module polyfill';
+			}
+			return 'ok';
+		});
+		expect(found).toBe('ok', 'DOM tests');
+	} finally {
+		await browser.close();
+	}
+});
