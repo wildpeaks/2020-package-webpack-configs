@@ -33,6 +33,7 @@ function getRegex(extensions){
  * @property {String} assetsRelativePath File extensions of files to just copy as-is
  * @property {Boolean} sourcemaps `true` to generate sourcemaps for scripts & stylesheets, `false` to skip them
  * @property {Boolean} skipPostprocess `true` for the lightweight config (for tests), `false` for the whole config
+ * @property {String[]} polyfills List of modules or files to automatically prepend to every entry
  */
 
 /**
@@ -54,7 +55,8 @@ module.exports = function getConfig({
 	copyExtensions = ['woff'],
 	assetsRelativePath = 'assets/',
 	sourcemaps = true,
-	skipPostprocess = false
+	skipPostprocess = false,
+	polyfills = ['core-js/fn/promise']
 } = {}){
 	strictEqual(entry === null, false, '"entry" should not be null');
 	strictEqual(typeof entry, 'object', '"entry" should be an Object');
@@ -76,6 +78,7 @@ module.exports = function getConfig({
 	strictEqual(typeof assetsRelativePath, 'string', '"assetsRelativePath" should be a String');
 	strictEqual(typeof sourcemaps, 'boolean', '"sourcemaps" should be a Boolean');
 	strictEqual(typeof skipPostprocess, 'boolean', '"skipPostprocess" should be a Boolean');
+	strictEqual(Array.isArray(polyfills), true, '"polyfills" should be an Array');
 	if (!isAbsolute(rootFolder)){
 		throw new Error('"rootFolder" should be an absolute path');
 	}
@@ -85,6 +88,14 @@ module.exports = function getConfig({
 	if ((assetsRelativePath !== '') && !assetsRelativePath.endsWith('/')){
 		throw new Error('"assetsRelativePath" must end with "/" when not empty');
 	}
+
+	//region Polyfills
+	const entries = {};
+	for (const key in entry){
+		const filepath = entry[key];
+		entries[key] = polyfills.concat(Array.isArray(filepath) ? filepath : [filepath]);
+	}
+	//endregion
 
 	const loaders = [];
 	const plugins = [];
@@ -98,7 +109,7 @@ module.exports = function getConfig({
 			extensions: ['.ts', '.js']
 		},
 		context: rootFolder,
-		entry,
+		entry: entries,
 		//endregion
 		//region Output
 		output: {

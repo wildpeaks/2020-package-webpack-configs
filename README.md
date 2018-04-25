@@ -11,15 +11,12 @@ Generates a **Webpack 4 config** for Web applications written in *Typescript*.
 ## Babel
 
 Note that it **intentionally doesn't use Babel** because Typescript itself can already take care of transpiling
-to ES5 + ES Modules, and Webpack converts the ES Modules. This greatly **reduces the number of dependencies**,
-but it also means it doesn't automatically include `core-js` dependencies.
+to ES5 + ES Modules, and Webpack converts the ES Modules. This greatly **reduces the number of dependencies**
+and avoids [limitations of the Typescript plugin for Babel](https://github.com/babel/babel/blob/master/packages/babel-plugin-transform-typescript/README.md#babelplugin-transform-typescript).
 
-However, you will be able to pass a list of polyfills to use (including polyfills that Babel wouldn't include
+However it also means it doesn't automatically include `core-js` dependencies.
+Therefore **you can pass a list of polyfills** to use (*including polyfills that Babel wouldn't include*
 and that you would have to add manually anyway) in options.
-
-I'll most likely do a Babel branch to compare compilation time/sizes (using Babel to transpile
-to ES5 instead of Typescript) similar to the archived Stage2 boilerplate, but it seems unlikely
-to be worth the extra bloat unless adding polyfills to chunks and webworkers prooves too cumbersome.
 
 
 -------------------------------------------------------------------------------
@@ -33,11 +30,12 @@ package.json
 		"watch": "webpack-dev-server --mode development"
 	},
 	"dependencies": {
-		"@wildpeaks/webpack-config-web": "1.0.0-alpha7",
-		"typescript": "2.8.1",
-		"webpack": "4.4.1",
-		"webpack-cli": "2.0.13",
-		"webpack-dev-server": "3.1.1"
+		"@wildpeaks/webpack-config-web": "1.0.0-alpha8",
+		"typescript": "2.8.3",
+		"webpack": "4.6.0",
+		"webpack-cli": "2.0.15",
+		"webpack-dev-server": "3.1.3",
+		"whatwg-fetch": "2.0.4"
 	}
 
 webpack.config.js
@@ -53,7 +51,11 @@ webpack.config.js
 			},
 			rootFolder: __dirname,
 			outputFolder: join(__dirname, 'dist'),
-			minify: (mode === 'production')
+			minify: (mode === 'production'),
+			polyfills: [
+				'core-js/fn/promise',
+				'whatwg-fetch'
+			]
 		});
 	};
 
@@ -145,7 +147,7 @@ See ["customProperties" in CSSNext Documentation](http://cssnext.io/usage/#featu
 
 Target browsers for CSS Autoprefixer.
 
-Default: `["last 2 versions", "ie >= 11"]`.
+Default: `[">0.25%", "ie >= 11"]`.
 
 See ["browsers" in CSSNext Documentation](http://cssnext.io/usage/#browsers).
 
@@ -198,6 +200,14 @@ Default: `true`
 Use `true` for the lightweight config (for tests), `false` for the whole config.
 
 Default: `false`
+
+
+---
+### `polyfills`: String[]
+
+List of modules or files to automatically prepend to every entry.
+
+Default: `['core-js/fn/promise']`
 
 
 -------------------------------------------------------------------------------
