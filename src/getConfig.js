@@ -79,7 +79,7 @@ module.exports = function getConfig({
 	if (!isAbsolute(rootFolder)){
 		throw new Error('"rootFolder" should be an absolute path');
 	}
-	if (!isAbsolute(outputFolder)){
+	if (!skipPostprocess && !isAbsolute(outputFolder)){
 		throw new Error('"outputFolder" should be an absolute path');
 	}
 	if ((assetsRelativePath !== '') && !assetsRelativePath.endsWith('/')){
@@ -106,16 +106,19 @@ module.exports = function getConfig({
 			publicPath,
 			filename: minify ? '[hash].[name].js' : '[name].js',
 			chunkFilename: minify ? '[hash].chunk.[id].js' : 'chunk.[id].js'
-		},
-		//endregion
-		//region Minification
-		optimization: {
-			minimize: minify,
-			nodeEnv: minify ? 'production' : 'development',
-			concatenateModules: true
 		}
 		//endregion
 	};
+	//endregion
+
+	//region Minification
+	if (!skipPostprocess){
+		config.optimization = {
+			minimize: minify,
+			nodeEnv: minify ? 'production' : 'development',
+			concatenateModules: true
+		};
+	}
 	//endregion
 
 	//region Reset the output
