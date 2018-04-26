@@ -390,7 +390,7 @@ it('Chunks', async() => {
 	try {
 		const page = await browser.newPage();
 		await page.goto('http://localhost:8888/');
-		await sleep(50);
+		await sleep(100);
 		const found = await page.evaluate(() => {
 			/* global document */
 			const el = document.getElementById('hello');
@@ -600,6 +600,18 @@ it('Polyfills', async() => {
 		const found = await page.evaluate(() => {
 			/* global document */
 			/* global window */
+			if (typeof window.EXAMPLE_FAKE_POLYFILL !== 'undefined'){
+				return 'Fake polyfill exists';
+			}
+			if (window.EXAMPLE_VANILLA_POLYFILL !== 'ok once'){ // compiled fine, yet this is not defined ???
+				return 'Missing vanilla polyfill';
+			}
+			if (window.EXAMPLE_TYPESCRIPT_POLYFILL !== 'ok once'){
+				return 'Missing typescript polyfill';
+			}
+			if (window.EXAMPLE_MODULE_POLYFILL !== 'ok once'){
+				return 'Missing module polyfill';
+			}
 			const el = document.getElementById('hello');
 			if (typeof el === 'undefined'){
 				return '#hello not found';
@@ -607,17 +619,64 @@ it('Polyfills', async() => {
 			if (el.innerText !== 'Hello World'){
 				return `Bad #hello.innerText: ${el.innerText}`;
 			}
+			return 'ok';
+		});
+		expect(found).toBe('ok', 'DOM tests');
+	} finally {
+		await browser.close();
+	}
+});
+
+
+it('Chunks & Polyfill', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		entry: {
+			myapp: './chunks-polyfills/myapp.ts'
+		},
+		minify: false,
+		polyfills: [
+			'module-polyfill',
+			'./polyfills/vanilla-polyfill.js',
+			'./polyfills/typescript-polyfill.ts'
+		]
+	});
+	const expectedFiles = [
+		'index.html',
+		'myapp.js',
+		'myapp.js.map',
+		'chunk.0.js',
+		'chunk.0.js.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+	try {
+		const page = await browser.newPage();
+		await page.goto('http://localhost:8888/');
+		await sleep(100);
+		const found = await page.evaluate(() => {
+			/* global document */
+			/* global window */
 			if (typeof window.EXAMPLE_FAKE_POLYFILL !== 'undefined'){
 				return 'Fake polyfill exists';
 			}
-			if (window.EXAMPLE_VANILLA_POLYFILL !== 'ok'){ // compiled fine, yet this is not defined ???
+			if (window.EXAMPLE_VANILLA_POLYFILL !== 'ok once'){ // compiled fine, yet this is not defined ???
 				return 'Missing vanilla polyfill';
 			}
-			if (window.EXAMPLE_TYPESCRIPT_POLYFILL !== 'ok'){
+			if (window.EXAMPLE_TYPESCRIPT_POLYFILL !== 'ok once'){
 				return 'Missing typescript polyfill';
 			}
-			if (window.EXAMPLE_MODULE_POLYFILL !== 'ok'){
+			if (window.EXAMPLE_MODULE_POLYFILL !== 'ok once'){
 				return 'Missing module polyfill';
+			}
+			const el = document.getElementById('hello');
+			if (typeof el === 'undefined'){
+				return '#hello not found';
+			}
+			if (el.innerText !== 'Delayed 123 ok once ok once ok once'){
+				return `Bad #hello.innerText: ${el.innerText}`;
 			}
 			return 'ok';
 		});
