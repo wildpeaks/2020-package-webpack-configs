@@ -3,7 +3,7 @@ const RelativeWorker = require('./relative.webworker');
 const ModuleWorker = require('my-worker-module');
 
 const mydiv1 = document.createElement('div');
-mydiv1.setAttribute('id', 'hello1'); // why not found ???
+mydiv1.setAttribute('id', 'hello1');
 mydiv1.innerText = 'Initially 1';
 document.body.appendChild(mydiv1);
 

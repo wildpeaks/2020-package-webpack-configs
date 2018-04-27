@@ -581,7 +581,7 @@ it('Polyfills', async() => {
 		minify: false,
 		sourcemaps: false,
 		polyfills: [
-			'module-polyfill',
+			'module-window-polyfill',
 			'./polyfills/vanilla-polyfill.js',
 			'./polyfills/typescript-polyfill.ts'
 		]
@@ -637,7 +637,7 @@ it('Chunks & Polyfill', async() => {
 		},
 		minify: false,
 		polyfills: [
-			'module-polyfill',
+			'module-window-polyfill',
 			'./polyfills/vanilla-polyfill.js',
 			'./polyfills/typescript-polyfill.ts'
 		]
@@ -687,7 +687,7 @@ it('Chunks & Polyfill', async() => {
 });
 
 
-it('Multiple Webworkers', async() => {
+it('Webworkers', async() => {
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -726,6 +726,66 @@ it('Multiple Webworkers', async() => {
 				return '#hello2 not found';
 			}
 			if (el2.innerText !== 'MODULE WORKER replies HELLO 2'){
+				return `Bad #hello2.innerText: ${el2.innerText}`;
+			}
+			return 'ok';
+		});
+		expect(found).toBe('ok', 'DOM tests');
+	} finally {
+		await browser.close();
+	}
+});
+
+
+it('Webworkers + Polyfills', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		entry: {
+			myapp: './webworkers-polyfills/myapp.ts'
+		},
+		minify: false,
+
+		// Unlike "webworkerPolyfills", they're just added to "entry", so they're resolved from "context".
+		polyfills: [
+			'./webworkers-polyfills/both.polyfill.ts',
+			'./webworkers-polyfills/only-main.polyfill.ts'
+		],
+		webworkerPolyfills: [
+			'./both.polyfill',
+			'./only-worker.polyfill',
+			'module-self-polyfill'
+		]
+	});
+	const expectedFiles = [
+		'index.html',
+		'myapp.js',
+		'myapp.js.map',
+		'myapp.webworker.js',
+		'myapp.webworker.js.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+	try {
+		const page = await browser.newPage();
+		await page.goto('http://localhost:8888/');
+		await sleep(200);
+		const found = await page.evaluate(() => {
+			/* global document */
+			const el1 = document.getElementById('hello1');
+			if (el1 === null){
+				return '#hello1 not found';
+			}
+			if (el1.innerText !== 'BOTH undefined MAIN undefined'){
+				return `Bad #hello1.innerText: ${el1.innerText}`;
+			}
+
+			const el2 = document.getElementById('hello2');
+			if (el2 === null){
+				return '#hello2 not found';
+			}
+			if (el2.innerText !== 'BOTH WORKER undefined MODULE'){
 				return `Bad #hello2.innerText: ${el2.innerText}`;
 			}
 			return 'ok';
