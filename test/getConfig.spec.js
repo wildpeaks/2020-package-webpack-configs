@@ -103,7 +103,7 @@ it('Basic', async() => {
 		const found = await page.evaluate(() => {
 			/* global document */
 			const el = document.getElementById('hello');
-			if (typeof el === 'undefined'){
+			if (el === null){
 				return '#hello not found';
 			}
 			if (el.innerText !== 'Hello World'){
@@ -155,7 +155,7 @@ it('Multiple independant entries', async() => {
 		const found = await page.evaluate(() => {
 			/* global document */
 			const el = document.getElementById('hello');
-			if (typeof el === 'undefined'){
+			if (el === null){
 				return '#hello not found';
 			}
 			if (el.innerText !== `APP 1`){
@@ -175,7 +175,7 @@ it('Multiple independant entries', async() => {
 		const found = await page.evaluate(() => {
 			/* global document */
 			const el = document.getElementById('hello');
-			if (typeof el === 'undefined'){
+			if (el === null){
 				return '#hello not found';
 			}
 			if (el.innerText !== `APP 2`){
@@ -195,7 +195,7 @@ it('Multiple independant entries', async() => {
 		const found = await page.evaluate(() => {
 			/* global document */
 			const el = document.getElementById('hello');
-			if (typeof el === 'undefined'){
+			if (el === null){
 				return '#hello not found';
 			}
 			if (el.innerText !== `APP 3`){
@@ -233,7 +233,7 @@ it('Local Modules', async() => {
 		const found = await page.evaluate(() => {
 			/* global document */
 			const el = document.getElementById('hello');
-			if (typeof el === 'undefined'){
+			if (el === null){
 				return '#hello not found';
 			}
 			if (el.innerText !== 'Hello 100123'){
@@ -274,7 +274,7 @@ it('CSS', async() => {
 			/* global document */
 			/* global window */
 			const el = document.getElementById('hello');
-			if (typeof el === 'undefined'){
+			if (el === null){
 				return '#hello not found';
 			}
 			const computed = window.getComputedStyle(el);
@@ -321,7 +321,7 @@ it('Assets', async() => {
 		const found = await page.evaluate(() => {
 			/* global document */
 			const container = document.getElementById('images');
-			if (typeof container === 'undefined'){
+			if (container === null){
 				return '#images not found';
 			}
 			if (container.childNodes.length !== 6){
@@ -390,11 +390,11 @@ it('Chunks', async() => {
 	try {
 		const page = await browser.newPage();
 		await page.goto('http://localhost:8888/');
-		await sleep(50);
+		await sleep(300);
 		const found = await page.evaluate(() => {
 			/* global document */
 			const el = document.getElementById('hello');
-			if (typeof el === 'undefined'){
+			if (el === null){
 				return '#hello not found';
 			}
 			if (el.innerText !== 'Delayed 100123'){
@@ -421,7 +421,7 @@ it('Minify', async() => {
 
 	let hash = '';
 	for (const actualFile of actualFiles){
-		const regex = /^([^\.]+)\.myapp\.js$/;
+		const regex = /^([^.]+)\.myapp\.js$/;
 		const matches = regex.exec(actualFile);
 		if (matches){
 			hash = matches[1];
@@ -454,7 +454,7 @@ it('Minify', async() => {
 		const found = await page.evaluate(() => {
 			/* global document */
 			const el0 = document.getElementById('hello');
-			if (typeof el0 === 'undefined'){
+			if (el0 === null){
 				return '#hello not found';
 			}
 			if (el0.innerText !== 'Hello World'){
@@ -581,7 +581,7 @@ it('Polyfills', async() => {
 		minify: false,
 		sourcemaps: false,
 		polyfills: [
-			'module-polyfill',
+			'module-window-polyfill',
 			'./polyfills/vanilla-polyfill.js',
 			'./polyfills/typescript-polyfill.ts'
 		]
@@ -600,24 +600,193 @@ it('Polyfills', async() => {
 		const found = await page.evaluate(() => {
 			/* global document */
 			/* global window */
+			if (typeof window.EXAMPLE_FAKE_POLYFILL !== 'undefined'){
+				return 'Fake polyfill exists';
+			}
+			if (window.EXAMPLE_VANILLA_POLYFILL !== 'ok once'){
+				return 'Missing vanilla polyfill';
+			}
+			if (window.EXAMPLE_TYPESCRIPT_POLYFILL !== 'ok once'){
+				return 'Missing typescript polyfill';
+			}
+			if (window.EXAMPLE_MODULE_POLYFILL !== 'ok once'){
+				return 'Missing module polyfill';
+			}
 			const el = document.getElementById('hello');
-			if (typeof el === 'undefined'){
+			if (el === null){
 				return '#hello not found';
 			}
 			if (el.innerText !== 'Hello World'){
 				return `Bad #hello.innerText: ${el.innerText}`;
 			}
+			return 'ok';
+		});
+		expect(found).toBe('ok', 'DOM tests');
+	} finally {
+		await browser.close();
+	}
+});
+
+
+it('Chunks & Polyfill', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		entry: {
+			myapp: './chunks-polyfills/myapp.ts'
+		},
+		minify: false,
+		polyfills: [
+			'module-window-polyfill',
+			'./polyfills/vanilla-polyfill.js',
+			'./polyfills/typescript-polyfill.ts'
+		]
+	});
+	const expectedFiles = [
+		'index.html',
+		'myapp.js',
+		'myapp.js.map',
+		'chunk.0.js',
+		'chunk.0.js.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+	try {
+		const page = await browser.newPage();
+		await page.goto('http://localhost:8888/');
+		await sleep(300);
+		const found = await page.evaluate(() => {
+			/* global document */
+			/* global window */
 			if (typeof window.EXAMPLE_FAKE_POLYFILL !== 'undefined'){
 				return 'Fake polyfill exists';
 			}
-			if (window.EXAMPLE_VANILLA_POLYFILL !== 'ok'){ // compiled fine, yet this is not defined ???
+			if (window.EXAMPLE_VANILLA_POLYFILL !== 'ok once'){
 				return 'Missing vanilla polyfill';
 			}
-			if (window.EXAMPLE_TYPESCRIPT_POLYFILL !== 'ok'){
+			if (window.EXAMPLE_TYPESCRIPT_POLYFILL !== 'ok once'){
 				return 'Missing typescript polyfill';
 			}
-			if (window.EXAMPLE_MODULE_POLYFILL !== 'ok'){
+			if (window.EXAMPLE_MODULE_POLYFILL !== 'ok once'){
 				return 'Missing module polyfill';
+			}
+			const el = document.getElementById('hello');
+			if (el === null){
+				return '#hello not found';
+			}
+			if (el.innerText !== 'Delayed 123 ok once ok once ok once'){
+				return `Bad #hello.innerText: ${el.innerText}`;
+			}
+			return 'ok';
+		});
+		expect(found).toBe('ok', 'DOM tests');
+	} finally {
+		await browser.close();
+	}
+});
+
+
+it('Webworkers', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		entry: {
+			myapp: './webworkers/myapp.ts'
+		},
+		minify: false
+	});
+	const expectedFiles = [
+		'index.html',
+		'myapp.js',
+		'myapp.js.map',
+		'relative.webworker.js',
+		'relative.webworker.js.map',
+		'my-worker-module.webworker.js',
+		'my-worker-module.webworker.js.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+	try {
+		const page = await browser.newPage();
+		await page.goto('http://localhost:8888/');
+		await sleep(300);
+		const found = await page.evaluate(() => {
+			/* global document */
+			const el1 = document.getElementById('hello1');
+			if (el1 === null){
+				return '#hello1 not found';
+			}
+			if (el1.innerText !== 'RELATIVE WORKER replies HELLO 1'){
+				return `Bad #hello1.innerText: ${el1.innerText}`;
+			}
+			const el2 = document.getElementById('hello2');
+			if (el2 === null){
+				return '#hello2 not found';
+			}
+			if (el2.innerText !== 'MODULE WORKER replies HELLO 2'){
+				return `Bad #hello2.innerText: ${el2.innerText}`;
+			}
+			return 'ok';
+		});
+		expect(found).toBe('ok', 'DOM tests');
+	} finally {
+		await browser.close();
+	}
+});
+
+
+it('Webworkers + Polyfills', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		entry: {
+			myapp: './webworkers-polyfills/myapp.ts'
+		},
+		minify: false,
+
+		// Unlike "webworkerPolyfills", they're just added to "entry", so they're resolved from "context".
+		polyfills: [
+			'./webworkers-polyfills/both.polyfill.ts',
+			'./webworkers-polyfills/only-main.polyfill.ts'
+		],
+		webworkerPolyfills: [
+			'./both.polyfill',
+			'./only-worker.polyfill',
+			'module-self-polyfill'
+		]
+	});
+	const expectedFiles = [
+		'index.html',
+		'myapp.js',
+		'myapp.js.map',
+		'myapp.webworker.js',
+		'myapp.webworker.js.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+	try {
+		const page = await browser.newPage();
+		await page.goto('http://localhost:8888/');
+		await sleep(300);
+		const found = await page.evaluate(() => {
+			/* global document */
+			const el1 = document.getElementById('hello1');
+			if (el1 === null){
+				return '#hello1 not found';
+			}
+			if (el1.innerText !== 'BOTH undefined MAIN undefined'){
+				return `Bad #hello1.innerText: ${el1.innerText}`;
+			}
+
+			const el2 = document.getElementById('hello2');
+			if (el2 === null){
+				return '#hello2 not found';
+			}
+			if (el2.innerText !== 'BOTH WORKER undefined MODULE'){
+				return `Bad #hello2.innerText: ${el2.innerText}`;
 			}
 			return 'ok';
 		});

@@ -30,7 +30,7 @@ package.json
 		"watch": "webpack-dev-server --mode development"
 	},
 	"dependencies": {
-		"@wildpeaks/webpack-config-web": "1.0.0-alpha8",
+		"@wildpeaks/webpack-config-web": "1.0.0-alpha9",
 		"typescript": "2.8.3",
 		"webpack": "4.6.0",
 		"webpack-cli": "2.0.15",
@@ -206,8 +206,31 @@ Default: `false`
 ### `polyfills`: String[]
 
 List of modules or files to automatically prepend to every entry.
+They are resolved from `rootFolder`.
 
 Default: `['core-js/fn/promise']`
+
+
+---
+### `webworkerPolyfills`: String[]
+
+List of modules or files to automatically prepend to every webworker.
+
+If you're using relative filepaths for polyfills instead of
+thirdparty modules or local modules, note that `webworkerPolyfills` references
+are resolved from each webworker unlike `polyfills` (because `worker-loader` doesn't have
+an option to have an array for its internal compilation, unlike main "entry" points,
+so the `webworkerPolyfills` references are imported directly in the code).
+
+Default: `['core-js/fn/promise']`
+
+
+---
+### `webworkerPattern`: RegExp
+
+RegExp test for the Web Worker loader.
+
+Default: `/\.webworker\.ts$/`
 
 
 -------------------------------------------------------------------------------
