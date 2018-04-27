@@ -603,7 +603,7 @@ it('Polyfills', async() => {
 			if (typeof window.EXAMPLE_FAKE_POLYFILL !== 'undefined'){
 				return 'Fake polyfill exists';
 			}
-			if (window.EXAMPLE_VANILLA_POLYFILL !== 'ok once'){ // compiled fine, yet this is not defined ???
+			if (window.EXAMPLE_VANILLA_POLYFILL !== 'ok once'){
 				return 'Missing vanilla polyfill';
 			}
 			if (window.EXAMPLE_TYPESCRIPT_POLYFILL !== 'ok once'){
@@ -662,7 +662,7 @@ it('Chunks & Polyfill', async() => {
 			if (typeof window.EXAMPLE_FAKE_POLYFILL !== 'undefined'){
 				return 'Fake polyfill exists';
 			}
-			if (window.EXAMPLE_VANILLA_POLYFILL !== 'ok once'){ // compiled fine, yet this is not defined ???
+			if (window.EXAMPLE_VANILLA_POLYFILL !== 'ok once'){
 				return 'Missing vanilla polyfill';
 			}
 			if (window.EXAMPLE_TYPESCRIPT_POLYFILL !== 'ok once'){
