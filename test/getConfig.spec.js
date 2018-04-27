@@ -390,7 +390,7 @@ it('Chunks', async() => {
 	try {
 		const page = await browser.newPage();
 		await page.goto('http://localhost:8888/');
-		await sleep(100);
+		await sleep(300);
 		const found = await page.evaluate(() => {
 			/* global document */
 			const el = document.getElementById('hello');
@@ -655,7 +655,7 @@ it('Chunks & Polyfill', async() => {
 	try {
 		const page = await browser.newPage();
 		await page.goto('http://localhost:8888/');
-		await sleep(100);
+		await sleep(300);
 		const found = await page.evaluate(() => {
 			/* global document */
 			/* global window */
@@ -711,7 +711,7 @@ it('Webworkers', async() => {
 	try {
 		const page = await browser.newPage();
 		await page.goto('http://localhost:8888/');
-		await sleep(200);
+		await sleep(300);
 		const found = await page.evaluate(() => {
 			/* global document */
 			const el1 = document.getElementById('hello1');
@@ -770,7 +770,7 @@ it('Webworkers + Polyfills', async() => {
 	try {
 		const page = await browser.newPage();
 		await page.goto('http://localhost:8888/');
-		await sleep(200);
+		await sleep(300);
 		const found = await page.evaluate(() => {
 			/* global document */
 			const el1 = document.getElementById('hello1');
