@@ -421,7 +421,7 @@ it('Minify', async() => {
 
 	let hash = '';
 	for (const actualFile of actualFiles){
-		const regex = /^([^\.]+)\.myapp\.js$/;
+		const regex = /^([^.]+)\.myapp\.js$/;
 		const matches = regex.exec(actualFile);
 		if (matches){
 			hash = matches[1];
