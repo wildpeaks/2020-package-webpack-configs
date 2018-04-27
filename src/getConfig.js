@@ -34,6 +34,8 @@ function getRegex(extensions){
  * @property {Boolean} sourcemaps `true` to generate sourcemaps for scripts & stylesheets, `false` to skip them
  * @property {Boolean} skipPostprocess `true` for the lightweight config (for tests), `false` for the whole config
  * @property {String[]} polyfills List of modules or files to automatically prepend to every entry
+ * @property {String[]} webworkerPolyfills List of modules or files to automatically prepend to every webworker
+ * @property {RegExp} webworkerPattern RegExp test for the Web Worker loader
  */
 
 /**
@@ -56,7 +58,9 @@ module.exports = function getConfig({
 	assetsRelativePath = 'assets/',
 	sourcemaps = true,
 	skipPostprocess = false,
-	polyfills = ['core-js/fn/promise']
+	polyfills = ['core-js/fn/promise'],
+	webworkerPolyfills = ['core-js/fn/promise'],
+	webworkerPattern = /\.webworker\.ts$/
 } = {}){
 	strictEqual(entry === null, false, '"entry" should not be null');
 	strictEqual(typeof entry, 'object', '"entry" should be an Object');
@@ -79,6 +83,7 @@ module.exports = function getConfig({
 	strictEqual(typeof sourcemaps, 'boolean', '"sourcemaps" should be a Boolean');
 	strictEqual(typeof skipPostprocess, 'boolean', '"skipPostprocess" should be a Boolean');
 	strictEqual(Array.isArray(polyfills), true, '"polyfills" should be an Array');
+	strictEqual(Array.isArray(webworkerPolyfills), true, '"webworkerPolyfills" should be an Array');
 	if (!isAbsolute(rootFolder)){
 		throw new Error('"rootFolder" should be an absolute path');
 	}
@@ -87,6 +92,9 @@ module.exports = function getConfig({
 	}
 	if ((assetsRelativePath !== '') && !assetsRelativePath.endsWith('/')){
 		throw new Error('"assetsRelativePath" must end with "/" when not empty');
+	}
+	if (!(webworkerPattern instanceof RegExp)){
+		throw new Error('"webworkerPattern" should be a RegExp');
 	}
 
 	//region Polyfills
@@ -190,6 +198,24 @@ module.exports = function getConfig({
 			use: 'source-map-loader'
 		});
 	}
+	loaders.push({
+		test: webworkerPattern,
+		use: [
+			{
+				loader: 'ts-loader',
+				options: {
+					transpileOnly: true
+				}
+			},
+			{
+				loader: 'worker-loader',
+				options: {
+					inline: false,
+					name: minify ? '[hash].[name].js' : '[name].js'
+				}
+			}
+		]
+	});
 	loaders.push({
 		test: /\.(ts|js)$/,
 		use: [

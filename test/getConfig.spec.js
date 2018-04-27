@@ -685,3 +685,53 @@ it('Chunks & Polyfill', async() => {
 		await browser.close();
 	}
 });
+
+
+it('Multiple Webworkers', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		entry: {
+			myapp: './webworkers/myapp.ts'
+		},
+		minify: false
+	});
+	const expectedFiles = [
+		'index.html',
+		'myapp.js',
+		'myapp.js.map',
+		'relative.webworker.js',
+		'relative.webworker.js.map',
+		'my-worker-module.webworker.js',
+		'my-worker-module.webworker.js.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+	try {
+		const page = await browser.newPage();
+		await page.goto('http://localhost:8888/');
+		await sleep(200);
+		const found = await page.evaluate(() => {
+			/* global document */
+			const el1 = document.getElementById('hello1');
+			if (el1 === null){
+				return '#hello1 not found';
+			}
+			if (el1.innerText !== 'RELATIVE WORKER replies HELLO 1'){
+				return `Bad #hello1.innerText: ${el1.innerText}`;
+			}
+			const el2 = document.getElementById('hello2');
+			if (el2 === null){
+				return '#hello2 not found';
+			}
+			if (el2.innerText !== 'MODULE WORKER replies HELLO 2'){
+				return `Bad #hello2.innerText: ${el2.innerText}`;
+			}
+			return 'ok';
+		});
+		expect(found).toBe('ok', 'DOM tests');
+	} finally {
+		await browser.close();
+	}
+});
