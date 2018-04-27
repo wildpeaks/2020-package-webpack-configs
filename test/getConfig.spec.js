@@ -103,7 +103,7 @@ it('Basic', async() => {
 		const found = await page.evaluate(() => {
 			/* global document */
 			const el = document.getElementById('hello');
-			if (typeof el === 'undefined'){
+			if (el === null){
 				return '#hello not found';
 			}
 			if (el.innerText !== 'Hello World'){
@@ -155,7 +155,7 @@ it('Multiple independant entries', async() => {
 		const found = await page.evaluate(() => {
 			/* global document */
 			const el = document.getElementById('hello');
-			if (typeof el === 'undefined'){
+			if (el === null){
 				return '#hello not found';
 			}
 			if (el.innerText !== `APP 1`){
@@ -175,7 +175,7 @@ it('Multiple independant entries', async() => {
 		const found = await page.evaluate(() => {
 			/* global document */
 			const el = document.getElementById('hello');
-			if (typeof el === 'undefined'){
+			if (el === null){
 				return '#hello not found';
 			}
 			if (el.innerText !== `APP 2`){
@@ -195,7 +195,7 @@ it('Multiple independant entries', async() => {
 		const found = await page.evaluate(() => {
 			/* global document */
 			const el = document.getElementById('hello');
-			if (typeof el === 'undefined'){
+			if (el === null){
 				return '#hello not found';
 			}
 			if (el.innerText !== `APP 3`){
@@ -233,7 +233,7 @@ it('Local Modules', async() => {
 		const found = await page.evaluate(() => {
 			/* global document */
 			const el = document.getElementById('hello');
-			if (typeof el === 'undefined'){
+			if (el === null){
 				return '#hello not found';
 			}
 			if (el.innerText !== 'Hello 100123'){
@@ -274,7 +274,7 @@ it('CSS', async() => {
 			/* global document */
 			/* global window */
 			const el = document.getElementById('hello');
-			if (typeof el === 'undefined'){
+			if (el === null){
 				return '#hello not found';
 			}
 			const computed = window.getComputedStyle(el);
@@ -321,7 +321,7 @@ it('Assets', async() => {
 		const found = await page.evaluate(() => {
 			/* global document */
 			const container = document.getElementById('images');
-			if (typeof container === 'undefined'){
+			if (container === null){
 				return '#images not found';
 			}
 			if (container.childNodes.length !== 6){
@@ -394,7 +394,7 @@ it('Chunks', async() => {
 		const found = await page.evaluate(() => {
 			/* global document */
 			const el = document.getElementById('hello');
-			if (typeof el === 'undefined'){
+			if (el === null){
 				return '#hello not found';
 			}
 			if (el.innerText !== 'Delayed 100123'){
@@ -454,7 +454,7 @@ it('Minify', async() => {
 		const found = await page.evaluate(() => {
 			/* global document */
 			const el0 = document.getElementById('hello');
-			if (typeof el0 === 'undefined'){
+			if (el0 === null){
 				return '#hello not found';
 			}
 			if (el0.innerText !== 'Hello World'){
@@ -613,7 +613,7 @@ it('Polyfills', async() => {
 				return 'Missing module polyfill';
 			}
 			const el = document.getElementById('hello');
-			if (typeof el === 'undefined'){
+			if (el === null){
 				return '#hello not found';
 			}
 			if (el.innerText !== 'Hello World'){
@@ -672,7 +672,7 @@ it('Chunks & Polyfill', async() => {
 				return 'Missing module polyfill';
 			}
 			const el = document.getElementById('hello');
-			if (typeof el === 'undefined'){
+			if (el === null){
 				return '#hello not found';
 			}
 			if (el.innerText !== 'Delayed 123 ok once ok once ok once'){
