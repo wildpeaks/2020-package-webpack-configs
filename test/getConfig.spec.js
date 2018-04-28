@@ -96,7 +96,7 @@ it('Basic', async() => {
 	];
 	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
 
-	const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+	const browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
 		await page.goto('http://localhost:8888/');
@@ -148,7 +148,7 @@ it('Multiple independant entries', async() => {
 	];
 	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
 
-	let browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+	let browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
 		await page.goto(`http://localhost:8888/app1.html`);
@@ -168,7 +168,7 @@ it('Multiple independant entries', async() => {
 		await browser.close();
 	}
 
-	browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+	browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
 		await page.goto(`http://localhost:8888/app2.html`);
@@ -188,7 +188,7 @@ it('Multiple independant entries', async() => {
 		await browser.close();
 	}
 
-	browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+	browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
 		await page.goto(`http://localhost:8888/app3.html`);
@@ -226,7 +226,7 @@ it('Local Modules', async() => {
 	];
 	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
 
-	const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+	const browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
 		await page.goto('http://localhost:8888/');
@@ -266,7 +266,7 @@ it('CSS', async() => {
 	];
 	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
 
-	const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+	const browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
 		await page.goto('http://localhost:8888/');
@@ -314,7 +314,7 @@ it('Assets', async() => {
 	];
 	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
 
-	const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+	const browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
 		await page.goto('http://localhost:8888/');
@@ -386,7 +386,7 @@ it('Chunks', async() => {
 	];
 	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
 
-	const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+	const browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
 		await page.goto('http://localhost:8888/');
@@ -447,7 +447,7 @@ it('Minify', async() => {
 	const jsRaw = readFileSync(join(outputFolder, `${hash}.myapp.js`), 'utf8');
 	expect(jsRaw.startsWith('!function(e){'), true, 'JS not minified');
 
-	const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+	const browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
 		await page.goto('http://localhost:8888/');
@@ -593,7 +593,7 @@ it('Polyfills', async() => {
 	];
 	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
 
-	const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+	const browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
 		await page.goto('http://localhost:8888/');
@@ -651,7 +651,7 @@ it('Chunks & Polyfill', async() => {
 	];
 	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
 
-	const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+	const browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
 		await page.goto('http://localhost:8888/');
@@ -707,7 +707,7 @@ it('Webworkers', async() => {
 	];
 	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
 
-	const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+	const browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
 		await page.goto('http://localhost:8888/');
@@ -766,7 +766,7 @@ it('Webworkers + Polyfills', async() => {
 	];
 	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
 
-	const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+	const browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
 		await page.goto('http://localhost:8888/');
