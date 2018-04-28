@@ -5,11 +5,11 @@ const getConfig = require('..');
 
 
 /**
- * @param {String[]} webworkerPolyfills
+ * @param {String[]} webworkerPattern
  * @param {Boolean} expectThrows
  * @param {String} expectContains
  */
-function testFixture(webworkerPolyfills, expectThrows){
+function testFixture(webworkerPattern, expectThrows){
 	let actualThrows = false;
 	try {
 		getConfig({
@@ -18,7 +18,7 @@ function testFixture(webworkerPolyfills, expectThrows){
 			},
 			rootFolder: __dirname,
 			outputFolder: join(__dirname, 'dummy'),
-			webworkerPolyfills
+			webworkerPattern
 		});
 	} catch(e){
 		actualThrows = true;

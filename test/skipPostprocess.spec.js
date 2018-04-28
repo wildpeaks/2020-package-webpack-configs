@@ -8,25 +8,30 @@ const getConfig = require('..');
  * @param {Boolean} skipPostprocess
  * @param {Boolean} expectThrows
  */
-function testFixture(skipPostprocess, expectThrows){
+function testFixture(skipPostprocess, expectThrows, useOutputFolder = true){
 	let actualThrows = false;
 	try {
-		getConfig({
+		const options = {
 			entry: {
 				dummy: './src/dummy.ts'
 			},
 			rootFolder: __dirname,
-			outputFolder: join(__dirname, 'dummy'),
 			skipPostprocess
-		});
+		};
+		if (useOutputFolder){
+			options.outputFolder = join(__dirname, 'dummy');
+		}
+		getConfig(options);
 	} catch(e){
 		actualThrows = true;
 	}
 	expect(actualThrows).toBe(expectThrows);
 }
 
-it('Valid: true', testFixture.bind(null, true, false));
-it('Valid: false', testFixture.bind(null, true, false));
+it('Valid: true (with outputFolder)', testFixture.bind(null, true, false, true));
+it('Valid: true (without outputFolder)', testFixture.bind(null, true, false, false));
+it('Valid: false (with outputFolder)', testFixture.bind(null, false, false, true));
+it('Invalid: false (without outputFolder)', testFixture.bind(null, false, true, false));
 it('Invalid: ""', testFixture.bind(null, '', true));
 it('Invalid: "true"', testFixture.bind(null, 'true', true));
 it('Invalid: "false"', testFixture.bind(null, 'false', true));
