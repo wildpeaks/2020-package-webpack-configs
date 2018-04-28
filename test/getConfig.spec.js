@@ -745,8 +745,6 @@ it('Webworkers + Polyfills', async() => {
 			myapp: './webworkers-polyfills/myapp.ts'
 		},
 		minify: false,
-
-		// Unlike "webworkerPolyfills", they're just added to "entry", so they're resolved from "context".
 		polyfills: [
 			'./webworkers-polyfills/both.polyfill.ts',
 			'./webworkers-polyfills/only-main.polyfill.ts'
@@ -777,7 +775,7 @@ it('Webworkers + Polyfills', async() => {
 			if (el1 === null){
 				return '#hello1 not found';
 			}
-			if (el1.innerText !== 'BOTH undefined MAIN undefined'){
+			if (el1.innerText !== 'BOTH once undefined MAIN once undefined'){
 				return `Bad #hello1.innerText: ${el1.innerText}`;
 			}
 
@@ -785,7 +783,7 @@ it('Webworkers + Polyfills', async() => {
 			if (el2 === null){
 				return '#hello2 not found';
 			}
-			if (el2.innerText !== 'BOTH WORKER undefined MODULE'){
+			if (el2.innerText !== 'BOTH once WORKER once undefined MODULE once'){
 				return `Bad #hello2.innerText: ${el2.innerText}`;
 			}
 			return 'ok';
