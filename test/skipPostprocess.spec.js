@@ -5,40 +5,44 @@ const getConfig = require('..');
 
 
 /**
+ * @param {String} title
  * @param {Boolean} skipPostprocess
  * @param {Boolean} expectThrows
+ * @param {Boolean} useOutputFolder
  */
-function testFixture(skipPostprocess, expectThrows, useOutputFolder = true){
-	let actualThrows = false;
-	try {
-		const options = {
-			entry: {
-				dummy: './src/dummy.ts'
-			},
-			rootFolder: __dirname,
-			skipPostprocess
-		};
-		if (useOutputFolder){
-			options.outputFolder = join(__dirname, 'dummy');
+function testFixture(title, skipPostprocess, expectThrows, useOutputFolder = true){
+	it(title, () => {
+		let actualThrows = false;
+		try {
+			const options = {
+				entry: {
+					dummy: './src/dummy.ts'
+				},
+				rootFolder: __dirname,
+				skipPostprocess
+			};
+			if (useOutputFolder){
+				options.outputFolder = join(__dirname, 'dummy');
+			}
+			getConfig(options);
+		} catch(e){
+			actualThrows = true;
 		}
-		getConfig(options);
-	} catch(e){
-		actualThrows = true;
-	}
-	expect(actualThrows).toBe(expectThrows);
+		expect(actualThrows).toBe(expectThrows);
+	});
 }
 
-it('Valid: true (with outputFolder)', testFixture.bind(null, true, false, true));
-it('Valid: true (without outputFolder)', testFixture.bind(null, true, false, false));
-it('Valid: false (with outputFolder)', testFixture.bind(null, false, false, true));
-it('Valid: false (without outputFolder)', testFixture.bind(null, false, false, false));
-it('Invalid: ""', testFixture.bind(null, '', true));
-it('Invalid: "true"', testFixture.bind(null, 'true', true));
-it('Invalid: "false"', testFixture.bind(null, 'false', true));
-it('Invalid: 123', testFixture.bind(null, 123, true));
-it('Invalid: 0', testFixture.bind(null, 0, true));
-it('Invalid: NaN', testFixture.bind(null, NaN, true));
-it('Invalid: -1', testFixture.bind(null, -1, true));
-it('Invalid: {}', testFixture.bind(null, {}, true));
-it('Invalid: null', testFixture.bind(null, null, true));
-it('Invalid: Symbol', testFixture.bind(null, Symbol('true'), true));
+testFixture('Valid: true (with outputFolder)', true, false, true);
+testFixture('Valid: true (without outputFolder)', true, false, false);
+testFixture('Valid: false (with outputFolder)', false, false, true);
+testFixture('Valid: false (without outputFolder)', false, false, false);
+testFixture('Invalid: ""', '', true);
+testFixture('Invalid: "true"', 'true', true);
+testFixture('Invalid: "false"', 'false', true);
+testFixture('Invalid: 123', 123, true);
+testFixture('Invalid: 0', 0, true);
+testFixture('Invalid: NaN', NaN, true);
+testFixture('Invalid: -1', -1, true);
+testFixture('Invalid: {}', {}, true);
+testFixture('Invalid: null', null, true);
+testFixture('Invalid: Symbol', Symbol('true'), true);
