@@ -86,19 +86,33 @@ module.exports = function getConfig({
 	}
 
 	strictEqual(entry === null, false, '"entry" should not be null');
+	strictEqual(Array.isArray(entry), false, '"entry" should not be an Array');
+	strictEqual(entry instanceof Promise, false, '"entry" should not be a Promise');
+	strictEqual(entry instanceof RegExp, false, '"entry" should not be a RegExp');
+	strictEqual(entry instanceof Symbol, false, '"entry" should not be a Symbol');
 	strictEqual(typeof entry, 'object', '"entry" should be an Object');
-	strictEqual(typeof publicPath, 'string', '"publicPath" should be a String');
+
 	strictEqual(typeof port, 'number', '"port" should be a Number');
 	strictEqual(isNaN(port), false, '"port" must not be NaN');
 	strictEqual(port > 0, true, '"port" should be a positive number');
+
 	strictEqual(cssVariables === null, false, '"cssVariables" should not be null');
+	strictEqual(Array.isArray(cssVariables), false, '"cssVariables" should not be an Array');
+	strictEqual(cssVariables instanceof Promise, false, '"cssVariables" should not be a Promise');
+	strictEqual(cssVariables instanceof RegExp, false, '"cssVariables" should not be a RegExp');
+	strictEqual(cssVariables instanceof Symbol, false, '"cssVariables" should not be a Symbol');
 	strictEqual(typeof cssVariables, 'object', '"cssVariables" should be an Object');
+
 	strictEqual(Array.isArray(browsers), true, '"browsers" should be an Array');
 	strictEqual(browsers.length > 0, true, '"browsers" should not be empty');
+
 	strictEqual(typeof embedLimit, 'number', '"embedLimit" should be a Number');
 	strictEqual(isNaN(embedLimit), false, '"embedLimit" must not be NaN');
+
 	strictEqual(Array.isArray(embedExtensions), true, '"embedExtensions" should be an Array');
 	strictEqual(Array.isArray(copyExtensions), true, '"copyExtensions" should be an Array');
+
+	strictEqual(typeof publicPath, 'string', '"publicPath" should be a String');
 	strictEqual(typeof sourcemaps, 'boolean', '"sourcemaps" should be a Boolean');
 	strictEqual(typeof skipPostprocess, 'boolean', '"skipPostprocess" should be a Boolean');
 	strictEqual(Array.isArray(polyfills), true, '"polyfills" should be an Array');
@@ -131,7 +145,7 @@ module.exports = function getConfig({
 		devtool: sourcemaps ? 'source-map' : false,
 		mode,
 		resolve: {
-			extensions: ['.ts', '.js']
+			extensions: ['.ts', '.tsx', '.js', '.jsx']
 		},
 		context: actualRootFolder,
 		entry: entries,
@@ -211,7 +225,7 @@ module.exports = function getConfig({
 	if (sourcemaps){
 		loaders.push({
 			enforce: 'pre',
-			test: /\.(ts|js)?$/,
+			test: /\.(ts|tsx|js|jsx)?$/,
 			use: 'source-map-loader'
 		});
 	}
@@ -253,7 +267,7 @@ module.exports = function getConfig({
 		]
 	});
 	loaders.push({
-		test: /\.(ts|js)$/,
+		test: /\.(ts|tsx|js|jsx)$/,
 		use: [
 			{
 				loader: 'ts-loader',
