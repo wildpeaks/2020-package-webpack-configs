@@ -84,10 +84,10 @@ it('Basic', async() => {
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
+		mode: 'development',
 		entry: {
 			myapp: './basic/myapp.ts'
-		},
-		minify: false
+		}
 	});
 	const expectedFiles = [
 		'index.html',
@@ -122,12 +122,12 @@ it('Multiple independant entries', async() => {
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
+		mode: 'development',
 		entry: {
 			app1: './multiple/app1.ts',
 			app2: './multiple/app2.ts',
 			app3: './multiple/app3.ts'
-		},
-		minify: false
+		}
 	});
 	const expectedFiles = [
 		'app1.html',
@@ -214,10 +214,10 @@ it('Local Modules', async() => {
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
+		mode: 'development',
 		entry: {
 			myapp: './local-modules/myapp.ts'
-		},
-		minify: false
+		}
 	});
 	const expectedFiles = [
 		'index.html',
@@ -252,10 +252,10 @@ it('CSS', async() => {
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
+		mode: 'development',
 		entry: {
 			myapp: './css/myapp.ts'
-		},
-		minify: false
+		}
 	});
 	const expectedFiles = [
 		'index.html',
@@ -294,10 +294,10 @@ it('Assets', async() => {
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
+		mode: 'development',
 		entry: {
 			myapp: './assets/myapp.ts'
 		},
-		minify: false,
 		embedLimit: 5000,
 		embedExtensions: ['jpg', 'png'],
 		copyExtensions: ['gif'],
@@ -372,10 +372,10 @@ it('Chunks', async() => {
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
+		mode: 'development',
 		entry: {
 			myapp: './chunks/myapp.ts'
-		},
-		minify: false
+		}
 	});
 	const expectedFiles = [
 		'index.html',
@@ -413,10 +413,10 @@ it('Minify', async() => {
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
+		mode: 'production',
 		entry: {
 			myapp: './css/myapp.ts'
-		},
-		minify: true
+		}
 	});
 
 	let hash = '';
@@ -503,7 +503,7 @@ it('Skip Postprocessing', async() => {
 		entry: {
 			myapp: './css/myapp.ts'
 		},
-		minify: false,
+		mode: 'development',
 		skipPostprocess: true
 	});
 
@@ -521,10 +521,10 @@ it('Enable sourcemaps', async() => {
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
+		mode: 'development',
 		entry: {
 			myapp: './css/myapp.ts'
 		},
-		minify: false,
 		sourcemaps: true
 	});
 
@@ -549,10 +549,10 @@ it('Disable sourcemaps', async() => {
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
+		mode: 'development',
 		entry: {
 			myapp: './css/myapp.ts'
 		},
-		minify: false,
 		sourcemaps: false
 	});
 
@@ -575,10 +575,10 @@ it('Polyfills', async() => {
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
+		mode: 'development',
 		entry: {
 			myapp: './polyfills/myapp.ts'
 		},
-		minify: false,
 		sourcemaps: false,
 		polyfills: [
 			'module-window-polyfill',
@@ -632,10 +632,10 @@ it('Chunks & Polyfill', async() => {
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
+		mode: 'development',
 		entry: {
 			myapp: './chunks-polyfills/myapp.ts'
 		},
-		minify: false,
 		polyfills: [
 			'module-window-polyfill',
 			'./polyfills/vanilla-polyfill.js',
@@ -691,10 +691,10 @@ it('Webworkers', async() => {
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
+		mode: 'development',
 		entry: {
 			myapp: './webworkers/myapp.ts'
-		},
-		minify: false
+		}
 	});
 	const expectedFiles = [
 		'index.html',
@@ -741,10 +741,10 @@ it('Webworkers + Polyfills', async() => {
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
+		mode: 'development',
 		entry: {
 			myapp: './webworkers-polyfills/myapp.ts'
 		},
-		minify: false,
 		polyfills: [
 			'./webworkers-polyfills/both.polyfill.ts',
 			'./webworkers-polyfills/only-main.polyfill.ts'

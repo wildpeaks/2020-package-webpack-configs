@@ -24,45 +24,60 @@ and that you would have to add manually anyway) in options.
 ## Usage example
 
 package.json
-
+````json
+{
 	"scripts": {
 		"build": "webpack --mode production",
 		"watch": "webpack-dev-server --mode development"
 	},
 	"dependencies": {
-		"@wildpeaks/webpack-config-web": "1.0.0-alpha10",
+		"@wildpeaks/webpack-config-web": "1.0.0-alpha11",
 		"typescript": "2.8.3",
 		"webpack": "4.6.0",
 		"webpack-cli": "2.0.15",
 		"webpack-dev-server": "3.1.3",
 		"whatwg-fetch": "2.0.4"
 	}
+}
+````
 
 webpack.config.js
+````js
+'use strict';
+const {join} = require('path');
+const getConfig = require('@wildpeaks/webpack-config-web');
 
-	'use strict';
-	const {join} = require('path');
-	const getConfig = require('@wildpeaks/webpack-config-web');
-
-	module.exports = function(_env, {mode = 'production'} = {}) {
-		return getConfig({
-			entry: {
-				myapp: './src/myapp.ts'
-			},
-			rootFolder: __dirname,
-			outputFolder: join(__dirname, 'dist'),
-			minify: (mode === 'production'),
-			polyfills: [
-				'core-js/fn/promise',
-				'whatwg-fetch'
-			]
-		});
-	};
+module.exports = function(_env, {mode = 'production'} = {}) {
+	return getConfig({
+		mode,
+		entry: {
+			myapp: './src/myapp.ts'
+		},
+		rootFolder: __dirname,
+		outputFolder: join(__dirname, 'dist'),
+		polyfills: [
+			'core-js/fn/promise',
+			'whatwg-fetch'
+		]
+	});
+};
+````
 
 
 -------------------------------------------------------------------------------
 
 ## Parameters
+
+
+---
+### `mode`: String
+
+Default: `production`.
+
+Use `production` to optimize the output (CSS and JS files are minified), and the HTML script tags
+have [Subresource Integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity) hashes.
+
+See ["mode" in Webpack Documentation](https://webpack.js.org/concepts/mode/).
 
 
 ---
@@ -85,10 +100,9 @@ Example:
 ### `rootFolder`: String
 
 Absolute path to the root context folder.
+Defaults to the process current working directory.
 
-Default: `""`
-
-Example: `"C:/Example"`
+Examples: `"C:/Example"` or `/usr/share/www/example`
 
 
 ---
@@ -97,9 +111,9 @@ Example: `"C:/Example"`
 Absolute path to the folder where files are emitted.
 See ["output.path" in Webpack Documentation](https://webpack.js.org/configuration/output/#output-path).
 
-Default: `""`
+Defaults to subfolder `dist` in `rootFolder`.
 
-Example: `"C:/Example/output"`
+Example: `"C:/Example/dist"` or `/usr/share/www/example/dist`
 
 
 ---
@@ -111,15 +125,6 @@ See ["publicPath" in Webpack Documentation](https://webpack.js.org/guides/public
 Default: `"/"`
 
 Example: `"/mysite/"`
-
-
----
-### `minify`: Boolean
-
-Default: `false`.
-
-When `true`, the CSS and JS files are minified, and the HTML pageript tags have
-[Subresource Integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity) hashes.
 
 
 ---

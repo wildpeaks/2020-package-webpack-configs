@@ -31,7 +31,7 @@ function testFixture(skipPostprocess, expectThrows, useOutputFolder = true){
 it('Valid: true (with outputFolder)', testFixture.bind(null, true, false, true));
 it('Valid: true (without outputFolder)', testFixture.bind(null, true, false, false));
 it('Valid: false (with outputFolder)', testFixture.bind(null, false, false, true));
-it('Invalid: false (without outputFolder)', testFixture.bind(null, false, true, false));
+it('Valid: false (without outputFolder)', testFixture.bind(null, false, false, false));
 it('Invalid: ""', testFixture.bind(null, '', true));
 it('Invalid: "true"', testFixture.bind(null, 'true', true));
 it('Invalid: "false"', testFixture.bind(null, 'false', true));
