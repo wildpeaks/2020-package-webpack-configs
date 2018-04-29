@@ -23,7 +23,7 @@ function getRegex(extensions){
  * @property {String} rootFolder Absolute path to the rroot context folder
  * @property {String} outputFolder Absolute path to the folder where files are emitted
  * @property {String} publicPath Path prepended to url references, e.g. `/` or `/mysite/`
- * @property {Boolean} minify `true` to minify CSS/JS and use SRI hashes, `false` otherwise
+ * @property {String} mode Use `production` to optimize the output, `development` for faster builds
  * @property {Number} port Port for Webpack Dev Server
  * @property {Object} cssVariables CSS Variables, e.g. `{themeBackground: 'rebeccapurple'}`
  * @property {String[]} browsers Target browsers for CSS Autoprefixer
@@ -48,7 +48,7 @@ module.exports = function getConfig({
 	rootFolder = '',
 	outputFolder = '',
 	publicPath = '/',
-	minify = true,
+	mode = 'production',
 	port = 8000,
 	cssVariables = {},
 	browsers = ['>0.25%', 'ie >= 11'],
@@ -62,12 +62,32 @@ module.exports = function getConfig({
 	webworkerPolyfills = ['core-js/fn/promise'],
 	webworkerPattern = /\.webworker\.ts$/
 } = {}){
+	strictEqual(typeof rootFolder, 'string', '"rootFolder" should be a String');
+	let actualRootFolder = rootFolder;
+	if (actualRootFolder === ''){
+		actualRootFolder = process.cwd();
+	} else if (!isAbsolute(actualRootFolder)){
+		throw new Error('"rootFolder" should be an absolute path');
+	}
+
+	strictEqual(typeof outputFolder, 'string', '"outputFolder" should be a String');
+	let actualOutputFolder = outputFolder;
+	if (!skipPostprocess){
+		if (actualOutputFolder === ''){
+			actualOutputFolder = join(actualRootFolder, 'dist');
+		} else if (!isAbsolute(actualOutputFolder)){
+			throw new Error('"outputFolder" should be an absolute path');
+		}
+	}
+
+	strictEqual(typeof mode, 'string', '"mode" should be a String');
+	if (mode === ''){
+		throw new Error('"mode" should not be empty');
+	}
+
 	strictEqual(entry === null, false, '"entry" should not be null');
 	strictEqual(typeof entry, 'object', '"entry" should be an Object');
-	strictEqual(typeof rootFolder, 'string', '"rootFolder" should be a String');
-	strictEqual(typeof outputFolder, 'string', '"outputFolder" should be a String');
 	strictEqual(typeof publicPath, 'string', '"publicPath" should be a String');
-	strictEqual(typeof minify, 'boolean', '"minify" should be a Boolean');
 	strictEqual(typeof port, 'number', '"port" should be a Number');
 	strictEqual(isNaN(port), false, '"port" must not be NaN');
 	strictEqual(port > 0, true, '"port" should be a positive number');
@@ -79,20 +99,16 @@ module.exports = function getConfig({
 	strictEqual(isNaN(embedLimit), false, '"embedLimit" must not be NaN');
 	strictEqual(Array.isArray(embedExtensions), true, '"embedExtensions" should be an Array');
 	strictEqual(Array.isArray(copyExtensions), true, '"copyExtensions" should be an Array');
-	strictEqual(typeof assetsRelativePath, 'string', '"assetsRelativePath" should be a String');
 	strictEqual(typeof sourcemaps, 'boolean', '"sourcemaps" should be a Boolean');
 	strictEqual(typeof skipPostprocess, 'boolean', '"skipPostprocess" should be a Boolean');
 	strictEqual(Array.isArray(polyfills), true, '"polyfills" should be an Array');
 	strictEqual(Array.isArray(webworkerPolyfills), true, '"webworkerPolyfills" should be an Array');
-	if (!isAbsolute(rootFolder)){
-		throw new Error('"rootFolder" should be an absolute path');
-	}
-	if (!skipPostprocess && !isAbsolute(outputFolder)){
-		throw new Error('"outputFolder" should be an absolute path');
-	}
+
+	strictEqual(typeof assetsRelativePath, 'string', '"assetsRelativePath" should be a String');
 	if ((assetsRelativePath !== '') && !assetsRelativePath.endsWith('/')){
 		throw new Error('"assetsRelativePath" must end with "/" when not empty');
 	}
+
 	if (!(webworkerPattern instanceof RegExp)){
 		throw new Error('"webworkerPattern" should be a RegExp');
 	}
@@ -105,6 +121,7 @@ module.exports = function getConfig({
 	}
 	//endregion
 
+	const minify = (mode === 'production');
 	const loaders = [];
 	const plugins = [];
 	//region Base Config
@@ -112,16 +129,16 @@ module.exports = function getConfig({
 		//region Input
 		target: 'web',
 		devtool: sourcemaps ? 'source-map' : false,
-		mode: minify ? 'production' : 'development',
+		mode,
 		resolve: {
 			extensions: ['.ts', '.js']
 		},
-		context: rootFolder,
+		context: actualRootFolder,
 		entry: entries,
 		//endregion
 		//region Output
 		output: {
-			path: outputFolder,
+			path: actualOutputFolder,
 			publicPath,
 			filename: minify ? '[hash].[name].js' : '[name].js',
 			chunkFilename: minify ? '[hash].chunk.[id].js' : 'chunk.[id].js'
@@ -134,7 +151,7 @@ module.exports = function getConfig({
 	if (!skipPostprocess){
 		config.optimization = {
 			minimize: minify,
-			nodeEnv: minify ? 'production' : 'development',
+			nodeEnv: mode,
 			concatenateModules: true
 		};
 	}
@@ -144,9 +161,9 @@ module.exports = function getConfig({
 	if (!skipPostprocess){
 		plugins.push(
 			new CleanWebpackPlugin([
-				basename(outputFolder)
+				basename(actualOutputFolder)
 			], {
-				root: join(outputFolder, '..'),
+				root: join(actualOutputFolder, '..'),
 				verbose: false
 			})
 		);
@@ -319,7 +336,7 @@ module.exports = function getConfig({
 		config.devServer = {
 			port,
 			compress: true,
-			contentBase: outputFolder,
+			contentBase: actualOutputFolder,
 			publicPath,
 			historyApiFallback: false,
 			clientLogLevel: 'none',
