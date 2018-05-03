@@ -7,6 +7,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const SriPlugin = require('webpack-subresource-integrity');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const cssnext = require('postcss-cssnext');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 
 /**
@@ -16,6 +17,15 @@ function getRegex(extensions){
 	return new RegExp('\\.(' + extensions.join('|') + ')$'); // eslint-disable-line prefer-template
 }
 
+
+/**
+ * A pattern identifying files or folders to copy.
+ * @typedef CopyPattern
+ * @property {String} from
+ * @property {String} to
+ * @property {String?} toType
+ * @see See https://github.com/webpack-contrib/copy-webpack-plugin#patterns
+*/
 
 /**
  * @typedef GetConfigOptions
@@ -30,6 +40,7 @@ function getRegex(extensions){
  * @property {String[]} embedLimit Filesize limit to embed assets
  * @property {String[]} embedExtensions File extensions of files to embed as base64 (if small enough) or just copy as-is (if large)
  * @property {String[]} copyExtensions File extensions of files to just copy as-is
+ * @property {CopyPattern[]} copyPatterns Files and directories to copy as-is, without having to reference them in the code
  * @property {String} assetsRelativePath File extensions of files to just copy as-is
  * @property {Boolean} sourcemaps `true` to generate sourcemaps for scripts & stylesheets, `false` to skip them
  * @property {Boolean} skipPostprocess `true` for the lightweight config (for tests), `false` for the whole config
@@ -55,6 +66,7 @@ module.exports = function getConfig({
 	embedLimit = 5000,
 	embedExtensions = ['jpg', 'png', 'gif', 'svg'],
 	copyExtensions = ['woff'],
+	copyPatterns = [],
 	assetsRelativePath = 'assets/',
 	sourcemaps = true,
 	skipPostprocess = false,
@@ -111,6 +123,7 @@ module.exports = function getConfig({
 
 	strictEqual(Array.isArray(embedExtensions), true, '"embedExtensions" should be an Array');
 	strictEqual(Array.isArray(copyExtensions), true, '"copyExtensions" should be an Array');
+	strictEqual(Array.isArray(copyPatterns), true, '"copyPatterns" should be an Array');
 
 	strictEqual(typeof publicPath, 'string', '"publicPath" should be a String');
 	strictEqual(typeof sourcemaps, 'boolean', '"sourcemaps" should be a Boolean');
@@ -331,7 +344,7 @@ module.exports = function getConfig({
 	}
 	//endregion
 
-	//region Raw assets
+	//region Raw assets imported in code
 	if (copyExtensions.length > 0){
 		loaders.push({
 			test: getRegex(copyExtensions),
@@ -342,6 +355,17 @@ module.exports = function getConfig({
 				}
 			}
 		});
+	}
+	//endregion
+
+	//region Raw assets indirectly referenced in code
+	if (copyPatterns.length > 0){
+		plugins.push(
+			new CopyWebpackPlugin(copyPatterns, {
+				debug: 'warning',
+				context: rootFolder
+			})
+		);
 	}
 	//endregion
 
