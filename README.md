@@ -110,11 +110,12 @@ See [output.path](https://webpack.js.org/configuration/output/#output-path) in t
 ### `publicPath`: String
 
 Path prepended to url references.
-See [publicPath](https://webpack.js.org/guides/public-path/) in the Webpack documentation.
 
 Default: `"/"`
 
 Example: `"/mysite/"`
+
+See [publicPath](https://webpack.js.org/guides/public-path/) in the Webpack documentation.
 
 
 ---
