@@ -31,12 +31,12 @@ package.json
 		"watch": "webpack-dev-server --mode development"
 	},
 	"dependencies": {
-		"@wildpeaks/webpack-config-web": "1.0.0-alpha12",
-		"typescript": "2.8.3",
-		"webpack": "4.6.0",
-		"webpack-cli": "2.0.15",
-		"webpack-dev-server": "3.1.3",
-		"whatwg-fetch": "2.0.4"
+		"@wildpeaks/webpack-config-web": "1.0.0-alpha13",
+		"typescript": "...",
+		"webpack": "...",
+		"webpack-cli": "...",
+		"webpack-dev-server": "...",
+		"whatwg-fetch": "..."
 	}
 }
 ````
@@ -170,7 +170,8 @@ See ["limit" in url-loader Documentation](https://github.com/webpack-contrib/url
 ---
 ### `embedExtensions`: String[]
 
-File extensions of files to embed as base64 (if small enough) or just copy as-is (if large).
+File extensions of files to embed as base64 (if small enough) or just copy as-is (if large),
+for files referenced by `import` or `require`.
 
 Default: `["jpg", "png", "gif", "svg"]`.
 
@@ -178,15 +179,42 @@ Default: `["jpg", "png", "gif", "svg"]`.
 ---
 ### `copyExtensions`: String[]
 
-File extensions of files to just copy as-is.
+File extensions of files to just copy as-is, for files referenced by `import` or `require`.
 
 Default: `["woff"]`.
+
+
+---
+### `copyPatterns`: CopyPattern[]
+
+Files and folders to copy as-is, despite not being referenced by `import` or `require`.
+
+Default: `[]`.
+
+Examples:
+````js
+// Copy a directory
+{from: 'models', to: 'assets'}
+
+// Copy specific files
+{from: 'extras/**/*.3d', to: 'assets'}
+
+// Ignore some files
+{from: 'textures', to: 'assets', ignore: ['Thumbs.db']}
+
+// Force the type of copy with `toType`
+{from: 'file-without-extension', to: 'renamed', toType: 'file'}
+{from: 'directory-looks-like-a-filename.ext', to: 'renamed', toType: 'dir'}
+````
+See [CopyWebpackPlugin patterns](https://github.com/webpack-contrib/copy-webpack-plugin#patterns).
 
 
 ---
 ### `assetsRelativePath`: String
 
 Relative path to copy files to.
+Note that it only applies to `copyExtensions` and large `embedExtensions` files;
+`copyPatterns` specifies the output path in each pattern instead.
 
 Default: `"assets/"`
 
