@@ -193,19 +193,22 @@ Default: `[]`.
 
 Examples:
 ````js
-// Copy a directory
+// Copy a directory:
+// "models/example.ext" is copied to "assets/example.ext"
 {from: 'models', to: 'assets'}
 
-// Copy specific files
+// Copy specific files:
+// "extras/models/example.ext" is copied to "assets/extras/models/example.ext"
 {from: 'extras/**/*.3d', to: 'assets'}
+
+// Copy specific files:
+// "extras/models/example.ext" is copied to "assets/models/example.ext"
+{from: '**/*.3d', to: 'assets', context: 'extras'}
 
 // Ignore some files
 {from: 'textures', to: 'assets', ignore: ['Thumbs.db']}
-
-// Force the type of copy with `toType`
-{from: 'file-without-extension', to: 'renamed', toType: 'file'}
-{from: 'directory-looks-like-a-filename.ext', to: 'renamed', toType: 'dir'}
 ````
+
 See [CopyWebpackPlugin patterns](https://github.com/webpack-contrib/copy-webpack-plugin#patterns).
 
 

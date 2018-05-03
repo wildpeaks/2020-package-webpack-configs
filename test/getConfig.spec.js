@@ -793,3 +793,58 @@ it('Webworkers + Polyfills', async() => {
 		await browser.close();
 	}
 });
+
+
+it('Copy Patterns', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		mode: 'development',
+		entry: {
+			myapp: './copy-patterns/myapp.ts'
+		},
+		copyPatterns: [
+			// Without "**", "from" is the context:
+			{from: 'copy-patterns/myfolder-1', to: 'copied-1'},
+			{from: 'copy-patterns/myfolder-1', to: 'copied-2/'},
+			{from: 'copy-patterns/myfolder-1', to: 'copied-3', toType: 'dir'},
+			{from: 'copy-patterns/myfolder-1', to: 'copied-4/subfolder'},
+
+			// With "**", it copies using the whole path (hence creates a "copy-patterns/myfolder-2" folder in output).
+			// Use "context" to make it use only the end of the path.
+			{from: 'copy-patterns/myfolder-2/**/*.example-1', to: 'copied-5'},
+			{from: '**/*.example-1', to: 'copied-6', context: 'copy-patterns/myfolder-2'},
+
+			// File-looking folder name
+			{from: 'copy-patterns/myfolder-3.ext', to: 'copied-7'},
+
+			// Folder-looking filename
+			{from: 'copy-patterns/file9', to: 'copied-8'}
+		]
+	});
+	const expectedFiles = [
+		'index.html',
+		'myapp.js',
+		'myapp.js.map',
+
+		'copied-1/file1.example-1',
+		'copied-1/file2.example-1',
+		'copied-2/file1.example-1',
+		'copied-2/file2.example-1',
+		'copied-3/file1.example-1',
+		'copied-3/file2.example-1',
+		'copied-4/subfolder/file1.example-1',
+		'copied-4/subfolder/file2.example-1',
+
+		'copied-5/copy-patterns/myfolder-2/hello/file3.example-1',
+		'copied-5/copy-patterns/myfolder-2/hello/file5.example-1',
+		'copied-6/hello/file3.example-1',
+		'copied-6/hello/file5.example-1',
+
+		'copied-7/file7.example',
+		'copied-7/file8.example',
+
+		'copied-8/file9'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+});
