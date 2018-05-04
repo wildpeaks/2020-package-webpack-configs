@@ -248,13 +248,13 @@ it('Local Modules', async() => {
 });
 
 
-it('CSS', async() => {
+it('CSS Modules', async() => {
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
 		mode: 'development',
 		entry: {
-			myapp: './css/myapp.ts'
+			myapp: './css-modules/myapp.ts'
 		}
 	});
 	const expectedFiles = [
@@ -415,7 +415,7 @@ it('Minify', async() => {
 		outputFolder,
 		mode: 'production',
 		entry: {
-			myapp: './css/myapp.ts'
+			myapp: './css-modules/myapp.ts'
 		}
 	});
 
@@ -501,7 +501,7 @@ it('Skip Postprocessing', async() => {
 		rootFolder,
 		outputFolder,
 		entry: {
-			myapp: './css/myapp.ts'
+			myapp: './css-modules/myapp.ts'
 		},
 		mode: 'development',
 		skipPostprocess: true
@@ -523,7 +523,7 @@ it('Enable sourcemaps', async() => {
 		outputFolder,
 		mode: 'development',
 		entry: {
-			myapp: './css/myapp.ts'
+			myapp: './css-modules/myapp.ts'
 		},
 		sourcemaps: true
 	});
@@ -551,7 +551,7 @@ it('Disable sourcemaps', async() => {
 		outputFolder,
 		mode: 'development',
 		entry: {
-			myapp: './css/myapp.ts'
+			myapp: './css-modules/myapp.ts'
 		},
 		sourcemaps: false
 	});
@@ -847,4 +847,51 @@ it('Copy Patterns', async() => {
 		'copied-8/file9'
 	];
 	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+});
+
+
+it('CSS Reset', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		mode: 'development',
+		entry: {
+			myapp: './css-reset/myapp.ts'
+		},
+		polyfills: [
+			'./css-reset/reset.css'
+		]
+	});
+	const expectedFiles = [
+		'index.html',
+		'myapp.css',
+		'myapp.css.map',
+		'myapp.js',
+		'myapp.js.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const browser = await puppeteer.launch();
+	try {
+		const page = await browser.newPage();
+		await page.goto('http://localhost:8888/');
+		const found = await page.evaluate(() => {
+			/* global document */
+			/* global window */
+			const el = document.createElement('div');
+			const computed1 = window.getComputedStyle(el);
+			if (computed1.getPropertyValue('color') === 'rgb(0, 0, 128)'){
+				return 'Unexpected color before appending';
+			}
+			document.body.appendChild(el);
+			const computed2 = window.getComputedStyle(el);
+			if (computed2.getPropertyValue('color') !== 'rgb(0, 0, 128)'){
+				return 'Bad color';
+			}
+			return 'ok';
+		});
+		expect(found).toBe('ok', 'DOM tests');
+	} finally {
+		await browser.close();
+	}
 });
