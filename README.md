@@ -235,6 +235,8 @@ Default: `false`
 List of modules or files to automatically prepend to every entry.
 They are resolved from `rootFolder`.
 
+Note: given this handle any filetype the loaders do, you could also have a **CSS Reset** stylesheet in this list for example.
+
 Default: `['core-js/fn/promise']`
 
 
