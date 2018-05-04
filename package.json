@@ -1,6 +1,6 @@
 {
   "name": "@wildpeaks/webpack-config-web",
-  "version": "1.0.0-alpha13",
+  "version": "1.0.0-alpha14",
   "description": "Webpack base config generator for Web apps",
   "author": "Cecile Muller",
   "license": "MIT",
@@ -53,7 +53,7 @@
     "recursive-readdir": "2.2.2",
     "rimraf": "2.6.2",
     "typescript": "2.8.3",
-    "webpack": "4.6.0"
+    "webpack": "4.7.0"
   },
   "peerDependencies": {
     "typescript": "*",
