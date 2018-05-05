@@ -170,6 +170,11 @@ module.exports = function getConfig({
 			publicPath,
 			filename: minify ? '[hash].[name].js' : '[name].js',
 			chunkFilename: minify ? '[hash].chunk.[id].js' : 'chunk.[id].js'
+		},
+		//endregion
+		//region Hints
+		performance: {
+			hints: false
 		}
 		//endregion
 	};
