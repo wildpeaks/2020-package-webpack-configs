@@ -166,6 +166,7 @@ module.exports = function getConfig({
 		//region Output
 		output: {
 			path: actualOutputFolder,
+			pathinfo: false,
 			publicPath,
 			filename: minify ? '[hash].[name].js' : '[name].js',
 			chunkFilename: minify ? '[hash].chunk.[id].js' : 'chunk.[id].js'
