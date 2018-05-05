@@ -263,13 +263,6 @@ module.exports = function getConfig({
 	loaders.push({
 		test: webworkerPattern,
 		use: [
-			// {
-			// 	// enforce: 'pre',
-			// 	loader: join(__dirname, 'polyfills.loader.js'),
-			// 	options: {
-			// 		polyfills: webworkerPolyfills
-			// 	}
-			// },
 			{
 				loader: 'ts-loader',
 				options: {
