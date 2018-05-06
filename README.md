@@ -176,7 +176,7 @@ Default: `["woff"]`.
 
 
 ---
-### `copyPatterns`: CopyPattern[]
+### `copyPatterns`: Object[]
 
 Files and folders to copy as-is, despite not being referenced by `import` or `require`.
 
@@ -205,9 +205,9 @@ See [patterns](https://github.com/webpack-contrib/copy-webpack-plugin#patterns) 
 
 ---
 
-### `injectPatterns`: HTMLInjectPattern[]
+### `injectPatterns`: Object[]
 
-Adds arbitrary stylesheets / scripts in the HTML pages.
+Additional scripts and stylesheets to inject in HTML.
 
 This is especially useful for adding large precompiled libraries (local or from a CDN) without having them be part of the build
 which can **drastically speed up the build**. You can use `copyPatterns` to copy arbitrary files to the output
@@ -223,6 +223,7 @@ Examples:
 // CDN urls and Subresource Integrity
 {
 	append: false,
+	publicPath: false,
 	assets: [
 		{
 			type: 'css',
