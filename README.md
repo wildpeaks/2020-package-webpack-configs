@@ -204,6 +204,62 @@ See [patterns](https://github.com/webpack-contrib/copy-webpack-plugin#patterns) 
 
 
 ---
+
+### injectPatterns: HTMLInjectPattern[]
+
+Adds arbitrary stylesheets / scripts in the HTML pages.
+
+This is especially useful for adding large precompiled libraries without having them be part of the build
+which can drastically speed up the build. You can use `copyPatterns` to copy arbitrary files to the output
+if the injected patterns use relative paths instead of urls.
+
+Note that the **resulting script/link tags won't have automatic Subresource Integrity hashes**,
+you have to specify them manually using `attributes`.
+
+Default: `[]`
+
+Examples:
+````js
+// CDN urls and Subresource Integrity
+{
+	append: false,
+	assets: [
+		{
+			type: 'css',
+			path: 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css',
+			attributes: {
+				crossorigin: 'anonymous',
+				integrity: 'sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB'
+			}
+		},
+		{
+			type: 'js',
+			path: 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js',
+			attributes: {
+				crossorigin: 'anonymous',
+				integrity: 'sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T'
+			}
+		}
+	]
+}
+
+// `append: false` to add at the beginning
+{
+	append: false,
+	assets: ['thirdparty/three.min.js', 'thirdparty/OrbitControls.js']
+}
+
+// `append: true` to add at the end
+{
+	append: true,
+	assets: ['override-styles.css']
+}
+````
+
+See [Options](https://github.com/jharris4/html-webpack-include-assets-plugin#options) in the `html-webpack-include-assets-plugin` documentation.
+
+
+---
 ### `assetsRelativePath`: String
 
 Relative path to copy files to.
