@@ -205,12 +205,12 @@ See [patterns](https://github.com/webpack-contrib/copy-webpack-plugin#patterns) 
 
 ---
 
-### injectPatterns: HTMLInjectPattern[]
+### `injectPatterns`: HTMLInjectPattern[]
 
 Adds arbitrary stylesheets / scripts in the HTML pages.
 
-This is especially useful for adding large precompiled libraries without having them be part of the build
-which can drastically speed up the build. You can use `copyPatterns` to copy arbitrary files to the output
+This is especially useful for adding large precompiled libraries (local or from a CDN) without having them be part of the build
+which can **drastically speed up the build**. You can use `copyPatterns` to copy arbitrary files to the output
 if the injected patterns use relative paths instead of urls.
 
 Note that the **resulting script/link tags won't have automatic Subresource Integrity hashes**,
