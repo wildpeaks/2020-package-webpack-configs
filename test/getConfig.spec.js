@@ -895,3 +895,184 @@ it('CSS Reset', async() => {
 		await browser.close();
 	}
 });
+
+
+it('Inject Patterns', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		mode: 'development',
+		entry: {
+			myapp: './inject/myapp.ts'
+		},
+		sourcemaps: false,
+		polyfills: [],
+		publicPath: '/mypublic/',
+		assetsRelativePath: 'myassets/',
+		injectPatterns: [
+			{
+				append: false,
+				assets: ['thirdparty/three.min.js', 'thirdparty/OrbitControls.js']
+			},
+			{
+				append: true,
+				assets: ['override-styles-1.css']
+			},
+			{
+				append: true,
+				publicPath: false,
+				assets: ['override-styles-2.css']
+			},
+			{
+				append: true,
+				publicPath: 'custom/',
+				assets: ['override-styles-3.css']
+			},
+			{
+				append: false,
+				publicPath: false,
+				assets: [
+					{
+						type: 'css',
+						path: 'http://example.com/stylesheet',
+						attributes: {
+							hello: 'example css'
+						}
+					},
+					{
+						type: 'js',
+						path: 'http://example.com/script',
+						attributes: {
+							hello: 'example js'
+						}
+					}
+				]
+			}
+		]
+	});
+	const expectedFiles = [
+		'index.html',
+		'myapp.js'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const browser = await puppeteer.launch();
+	try {
+		const page = await browser.newPage();
+		await page.setRequestInterception(true);
+		page.on('request', request => {
+			const url = request.url();
+			if (url.endsWith('.css')){
+				request.respond({
+					headers: {'Access-Control-Allow-Origin': '*'},
+					content: 'text/css',
+					body: '.hello{}'
+				});
+				return;
+			}
+			if (url.endsWith('.js')){
+				request.respond({
+					headers: {'Access-Control-Allow-Origin': '*'},
+					content: 'text/javascript',
+					body: 'console.log("hello");'
+				});
+				return;
+			}
+			request.continue();
+		});
+		await page.goto('http://localhost:8888/');
+		const found = await page.evaluate(() => {
+			/* global document */
+			const bodyChildren = document.body.childNodes;
+			if (bodyChildren.length !== 6){
+				return `Wrong body.children.length: ${bodyChildren.length}`;
+			}
+
+			const headChildren = document.head.childNodes;
+			if (headChildren.length !== 9){
+				return `Wrong head.children.length: ${headChildren.length}`;
+			}
+
+			const headChild5 = /** @type {Element} */ (headChildren[5]);
+			if (headChild5.tagName !== 'LINK'){
+				return `Wrong head.children[5] tagName: "${headChild5.tagName}"`;
+			}
+			const headChild5Href = String(headChild5.getAttribute('href'));
+			if (headChild5Href !== 'http://example.com/stylesheet'){
+				return `Wrong head.children[5] href: "${headChild5Href}"`;
+			}
+			const headChild5Hello = String(headChild5.getAttribute('hello'));
+			if (headChild5Hello !== 'example css'){
+				return `Wrong head.children[5] hello: "${headChild5Hello}"`;
+			}
+
+			const headChild6 = /** @type {Element} */ (headChildren[6]);
+			if (headChild6.tagName !== 'LINK'){
+				return `Wrong head.children[6] tagName: "${headChild6.tagName}"`;
+			}
+			const headChild6Href = String(headChild6.getAttribute('href'));
+			if (headChild6Href !== '/mypublic/override-styles-1.css'){
+				return `Wrong head.children[6] href: "${headChild6Href}"`;
+			}
+
+			const headChild7 = /** @type {Element} */ (headChildren[7]);
+			if (headChild7.tagName !== 'LINK'){
+				return `Wrong head.children[7] tagName: "${headChild7.tagName}"`;
+			}
+			const headChild7Href = String(headChild7.getAttribute('href'));
+			if (headChild7Href !== 'override-styles-2.css'){
+				return `Wrong head.children[7] href: "${headChild7Href}"`;
+			}
+
+			const headChild8 = /** @type {Element} */ (headChildren[8]);
+			if (headChild8.tagName !== 'LINK'){
+				return `Wrong head.children[8] tagName: "${headChild8.tagName}"`;
+			}
+			const headChild8Href = String(headChild8.getAttribute('href'));
+			if (headChild8Href !== 'custom/override-styles-3.css'){
+				return `Wrong head.children[8] href: "${headChild8Href}"`;
+			}
+
+			const bodyChild1 = /** @type {Element} */ (bodyChildren[1]);
+			if (bodyChild1.tagName !== 'SCRIPT'){
+				return `Wrong body.children[1] tagName: "${bodyChild1.tagName}"`;
+			}
+			const bodyChild1Src = String(bodyChild1.getAttribute('src'));
+			if (bodyChild1Src !== 'http://example.com/script'){
+				return `Wrong body.children[1] src: "${bodyChild1Src}"`;
+			}
+
+			const bodyChild2 = /** @type {Element} */ (bodyChildren[2]);
+			if (bodyChild2.tagName !== 'SCRIPT'){
+				return `Wrong body.children[2] tagName: "${bodyChild2.tagName}"`;
+			}
+			const bodyChild2Src = String(bodyChild2.getAttribute('src'));
+			if (bodyChild2Src !== '/mypublic/thirdparty/three.min.js'){
+				return `Wrong body.children[2] src: "${bodyChild2Src}"`;
+			}
+
+			const bodyChild3 = /** @type {Element} */ (bodyChildren[3]);
+			if (bodyChild3.tagName !== 'SCRIPT'){
+				return `Wrong body.children[3] tagName: "${bodyChild3.tagName}"`;
+			}
+			const bodyChild3Src = String(bodyChild3.getAttribute('src'));
+			if (bodyChild3Src !== '/mypublic/thirdparty/OrbitControls.js'){
+				return `Wrong body.children[3] src: "${bodyChild3Src}"`;
+			}
+
+			const bodyChild4 = /** @type {Element} */ (bodyChildren[4]);
+			if (bodyChild4.tagName !== 'SCRIPT'){
+				return `Wrong body.children[4] tagName: "${bodyChild4.tagName}"`;
+			}
+			const bodyChild4Src = String(bodyChild4.getAttribute('src'));
+			if (!bodyChild4Src.startsWith('/mypublic/myapp.js')){
+				return `Wrong body.children[4] src: "${bodyChild4Src}"`;
+			}
+
+			return 'ok';
+		});
+		expect(found).toBe('ok', 'DOM tests');
+	} finally {
+		await browser.close();
+	}
+});

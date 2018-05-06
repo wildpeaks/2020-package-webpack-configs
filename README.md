@@ -18,7 +18,7 @@ package.json:
 		"watch": "webpack-dev-server --mode development"
 	},
 	"dependencies": {
-		"@wildpeaks/webpack-config-web": "1.0.0-alpha15",
+		"@wildpeaks/webpack-config-web": "1.0.0-alpha16",
 		"typescript": "...",
 		"webpack": "...",
 		"webpack-cli": "...",
@@ -176,7 +176,7 @@ Default: `["woff"]`.
 
 
 ---
-### `copyPatterns`: CopyPattern[]
+### `copyPatterns`: Object[]
 
 Files and folders to copy as-is, despite not being referenced by `import` or `require`.
 
@@ -201,6 +201,63 @@ Examples:
 ````
 
 See [patterns](https://github.com/webpack-contrib/copy-webpack-plugin#patterns) in the `copy-webpack-plugin` documentation.
+
+
+---
+
+### `injectPatterns`: Object[]
+
+Additional scripts and stylesheets to inject in HTML.
+
+This is especially useful for adding large precompiled libraries (local or from a CDN) without having them be part of the build
+which can **drastically speed up the build**. You can use `copyPatterns` to copy arbitrary files to the output
+if the injected patterns use relative paths instead of urls.
+
+Note that the **resulting script/link tags won't have automatic Subresource Integrity hashes**,
+you have to specify them manually using `attributes`.
+
+Default: `[]`
+
+Examples:
+````js
+// CDN urls and Subresource Integrity
+{
+	append: false,
+	publicPath: false,
+	assets: [
+		{
+			type: 'css',
+			path: 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css',
+			attributes: {
+				crossorigin: 'anonymous',
+				integrity: 'sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB'
+			}
+		},
+		{
+			type: 'js',
+			path: 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js',
+			attributes: {
+				crossorigin: 'anonymous',
+				integrity: 'sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T'
+			}
+		}
+	]
+}
+
+// `append: false` to add at the beginning
+{
+	append: false,
+	assets: ['thirdparty/three.min.js', 'thirdparty/OrbitControls.js']
+}
+
+// `append: true` to add at the end
+{
+	append: true,
+	assets: ['override-styles.css']
+}
+````
+
+See [Options](https://github.com/jharris4/html-webpack-include-assets-plugin#options) in the `html-webpack-include-assets-plugin` documentation.
 
 
 ---

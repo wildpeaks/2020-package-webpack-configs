@@ -4,6 +4,7 @@ const {strictEqual} = require('assert');
 const {basename, join, isAbsolute} = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plugin');
 const SriPlugin = require('webpack-subresource-integrity');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const cssnext = require('postcss-cssnext');
@@ -19,15 +20,6 @@ function getRegex(extensions){
 
 
 /**
- * A pattern identifying files or folders to copy.
- * @typedef CopyPattern
- * @property {String} from
- * @property {String} to
- * @property {String?} toType
- * @see See https://github.com/webpack-contrib/copy-webpack-plugin#patterns
-*/
-
-/**
  * @typedef GetConfigOptions
  * @property {Object} entry Webpack entries
  * @property {String} rootFolder Absolute path to the rroot context folder
@@ -40,7 +32,8 @@ function getRegex(extensions){
  * @property {String[]} embedLimit Filesize limit to embed assets
  * @property {String[]} embedExtensions File extensions of files to embed as base64 (if small enough) or just copy as-is (if large)
  * @property {String[]} copyExtensions File extensions of files to just copy as-is
- * @property {CopyPattern[]} copyPatterns Files and directories to copy as-is, without having to reference them in the code
+ * @property {Object[]} copyPatterns Files and directories to copy as-is, without having to reference them in the code
+ * @property {Object[]} injectPatterns Additional scripts and stylesheets to inject in HTML
  * @property {String} assetsRelativePath File extensions of files to just copy as-is
  * @property {Boolean} sourcemaps `true` to generate sourcemaps for scripts & stylesheets, `false` to skip them
  * @property {Boolean} skipPostprocess `true` for the lightweight config (for tests), `false` for the whole config
@@ -67,6 +60,7 @@ module.exports = function getConfig({
 	embedExtensions = ['jpg', 'png', 'gif', 'svg'],
 	copyExtensions = ['woff'],
 	copyPatterns = [],
+	injectPatterns = [],
 	assetsRelativePath = 'assets/',
 	sourcemaps = true,
 	skipPostprocess = false,
@@ -124,6 +118,7 @@ module.exports = function getConfig({
 	strictEqual(Array.isArray(embedExtensions), true, '"embedExtensions" should be an Array');
 	strictEqual(Array.isArray(copyExtensions), true, '"copyExtensions" should be an Array');
 	strictEqual(Array.isArray(copyPatterns), true, '"copyPatterns" should be an Array');
+	strictEqual(Array.isArray(injectPatterns), true, '"injectPatterns" should be an Array');
 
 	strictEqual(typeof publicPath, 'string', '"publicPath" should be a String');
 	strictEqual(typeof sourcemaps, 'boolean', '"sourcemaps" should be a Boolean');
@@ -368,6 +363,16 @@ module.exports = function getConfig({
 				context: rootFolder
 			})
 		);
+	}
+	//endregion
+
+	//region Arbitrary extra scripts & stylesheets
+	if (injectPatterns.length > 0){
+		for (const injectPattern of injectPatterns){
+			plugins.push(
+				new HtmlWebpackIncludeAssetsPlugin(injectPattern)
+			);
+		}
 	}
 	//endregion
 
