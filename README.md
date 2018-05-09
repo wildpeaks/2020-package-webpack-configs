@@ -85,6 +85,73 @@ Example:
 See [Entry Points](https://webpack.js.org/concepts/entry-points/) in the Webpack documentation.
 
 ---
+### `pages`: Object[]
+
+List of HTML pages to generate.
+
+Default: `{title: 'Index', filename: "index.html"}`.
+
+When you have multiple pages, specify the `chunks` (id of the entries) to use in the page,
+otherwise it will use all entries in the page.
+
+Examples:
+````js
+// Single page
+{
+	pages: [
+		{
+			title: 'Index',
+			filename: 'index.html'
+		}
+	]
+}
+
+// Multiple pages
+{
+	entry: {
+		app1: './src/first.ts',
+		app2: './src/second.ts'
+	},
+	pages: [
+		{
+			title: 'First',
+			filename: 'first-page.html',
+			chunks: ['app1']
+		},
+		{
+			title: 'Second',
+			filename: 'second-page.html',
+			chunks: ['app2']
+		}
+	]
+}
+
+// Shared chunk
+{
+	entry: {
+		app1: './src/first.ts',
+		app2: './src/second.ts',
+		shared: './src/extras.ts'
+	},
+	pages: [
+		{
+			title: 'First',
+			filename: 'first-page.html',
+			chunks: ['shared', 'app1']
+		},
+		{
+			title: 'Second',
+			filename: 'second-page.html',
+			chunks: ['shared', 'app2']
+		}
+	]
+}
+````
+
+See [Options](https://github.com/jantimon/html-webpack-plugin#options) in the `html-webpack-plugin` documentation.
+
+
+---
 ### `rootFolder`: String
 
 Absolute path to the root context folder.

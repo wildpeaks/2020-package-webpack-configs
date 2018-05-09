@@ -207,19 +207,9 @@ module.exports = function getConfig({
 	if (!skipPostprocess){
 		if (pages.length > 0){
 			for (const page of pages){
-				if (typeof page.template === 'undefined'){
-					const templated = Object.assign({}, page, {
-						inject: false,
-						template: HtmlWebpackTemplate
-					});
-					plugins.push(
-						new HtmlWebpackPlugin(templated)
-					);
-				} else {
-					plugins.push(
-						new HtmlWebpackPlugin(page)
-					);
-				}
+				plugins.push(
+					new HtmlWebpackPlugin(page)
+				);
 			}
 		}
 		//endregion
