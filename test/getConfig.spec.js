@@ -127,7 +127,21 @@ it('Multiple independant entries', async() => {
 			app1: './multiple/app1.ts',
 			app2: './multiple/app2.ts',
 			app3: './multiple/app3.ts'
-		}
+		},
+		pages: [
+			{
+				filename: 'app1.html',
+				chunks: ['app1']
+			},
+			{
+				filename: 'app2.html',
+				chunks: ['app2']
+			},
+			{
+				filename: 'app3.html',
+				chunks: ['app3']
+			}
+		]
 	});
 	const expectedFiles = [
 		'app1.html',
