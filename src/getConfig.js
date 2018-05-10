@@ -9,6 +9,7 @@ const SriPlugin = require('webpack-subresource-integrity');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const cssnext = require('postcss-cssnext');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const templateFilepath = join(__dirname, 'template.html');
 
 
 /**
@@ -209,6 +210,15 @@ module.exports = function getConfig({
 				if ((page === null) || (typeof page !== 'object')){
 					if (typeof page.minify === 'undefined'){
 						page.minify = minify;
+					}
+					if (typeof page.template === 'undefined'){
+						page.template = templateFilepath;
+					}
+					if (typeof page.lang === 'undefined'){
+						page.lang = 'en';
+					}
+					if (typeof page.viewport === 'undefined'){
+						page.viewport = 'width=device-width, initial-scale=1.0';
 					}
 				}
 				plugins.push(
