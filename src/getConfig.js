@@ -22,6 +22,7 @@ function getRegex(extensions){
 /**
  * @typedef GetConfigOptions
  * @property {Object} entry Webpack entries
+ * @property {Object[]} pages List of HTML pages to output
  * @property {String} rootFolder Absolute path to the rroot context folder
  * @property {String} outputFolder Absolute path to the folder where files are emitted
  * @property {String} publicPath Path prepended to url references, e.g. `/` or `/mysite/`
@@ -49,6 +50,7 @@ function getRegex(extensions){
  */
 module.exports = function getConfig({
 	entry = {application: './src/index.ts'},
+	pages = [{title: 'Index', filename: 'index.html'}],
 	rootFolder = '',
 	outputFolder = '',
 	publicPath = '/',
@@ -97,6 +99,8 @@ module.exports = function getConfig({
 	strictEqual(entry instanceof RegExp, false, '"entry" should not be a RegExp');
 	strictEqual(entry instanceof Symbol, false, '"entry" should not be a Symbol');
 	strictEqual(typeof entry, 'object', '"entry" should be an Object');
+
+	strictEqual(Array.isArray(pages), true, '"pages" should be an Array');
 
 	strictEqual(typeof port, 'number', '"port" should be a Number');
 	strictEqual(isNaN(port), false, '"port" must not be NaN');
@@ -200,24 +204,12 @@ module.exports = function getConfig({
 
 	//region HTML
 	if (!skipPostprocess){
-		const ids = Object.keys(entry);
-		if (ids.length === 1){
-			plugins.push(
-				new HtmlWebpackPlugin({
-					hash: !minify,
-					filename: 'index.html'
-				})
-			);
-		} else {
-			ids.forEach(entryId => {
+		if (pages.length > 0){
+			for (const page of pages){
 				plugins.push(
-					new HtmlWebpackPlugin({
-						hash: !minify,
-						chunks: [entryId],
-						filename: `${entryId}.html`
-					})
+					new HtmlWebpackPlugin(page)
 				);
-			});
+			}
 		}
 		//endregion
 	}
