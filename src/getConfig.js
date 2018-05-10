@@ -23,7 +23,7 @@ function getRegex(extensions){
  * @typedef GetConfigOptions
  * @property {Object} entry Webpack entries
  * @property {Object[]} pages List of HTML pages to output
- * @property {String} rootFolder Absolute path to the rroot context folder
+ * @property {String} rootFolder Absolute path to the root context folder
  * @property {String} outputFolder Absolute path to the folder where files are emitted
  * @property {String} publicPath Path prepended to url references, e.g. `/` or `/mysite/`
  * @property {String} mode Use `production` to optimize the output, `development` for faster builds
@@ -206,6 +206,11 @@ module.exports = function getConfig({
 	if (!skipPostprocess){
 		if (pages.length > 0){
 			for (const page of pages){
+				if ((page === null) || (typeof page !== 'object')){
+					if (typeof page.minify === 'undefined'){
+						page.minify = minify;
+					}
+				}
 				plugins.push(
 					new HtmlWebpackPlugin(page)
 				);
