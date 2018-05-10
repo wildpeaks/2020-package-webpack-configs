@@ -9,7 +9,6 @@ const SriPlugin = require('webpack-subresource-integrity');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const cssnext = require('postcss-cssnext');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const HtmlWebpackTemplate = require('html-webpack-template');
 
 
 /**
