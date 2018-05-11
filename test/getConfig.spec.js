@@ -1288,6 +1288,24 @@ it('Multiple pages', async() => {
 				return `Bad #world.innerText: ${el1.innerText}`;
 			}
 
+			const metas = document.querySelectorAll('meta');
+			const metasLength = metas.length;
+			if (metasLength < 2){
+				return `Wrong metas.length: ${metasLength}`;
+			}
+
+			const meta0 = metas[metasLength - 2];
+			const meta0Param = meta0.getAttribute('param1');
+			if (meta0Param !== 'Value 1'){
+				return `Wrong meta0.param1: ${meta0Param}`;
+			}
+
+			const meta1 = metas[metasLength - 1];
+			const meta1Param = meta1.getAttribute('param2');
+			if (meta1Param !== 'Value 2'){
+				return `Wrong meta1.param2: ${meta1Param}`;
+			}
+
 			return 'ok';
 		});
 		expect(found5).toBe('ok', 'DOM tests (page5)');
