@@ -1,4 +1,5 @@
 /* eslint-env node */
+/* eslint-disable max-statements */
 'use strict';
 const {strictEqual} = require('assert');
 const {basename, join, isAbsolute} = require('path');
@@ -333,32 +334,63 @@ module.exports = function getConfig({
 	);
 	//endregion
 
-	//region Images
+	//region Embeddable assets
 	if (embedExtensions.length > 0){
-		loaders.push({
-			test: getRegex(embedExtensions),
-			use: {
-				loader: 'url-loader',
-				options: {
-					limit: embedLimit,
-					name: minify ? `${assetsRelativePath}[hash].[name].[ext]` : `${assetsRelativePath}[name].[ext]`
+		if (embedExtensions.includes('json')){
+			loaders.push({
+				type: 'javascript/auto',
+				test: /\.json$/,
+				use: {
+					loader: 'url-loader',
+					options: {
+						limit: embedLimit,
+						name: minify ? `${assetsRelativePath}[hash].[name].[ext]` : `${assetsRelativePath}[name].[ext]`
+					}
 				}
-			}
-		});
+			});
+		}
+		const embedExtensionsWithoutJson = embedExtensions.filter(ext => ext !== 'json');
+		if (embedExtensionsWithoutJson.length > 0){
+			loaders.push({
+				test: getRegex(embedExtensionsWithoutJson),
+				use: {
+					loader: 'url-loader',
+					options: {
+						limit: embedLimit,
+						name: minify ? `${assetsRelativePath}[hash].[name].[ext]` : `${assetsRelativePath}[name].[ext]`
+					}
+				}
+			});
+		}
 	}
 	//endregion
 
 	//region Raw assets imported in code
 	if (copyExtensions.length > 0){
-		loaders.push({
-			test: getRegex(copyExtensions),
-			use: {
-				loader: 'file-loader',
-				options: {
-					name: minify ? `${assetsRelativePath}[hash].[name].[ext]` : `${assetsRelativePath}[name].[ext]`
+		if (copyExtensions.includes('json')){
+			loaders.push({
+				type: 'javascript/auto',
+				test: /\.json$/,
+				use: {
+					loader: 'file-loader',
+					options: {
+						name: minify ? `${assetsRelativePath}[hash].[name].[ext]` : `${assetsRelativePath}[name].[ext]`
+					}
 				}
-			}
-		});
+			});
+		}
+		const copyExtensionsWithoutJson = copyExtensions.filter(ext => ext !== 'json');
+		if (copyExtensionsWithoutJson.length > 0){
+			loaders.push({
+				test: getRegex(copyExtensionsWithoutJson),
+				use: {
+					loader: 'file-loader',
+					options: {
+						name: minify ? `${assetsRelativePath}[hash].[name].[ext]` : `${assetsRelativePath}[name].[ext]`
+					}
+				}
+			});
+		}
 	}
 	//endregion
 
