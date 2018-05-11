@@ -9,6 +9,7 @@ const SriPlugin = require('webpack-subresource-integrity');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const cssnext = require('postcss-cssnext');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const templateFilepath = join(__dirname, 'template.html');
 
 
 /**
@@ -23,7 +24,7 @@ function getRegex(extensions){
  * @typedef GetConfigOptions
  * @property {Object} entry Webpack entries
  * @property {Object[]} pages List of HTML pages to output
- * @property {String} rootFolder Absolute path to the rroot context folder
+ * @property {String} rootFolder Absolute path to the root context folder
  * @property {String} outputFolder Absolute path to the folder where files are emitted
  * @property {String} publicPath Path prepended to url references, e.g. `/` or `/mysite/`
  * @property {String} mode Use `production` to optimize the output, `development` for faster builds
@@ -206,6 +207,20 @@ module.exports = function getConfig({
 	if (!skipPostprocess){
 		if (pages.length > 0){
 			for (const page of pages){
+				if ((page === null) || (typeof page !== 'object')){
+					if (typeof page.minify === 'undefined'){
+						page.minify = minify;
+					}
+					if (typeof page.template === 'undefined'){
+						page.template = templateFilepath;
+					}
+					if (typeof page.lang === 'undefined'){
+						page.lang = 'en';
+					}
+					if (typeof page.viewport === 'undefined'){
+						page.viewport = 'width=device-width, initial-scale=1.0';
+					}
+				}
 				plugins.push(
 					new HtmlWebpackPlugin(page)
 				);

@@ -4,6 +4,7 @@
 .gitattributes  text
 .gitignore      text
 LICENSE         text
+*.html          text
 *.md            text
 *.js            text
 *.ts            text
