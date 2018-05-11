@@ -314,7 +314,7 @@ it('Assets', async() => {
 		},
 		embedLimit: 5000,
 		embedExtensions: ['jpg', 'png'],
-		copyExtensions: ['gif'],
+		copyExtensions: ['gif', 'json'],
 		assetsRelativePath: 'myimages/'
 	});
 	const expectedFiles = [
@@ -324,7 +324,9 @@ it('Assets', async() => {
 		'myimages/large.jpg',
 		'myimages/large.png',
 		'myimages/small.gif',
-		'myimages/large.gif'
+		'myimages/large.gif',
+		'myimages/small.json',
+		'myimages/large.json'
 	];
 	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
 
@@ -334,17 +336,23 @@ it('Assets', async() => {
 		await page.goto('http://localhost:8888/');
 		const found = await page.evaluate(() => {
 			/* global document */
-			const container = document.getElementById('images');
+			const container = document.getElementById('assets');
 			if (container === null){
-				return '#images not found';
+				return '#assets not found';
 			}
-			if (container.childNodes.length !== 6){
-				return `Wrong #images.childNodes.length: ${container.childNodes.length}`;
+			if (container.childNodes.length !== 8){
+				return `Wrong #assets.childNodes.length: ${container.childNodes.length}`;
 			}
 			for (let i = 0; i < 6; i++){
 				const img = container.childNodes[i];
 				if (img.nodeName !== 'IMG'){
-					return `#images.childNodes[${i}] isn't an image: ${img.nodeName}`;
+					return `#assets.childNodes[${i}] isn't an IMG: ${img.nodeName}`;
+				}
+			}
+			for (let i = 6; i < 8; i++){
+				const div = container.childNodes[i];
+				if (div.nodeName !== 'DIV'){
+					return `#assets.childNodes[${i}] isn't a DIV: ${div.nodeName}`;
 				}
 			}
 
@@ -354,24 +362,32 @@ it('Assets', async() => {
 			const img3 = container.childNodes[3].getAttribute('src');
 			const img4 = container.childNodes[4].getAttribute('src');
 			const img5 = container.childNodes[5].getAttribute('src');
+			const div0 = container.childNodes[6];
+			const div1 = container.childNodes[7];
 
 			if (!img0.startsWith('data:image/jpeg;base64')){
-				return `#images.childNodes[0] is not a base64 embed: ${img0}`;
+				return `#assets.childNodes[0] is not a base64 embed: ${img0}`;
 			}
 			if (!img2.startsWith('data:image/png;base64')){
-				return `#images.childNodes[2] is not a base64 embed: ${img2}`;
+				return `#assets.childNodes[2] is not a base64 embed: ${img2}`;
 			}
 			if (img1 !== '/myimages/large.jpg'){
-				return `Wrong url for #images.childNodes[1]: ${img1}`;
+				return `Wrong url for #assets.childNodes[1]: ${img1}`;
 			}
 			if (img3 !== '/myimages/large.png'){
-				return `Wrong url for #images.childNodes[3]: ${img3}`;
+				return `Wrong url for #assets.childNodes[3]: ${img3}`;
 			}
 			if (img4 !== '/myimages/small.gif'){
-				return `Wrong url for #images.childNodes[4]: ${img4}`;
+				return `Wrong url for #assets.childNodes[4]: ${img4}`;
 			}
 			if (img5 !== '/myimages/large.gif'){
-				return `Wrong url for #images.childNodes[5]: ${img5}`;
+				return `Wrong url for #assets.childNodes[5]: ${img5}`;
+			}
+			if (div0.innerText !== '/myimages/small.json'){
+				return `Wrong url for #assets.childNodes[6].innerText: ${div0.innerText}`;
+			}
+			if (div1.innerText !== '/myimages/large.json'){
+				return `Wrong url for #assets.childNodes[7].innerText: ${div1.innerText}`;
 			}
 			return 'ok';
 		});
