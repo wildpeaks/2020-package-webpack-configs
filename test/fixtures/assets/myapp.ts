@@ -5,9 +5,11 @@ import srcSmallPng from './small.png';
 import srcLargePng from './large.png';
 import srcSmallGif from './small.gif';
 import srcLargeGif from './large.gif';
+import srcSmallJson from './small.json';
+import srcLargeJson from './large.json';
 
 const mycontainer = document.createElement('div');
-mycontainer.setAttribute('id', 'images');
+mycontainer.setAttribute('id', 'assets');
 document.body.appendChild(mycontainer);
 
 const imgSmallJpg = document.createElement('img');
@@ -33,3 +35,11 @@ mycontainer.appendChild(imgSmallGif);
 const imgLargeGif = document.createElement('img');
 imgLargeGif.src = srcLargeGif;
 mycontainer.appendChild(imgLargeGif);
+
+const divSmallJson = document.createElement('div');
+divSmallJson.innerText = String(srcSmallJson);
+mycontainer.appendChild(divSmallJson);
+
+const divLargeJson = document.createElement('div');
+divLargeJson.innerText = String(srcLargeJson);
+mycontainer.appendChild(divLargeJson);
