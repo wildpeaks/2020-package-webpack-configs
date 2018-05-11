@@ -1090,3 +1090,254 @@ it('Inject Patterns', async() => {
 		await browser.close();
 	}
 });
+
+
+it('Multiple pages', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		mode: 'development',
+		sourcemaps: false,
+		polyfills: [],
+		entry: {
+			app1: './pages/hello.ts',
+			app2: './pages/world.ts'
+		},
+		pages: [
+			{
+				title: 'One',
+				filename: 'page1.html',
+				chunks: ['app1']
+			},
+			{
+				title: 'Two',
+				filename: 'page2.html',
+				chunks: ['app2']
+			},
+			{
+				title: 'Three',
+				filename: 'page3.html'
+			},
+			{
+				title: 'Four',
+				filename: 'subfolder/page4.html'
+			},
+			{
+				title: 'Five',
+				filename: 'page5.html',
+				meta: [
+					{param1: 'Value 1'},
+					{param2: 'Value 2'}
+				]
+			},
+			{
+				title: 'Six',
+				filename: 'page6.html',
+				example: 'AAAAA',
+				template: join(rootFolder, 'pages/template.html')
+			}
+		]
+	});
+	const expectedFiles = [
+		'app1.js',
+		'app2.js',
+		'page1.html',
+		'page2.html',
+		'page3.html',
+		'subfolder/page4.html',
+		'page5.html',
+		'page6.html'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const browser = await puppeteer.launch();
+	try {
+		const page = await browser.newPage();
+
+		//region page1
+		await page.goto('http://localhost:8888/page1.html');
+		const found1 = await page.evaluate(() => {
+			/* global document */
+			if (document.title !== 'One'){
+				return `Wrong title: "${document.title}"`;
+			}
+
+			const el0 = document.getElementById('hello');
+			if (el0 === null){
+				return '#hello not found';
+			}
+			if (el0.innerText !== 'TITLE IS One'){
+				return `Bad #hello.innerText: ${el0.innerText}`;
+			}
+
+			const el1 = document.getElementById('world');
+			if (el1 !== null){
+				return '#world should not exist';
+			}
+
+			return 'ok';
+		});
+		expect(found1).toBe('ok', 'DOM tests (page1)');
+		//endregion
+
+		//region page2
+		await page.goto('http://localhost:8888/page2.html');
+		const found2 = await page.evaluate(() => {
+			/* global document */
+			if (document.title !== 'Two'){
+				return `Wrong title: "${document.title}"`;
+			}
+
+			const el0 = document.getElementById('hello');
+			if (el0 !== null){
+				return '#hello should not exist';
+			}
+
+			const el1 = document.getElementById('world');
+			if (el1 === null){
+				return '#world not found';
+			}
+			if (el1.innerText !== 'TITLE IS Two'){
+				return `Bad #world.innerText: ${el1.innerText}`;
+			}
+
+			return 'ok';
+		});
+		expect(found2).toBe('ok', 'DOM tests (page2)');
+		//endregion
+
+		//region page3
+		await page.goto('http://localhost:8888/page3.html');
+		const found3 = await page.evaluate(() => {
+			/* global document */
+			if (document.title !== 'Three'){
+				return `Wrong title: "${document.title}"`;
+			}
+
+			const el0 = document.getElementById('hello');
+			if (el0 === null){
+				return '#hello not found';
+			}
+			if (el0.innerText !== 'TITLE IS Three'){
+				return `Bad #hello.innerText: ${el0.innerText}`;
+			}
+
+			const el1 = document.getElementById('world');
+			if (el1 === null){
+				return '#world not found';
+			}
+			if (el1.innerText !== 'TITLE IS Three'){
+				return `Bad #world.innerText: ${el1.innerText}`;
+			}
+
+			return 'ok';
+		});
+		expect(found3).toBe('ok', 'DOM tests (page3)');
+		//endregion
+
+		//region page4
+		await page.goto('http://localhost:8888/subfolder/page4.html');
+		const found4 = await page.evaluate(() => {
+			/* global document */
+			if (document.title !== 'Four'){
+				return `Wrong title: "${document.title}"`;
+			}
+
+			const el0 = document.getElementById('hello');
+			if (el0 === null){
+				return '#hello not found';
+			}
+			if (el0.innerText !== 'TITLE IS Four'){
+				return `Bad #hello.innerText: ${el0.innerText}`;
+			}
+
+			const el1 = document.getElementById('world');
+			if (el1 === null){
+				return '#world not found';
+			}
+			if (el1.innerText !== 'TITLE IS Four'){
+				return `Bad #world.innerText: ${el1.innerText}`;
+			}
+
+			return 'ok';
+		});
+		expect(found4).toBe('ok', 'DOM tests (page4)');
+		//endregion
+
+		//region page5
+		await page.goto('http://localhost:8888/page5.html');
+		const found5 = await page.evaluate(() => {
+			/* global document */
+			if (document.title !== 'Five'){
+				return `Wrong title: "${document.title}"`;
+			}
+
+			const el0 = document.getElementById('hello');
+			if (el0 === null){
+				return '#hello not found';
+			}
+			if (el0.innerText !== 'TITLE IS Five'){
+				return `Bad #hello.innerText: ${el0.innerText}`;
+			}
+
+			const el1 = document.getElementById('world');
+			if (el1 === null){
+				return '#world not found';
+			}
+			if (el1.innerText !== 'TITLE IS Five'){
+				return `Bad #world.innerText: ${el1.innerText}`;
+			}
+
+			return 'ok';
+		});
+		expect(found5).toBe('ok', 'DOM tests (page5)');
+		//endregion
+
+		//region page6
+		await page.goto('http://localhost:8888/page6.html');
+		const found6 = await page.evaluate(() => {
+			/* global document */
+			if (document.title !== 'Six - Customized'){
+				return `Wrong title: "${document.title}"`;
+			}
+			if (document.body.className !== 'customized'){
+				return `Wrong body.className: "${document.body.className}"`;
+			}
+
+			const divs = document.querySelectorAll('div');
+			if (divs.length !== 3){
+				return `Wrong divs.length: ${divs.length}`;
+			}
+
+			const div0 = /** @type {Element} */ (divs[0]);
+			if (div0.textContent !== 'Custom Option: AAAAA'){
+				return `Wrong divs[0].textContent: "${div0.textContent}"`;
+			}
+
+			const div1 = /** @type {Element} */ (divs[1]);
+			if (div1.textContent !== 'TITLE IS Six - Customized'){
+				return `Wrong divs[1].textContent: "${div1.textContent}"`;
+			}
+			const div1Id = div1.getAttribute('id');
+			if (div1Id !== 'hello'){
+				return `Wrong divs[1].id: "${div1Id}"`;
+			}
+
+			const div2 = /** @type {Element} */ (divs[2]);
+			if (div2.textContent !== 'TITLE IS Six - Customized'){
+				return `Wrong divs[2].textContent: "${div2.textContent}"`;
+			}
+			const div2Id = div2.getAttribute('id');
+			if (div2Id !== 'world'){
+				return `Wrong divs[2].id: "${div2Id}"`;
+			}
+
+			return 'ok';
+		});
+		expect(found6).toBe('ok', 'DOM tests (page6)');
+		//endregion
+
+	} finally {
+		await browser.close();
+	}
+}, 60000);
