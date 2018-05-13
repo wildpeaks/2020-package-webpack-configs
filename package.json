@@ -39,7 +39,7 @@
     "source-map-loader": "0.2.3",
     "style-loader": "0.21.0",
     "ts-loader": "4.3.0",
-    "ts-node": "5.0.1",
+    "ts-node": "6.0.3",
     "url-loader": "1.0.1",
     "webpack-subresource-integrity": "1.1.0-rc.4",
     "worker-loader": "1.1.1"
@@ -59,10 +59,5 @@
   "peerDependencies": {
     "typescript": "*",
     "webpack": "*"
-  },
-  "greenkeeper": {
-    "ignore": [
-      "ts-node"
-    ]
   }
 }
