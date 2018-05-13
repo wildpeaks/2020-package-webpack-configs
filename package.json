@@ -1,6 +1,6 @@
 {
   "name": "@wildpeaks/webpack-config-web",
-  "version": "1.0.0-rc",
+  "version": "1.0.0",
   "description": "Webpack base config generator for Web apps",
   "author": "Cecile Muller",
   "license": "MIT",

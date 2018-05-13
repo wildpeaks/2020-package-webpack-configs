@@ -18,7 +18,7 @@ package.json:
 		"watch": "webpack-dev-server --mode development"
 	},
 	"dependencies": {
-		"@wildpeaks/webpack-config-web": "1.0.0-rc",
+		"@wildpeaks/webpack-config-web": "1.0.0",
 		"typescript": "...",
 		"webpack": "...",
 		"webpack-cli": "...",
