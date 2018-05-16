@@ -1,5 +1,7 @@
 # Webpack Config: Web
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/wildpeaks/package-webpack-config-web.svg)](https://greenkeeper.io/)
+
 [![Build Status](https://travis-ci.org/wildpeaks/package-webpack-config-web.svg?branch=master)](https://travis-ci.org/wildpeaks/package-webpack-config-web)
 
 Generates a **Webpack 4 config** for Web applications written in *Typescript*.
