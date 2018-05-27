@@ -42,7 +42,7 @@
     "ts-node": "6.0.5",
     "url-loader": "1.0.1",
     "webpack-subresource-integrity": "1.1.0-rc.4",
-    "worker-loader": "1.1.1"
+    "worker-loader": "2.0.0"
   },
   "devDependencies": {
     "@types/node": "10.1.3",
