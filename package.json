@@ -1,6 +1,6 @@
 {
   "name": "@wildpeaks/webpack-config-web",
-  "version": "1.0.1",
+  "version": "1.1.0-alpha",
   "description": "Webpack base config generator for Web apps",
   "author": "Cecile Muller",
   "license": "MIT",
@@ -38,14 +38,14 @@
     "postcss-loader": "2.1.5",
     "source-map-loader": "0.2.3",
     "style-loader": "0.21.0",
-    "ts-loader": "4.3.0",
+    "ts-loader": "4.3.1",
     "ts-node": "6.1.0",
     "url-loader": "1.0.1",
     "webpack-subresource-integrity": "1.1.0-rc.4",
-    "worker-loader": "1.1.1"
+    "worker-loader": "2.0.0"
   },
   "devDependencies": {
-    "@types/node": "10.1.4",
+    "@types/node": "10.3.0",
     "@wildpeaks/eslint-config-commonjs": "4.9.0",
     "eslint": "4.19.1",
     "express": "4.16.3",
