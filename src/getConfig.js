@@ -31,6 +31,7 @@ function getRegex(extensions){
  * @property {String} mode Use `production` to optimize the output, `development` for faster builds
  * @property {Number} port Port for Webpack Dev Server
  * @property {Object} cssVariables CSS Variables, e.g. `{themeBackground: 'rebeccapurple'}`
+ * @property {Boolean} cssModules Enables CSS Modules
  * @property {String[]} browsers Target browsers for CSS Autoprefixer
  * @property {String[]} embedLimit Filesize limit to embed assets
  * @property {String[]} embedExtensions File extensions of files to embed as base64 (if small enough) or just copy as-is (if large)
@@ -59,6 +60,7 @@ module.exports = function getConfig({
 	mode = 'production',
 	port = 8000,
 	cssVariables = {},
+	cssModules = true,
 	browsers = ['>0.25%', 'ie >= 11'],
 	embedLimit = 5000,
 	embedExtensions = ['jpg', 'png', 'gif', 'svg'],
@@ -114,6 +116,7 @@ module.exports = function getConfig({
 	strictEqual(cssVariables instanceof RegExp, false, '"cssVariables" should not be a RegExp');
 	strictEqual(cssVariables instanceof Symbol, false, '"cssVariables" should not be a Symbol');
 	strictEqual(typeof cssVariables, 'object', '"cssVariables" should be an Object');
+	strictEqual(typeof cssModules, 'boolean', '"cssModules" should be a Boolean');
 
 	strictEqual(Array.isArray(browsers), true, '"browsers" should be an Array');
 	strictEqual(browsers.length > 0, true, '"browsers" should not be empty');
@@ -306,7 +309,7 @@ module.exports = function getConfig({
 				loader: 'css-loader',
 				options: {
 					minimize: minify,
-					modules: true
+					modules: cssModules
 				}
 			},
 			{
