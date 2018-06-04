@@ -12,21 +12,30 @@ Generates a **Webpack 4 config** for Web applications written in *Typescript*.
 ## Example
 
 package.json:
-````json
-{
-	"scripts": {
-		"build": "webpack --mode production",
-		"watch": "webpack-dev-server --mode development"
-	},
-	"dependencies": {
-		"@wildpeaks/webpack-config-web": "1.0.0",
-		"typescript": "...",
-		"webpack": "...",
-		"webpack-cli": "...",
-		"webpack-dev-server": "...",
-		"whatwg-fetch": "..."
-	}
+````js
+"scripts": {
+
+	// Build for production mode
+	"build": "webpack --mode production",
+
+	// Development server mode
+	"watch": "webpack-dev-server --mode development"
+},
+"dependencies": {
+
+	// This package
+	"@wildpeaks/webpack-config-web": "1.1.0",
+
+	// Peer dependencies
+	"typescript": "...",
+	"webpack": "...",
+	"webpack-cli": "...",
+	"webpack-dev-server": "...",
+
+	// Application-specific dependencies
+	"whatwg-fetch": "..."
 }
+
 ````
 
 webpack.config.js:
@@ -207,9 +216,19 @@ See [customProperties](http://cssnext.io/usage/#features) in the CSSNext documen
 
 
 ---
+### `cssModules`: Boolean
+
+The **CSS Modules** option makes classnames and identifiers globally unique at build time.
+
+Default: `true`.
+
+See [Modules](https://github.com/webpack-contrib/css-loader#modules) in the `css-loader` documentation.
+
+
+---
 ### `browsers`: String[]
 
-Target browsers for CSS Autoprefixer.
+Target browsers for **CSS Autoprefixer**.
 
 Default: `[">0.25%", "ie >= 11"]`.
 
