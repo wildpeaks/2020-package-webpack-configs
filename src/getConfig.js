@@ -8,7 +8,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plugin');
 const SriPlugin = require('webpack-subresource-integrity');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const cssnext = require('postcss-cssnext');
+const postcssPresetEnv = require('postcss-preset-env');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const templateFilepath = join(__dirname, 'template.html');
 
@@ -315,8 +315,9 @@ module.exports = function getConfig({
 			{
 				loader: 'postcss-loader',
 				options: {
+					ident: 'postcss',
 					plugins: [
-						cssnext({
+						postcssPresetEnv({
 							browsers,
 							features: {
 								customProperties: {
