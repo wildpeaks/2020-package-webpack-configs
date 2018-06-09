@@ -24,7 +24,7 @@ package.json:
 "dependencies": {
 
 	// This package
-	"@wildpeaks/webpack-config-web": "1.1.0",
+	"@wildpeaks/webpack-config-web": "...",
 
 	// Peer dependencies
 	"typescript": "...",
