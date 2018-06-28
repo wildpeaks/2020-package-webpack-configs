@@ -26,7 +26,7 @@
   "homepage": "https://github.com/wildpeaks/package-webpack-config-web#readme",
   "dependencies": {
     "clean-webpack-plugin": "0.1.19",
-    "copy-webpack-plugin": "4.5.1",
+    "copy-webpack-plugin": "4.5.2",
     "core-js": "2.5.7",
     "css-loader": "0.28.11",
     "file-loader": "1.1.11",
