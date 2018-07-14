@@ -10,6 +10,7 @@ const SriPlugin = require('webpack-subresource-integrity');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const postcssPresetEnv = require('postcss-preset-env');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const cssnano = require('cssnano');
 const templateFilepath = join(__dirname, 'template.html');
 
 
@@ -301,6 +302,27 @@ module.exports = function getConfig({
 	//endregion
 
 	//region CSS
+	const postcssPlugins = [
+		postcssPresetEnv({
+			browsers,
+			features: {
+				customProperties: {
+					variables: cssVariables
+				}
+			}
+		})
+	];
+	if (!skipPostprocess && minify){
+		postcssPlugins.push(
+			cssnano({
+				preset: ['default', {
+					discardComments: {
+						removeAll: true
+					}
+				}]
+			})
+		);
+	}
 	loaders.push({
 		test: /\.css$/,
 		use: [
@@ -316,16 +338,7 @@ module.exports = function getConfig({
 				loader: 'postcss-loader',
 				options: {
 					ident: 'postcss',
-					plugins: [
-						postcssPresetEnv({
-							browsers,
-							features: {
-								customProperties: {
-									variables: cssVariables
-								}
-							}
-						})
-					]
+					plugins: postcssPlugins
 				}
 			}
 		]
