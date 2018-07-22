@@ -1,6 +1,6 @@
 {
   "name": "@wildpeaks/webpack-config-web",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Webpack base config generator for Web apps",
   "author": "Cecile Muller",
   "license": "MIT",
@@ -47,7 +47,7 @@
   "devDependencies": {
     "@types/node": "10.5.2",
     "@wildpeaks/eslint-config-commonjs": "5.0.0",
-    "eslint": "5.1.0",
+    "eslint": "5.2.0",
     "express": "4.16.3",
     "jasmine": "3.1.0",
     "puppeteer": "1.6.0",
