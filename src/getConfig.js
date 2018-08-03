@@ -45,6 +45,7 @@ function getRegex(extensions){
  * @property {String[]} polyfills List of modules or files to automatically prepend to every entry
  * @property {String[]} webworkerPolyfills List of modules or files to automatically prepend to every webworker
  * @property {RegExp} webworkerPattern RegExp test for the Web Worker loader
+ * @property {Boolean} skipHashes If `true`, it will not add `[hash]` in filenames in production mode.
  */
 
 /**
@@ -73,7 +74,8 @@ module.exports = function getConfig({
 	skipPostprocess = false,
 	polyfills = ['core-js/fn/promise'],
 	webworkerPolyfills = ['core-js/fn/promise'],
-	webworkerPattern = /\.webworker\.ts$/
+	webworkerPattern = /\.webworker\.ts$/,
+	skipHashes = false
 } = {}){
 	strictEqual(typeof rootFolder, 'string', '"rootFolder" should be a String');
 	let actualRootFolder = rootFolder;
@@ -135,6 +137,7 @@ module.exports = function getConfig({
 	strictEqual(typeof skipPostprocess, 'boolean', '"skipPostprocess" should be a Boolean');
 	strictEqual(Array.isArray(polyfills), true, '"polyfills" should be an Array');
 	strictEqual(Array.isArray(webworkerPolyfills), true, '"webworkerPolyfills" should be an Array');
+	strictEqual(typeof skipHashes, 'boolean', '"webworkerPolyfills" should be a Boolean');
 
 	strictEqual(typeof assetsRelativePath, 'string', '"assetsRelativePath" should be a String');
 	if ((assetsRelativePath !== '') && !assetsRelativePath.endsWith('/')){
@@ -173,8 +176,8 @@ module.exports = function getConfig({
 			path: actualOutputFolder,
 			pathinfo: false,
 			publicPath,
-			filename: minify ? '[hash].[name].js' : '[name].js',
-			chunkFilename: minify ? '[hash].chunk.[id].js' : 'chunk.[id].js'
+			filename: (minify && !skipHashes) ? '[hash].[name].js' : '[name].js',
+			chunkFilename: (minify && !skipHashes) ? '[hash].chunk.[id].js' : 'chunk.[id].js'
 		},
 		//endregion
 		//region Hints
@@ -236,7 +239,7 @@ module.exports = function getConfig({
 	//endregion
 
 	//region Subressource Integrity
-	if (!skipPostprocess){
+	if (!skipPostprocess && !skipHashes){
 		config.output.crossOriginLoading = 'anonymous';
 		plugins.push(
 			new SriPlugin({
@@ -283,7 +286,7 @@ module.exports = function getConfig({
 				loader: 'worker-loader',
 				options: {
 					inline: false,
-					name: minify ? '[hash].[name].js' : '[name].js'
+					name: (minify && !skipHashes) ? '[hash].[name].js' : '[name].js'
 				}
 			}
 		]
@@ -345,7 +348,7 @@ module.exports = function getConfig({
 	});
 	plugins.push(
 		new MiniCssExtractPlugin({
-			filename: minify ? '[hash].[name].css' : '[name].css',
+			filename: (minify && !skipHashes) ? '[hash].[name].css' : '[name].css',
 			chunkFilename: '[id].css'
 		})
 	);
@@ -361,7 +364,7 @@ module.exports = function getConfig({
 					loader: 'url-loader',
 					options: {
 						limit: embedLimit,
-						name: minify ? `${assetsRelativePath}[hash].[name].[ext]` : `${assetsRelativePath}[name].[ext]`
+						name: (minify && !skipHashes) ? `${assetsRelativePath}[hash].[name].[ext]` : `${assetsRelativePath}[name].[ext]`
 					}
 				}
 			});
@@ -374,7 +377,7 @@ module.exports = function getConfig({
 					loader: 'url-loader',
 					options: {
 						limit: embedLimit,
-						name: minify ? `${assetsRelativePath}[hash].[name].[ext]` : `${assetsRelativePath}[name].[ext]`
+						name: (minify && !skipHashes) ? `${assetsRelativePath}[hash].[name].[ext]` : `${assetsRelativePath}[name].[ext]`
 					}
 				}
 			});
@@ -391,7 +394,7 @@ module.exports = function getConfig({
 				use: {
 					loader: 'file-loader',
 					options: {
-						name: minify ? `${assetsRelativePath}[hash].[name].[ext]` : `${assetsRelativePath}[name].[ext]`
+						name: (minify && !skipHashes) ? `${assetsRelativePath}[hash].[name].[ext]` : `${assetsRelativePath}[name].[ext]`
 					}
 				}
 			});
@@ -403,7 +406,7 @@ module.exports = function getConfig({
 				use: {
 					loader: 'file-loader',
 					options: {
-						name: minify ? `${assetsRelativePath}[hash].[name].[ext]` : `${assetsRelativePath}[name].[ext]`
+						name: (minify && !skipHashes) ? `${assetsRelativePath}[hash].[name].[ext]` : `${assetsRelativePath}[name].[ext]`
 					}
 				}
 			});
