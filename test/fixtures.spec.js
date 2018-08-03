@@ -1419,3 +1419,92 @@ it('Multiple pages', async() => {
 		await browser.close();
 	}
 }, 60000);
+
+
+it('Minify & skipHashes', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		skipHashes: true,
+		mode: 'production',
+		entry: {
+			myapp: './css-modules/myapp.ts'
+		}
+	});
+
+	let hash = '';
+	for (const actualFile of actualFiles){
+		const regex = /^([^.]+)\.myapp\.js$/;
+		const matches = regex.exec(actualFile);
+		if (matches){
+			hash = matches[1];
+			break;
+		}
+	}
+	expect(hash).toBe('', 'Hash found');
+
+	const expectedFiles = [
+		'index.html',
+		`myapp.css`,
+		`myapp.css.map`,
+		`myapp.js`,
+		`myapp.js.map`
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const cssRaw = readFileSync(join(outputFolder, `myapp.css`), 'utf8');
+	if (/^.([^{}]+){color:green}/.exec(cssRaw) === null){
+		throw new Error('CSS is not minified');
+	}
+
+	const jsRaw = readFileSync(join(outputFolder, `myapp.js`), 'utf8');
+	expect(jsRaw.startsWith('!function(e){'), true, 'JS not minified');
+
+	const browser = await puppeteer.launch();
+	try {
+		const page = await browser.newPage();
+		await page.goto('http://localhost:8888/');
+		const found = await page.evaluate(() => {
+			/* global document */
+			const el0 = document.getElementById('hello');
+			if (el0 === null){
+				return '#hello not found';
+			}
+			if (el0.innerText !== 'Hello World'){
+				return `Bad #hello.innerText: ${el0.innerText}`;
+			}
+
+			const el1 = document.querySelector('script');
+			if (el1 === null){
+				return 'No script';
+			}
+			const jsCrossorigin = el1.getAttribute('crossorigin');
+			if (jsCrossorigin !== null){
+				return `Bad script.crossorigin: ${jsCrossorigin}`;
+			}
+			const jsIntegrity = el1.getAttribute('integrity');
+			if (jsIntegrity !== null){
+				return `Bad script.integrity: ${jsIntegrity}`;
+			}
+
+			const el2 = document.querySelector('link[rel="stylesheet"]');
+			if (el2 === null){
+				return 'No stylesheet';
+			}
+
+			const cssCrossorigin = el2.getAttribute('crossorigin');
+			if (cssCrossorigin !== null){
+				return `Bad link.crossorigin: ${cssCrossorigin}`;
+			}
+			const cssIntegrity = el2.getAttribute('integrity');
+			if (cssIntegrity !== null){
+				return `Bad link.integrity: ${cssIntegrity}`;
+			}
+
+			return 'ok';
+		});
+		expect(found).toBe('ok', 'DOM tests');
+	} finally {
+		await browser.close();
+	}
+});
