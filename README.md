@@ -406,6 +406,15 @@ RegExp test for the Web Worker loader.
 Default: `/\.webworker\.ts$/`
 
 
+---
+### `skipHashes`: Boolean
+
+If `true`, mode "production" won't add SRI hashes to `<script>` and `<link>` tags,
+and filenames will not contain a cache-busting hash.
+
+Default: `false`
+
+
 -------------------------------------------------------------------------------
 
 ## Babel
