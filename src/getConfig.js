@@ -309,7 +309,7 @@ module.exports = function getConfig({
 		postcssPresetEnv({
 			browsers,
 			features: {
-				customProperties: {
+				'custom-properties': {
 					variables: cssVariables
 				}
 			}
