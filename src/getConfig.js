@@ -31,7 +31,6 @@ function getRegex(extensions){
  * @property {String} publicPath Path prepended to url references, e.g. `/` or `/mysite/`
  * @property {String} mode Use `production` to optimize the output, `development` for faster builds
  * @property {Number} port Port for Webpack Dev Server
- * @property {Object} cssVariables CSS Variables, e.g. `{themeBackground: 'rebeccapurple'}`
  * @property {Boolean} cssModules Enables CSS Modules
  * @property {String[]} browsers Target browsers for CSS Autoprefixer
  * @property {String[]} embedLimit Filesize limit to embed assets
@@ -61,7 +60,6 @@ module.exports = function getConfig({
 	publicPath = '/',
 	mode = 'production',
 	port = 8000,
-	cssVariables = {},
 	cssModules = true,
 	browsers = ['>0.25%', 'ie >= 11'],
 	embedLimit = 5000,
@@ -113,12 +111,6 @@ module.exports = function getConfig({
 	strictEqual(isNaN(port), false, '"port" must not be NaN');
 	strictEqual(port > 0, true, '"port" should be a positive number');
 
-	strictEqual(cssVariables === null, false, '"cssVariables" should not be null');
-	strictEqual(Array.isArray(cssVariables), false, '"cssVariables" should not be an Array');
-	strictEqual(cssVariables instanceof Promise, false, '"cssVariables" should not be a Promise');
-	strictEqual(cssVariables instanceof RegExp, false, '"cssVariables" should not be a RegExp');
-	strictEqual(cssVariables instanceof Symbol, false, '"cssVariables" should not be a Symbol');
-	strictEqual(typeof cssVariables, 'object', '"cssVariables" should be an Object');
 	strictEqual(typeof cssModules, 'boolean', '"cssModules" should be a Boolean');
 
 	strictEqual(Array.isArray(browsers), true, '"browsers" should be an Array');
@@ -306,14 +298,7 @@ module.exports = function getConfig({
 
 	//region CSS
 	const postcssPlugins = [
-		postcssPresetEnv({
-			browsers,
-			features: {
-				'custom-properties': {
-					variables: cssVariables
-				}
-			}
-		})
+		postcssPresetEnv({browsers})
 	];
 	if (!skipPostprocess && minify){
 		postcssPlugins.push(

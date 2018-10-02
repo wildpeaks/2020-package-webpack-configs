@@ -348,34 +348,6 @@ it('CSS without CSS Modules', async() => {
 });
 
 
-it('CSS Variables', async() => {
-	const actualFiles = await testFixture({
-		rootFolder,
-		outputFolder,
-		mode: 'development',
-		entry: {
-			myapp: './css-variables/myapp.ts'
-		},
-		cssModules: false,
-		sourcemaps: false,
-		cssVariables: {
-			myvar1: 'green',
-			myvar2: 'blue'
-		}
-	});
-	const expectedFiles = [
-		'index.html',
-		'myapp.css',
-		'myapp.js'
-	];
-	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
-
-	const actual = readFileSync(join(outputFolder, `myapp.css`), 'utf8').trim();
-	const expected = `.myclass1 {color: green;color: var(--myvar1)} .myclass2 {color: blue;color: var(--myvar2)}`;
-	expect(actual).toEqual(expected);
-});
-
-
 it('Assets', async() => {
 	const actualFiles = await testFixture({
 		rootFolder,

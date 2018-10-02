@@ -33,7 +33,7 @@ package.json:
 	"webpack-dev-server": "...",
 
 	// Application-specific dependencies
-	"whatwg-fetch": "..."
+	"unfetch": "..."
 }
 
 ````
@@ -54,7 +54,7 @@ module.exports = function(_env, {mode = 'production'} = {}) {
 		outputFolder: join(__dirname, 'dist'),
 		polyfills: [
 			'core-js/fn/promise',
-			'whatwg-fetch'
+			'unfetch'
 		]
 	});
 };
@@ -93,6 +93,7 @@ Example:
 	}
 
 See [Entry Points](https://webpack.js.org/concepts/entry-points/) in the Webpack documentation.
+
 
 ---
 ### `pages`: Object[]
@@ -203,16 +204,6 @@ Port for Webpack Dev Server.
 Default: `8000`.
 
 See [devServer.port](https://webpack.js.org/configuration/dev-server/#devserver-port) in the Webpack documentation.
-
-
----
-### `cssVariables`: Object
-
-CSS Variables, e.g. `{themeBackground: 'rebeccapurple'}`.
-
-Default: `{}`.
-
-See [customProperties](http://cssnext.io/usage/#features) in the CSSNext documentation.
 
 
 ---
