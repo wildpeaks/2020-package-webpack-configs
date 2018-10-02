@@ -7,9 +7,11 @@
 		".gitignore": true,
 		".gitattributes": true,
 		"node_modules": true,
-		"packages": true,
 		"package-lock.json": true,
-		"out": true
+		"out-assets": true,
+		"out-core": true,
+		"out-optimize": true,
+		"out-webworkers": true
 	},
 	"search.exclude": {
 		"LICENSE": true,
@@ -19,8 +21,10 @@
 		".gitignore": true,
 		".gitattributes": true,
 		"node_modules": true,
-		"packages": true,
 		"package-lock.json": true,
-		"out": true
+		"out-assets": true,
+		"out-core": true,
+		"out-optimize": true,
+		"out-webworkers": true
 	}
 }
