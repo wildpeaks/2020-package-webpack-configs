@@ -12,6 +12,7 @@ const rootFolder = join(__dirname, 'fixtures');
 const outputFolder = join(__dirname, '../out-webworkers');
 let app;
 let server;
+const port = 8883;
 
 
 /**
@@ -62,7 +63,7 @@ async function testFixture(options){
 beforeAll(() => {
 	app = express();
 	app.use(express.static(outputFolder));
-	server = app.listen(8883);
+	server = app.listen(port);
 	jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
 });
 
@@ -103,7 +104,7 @@ it('Webworkers', async() => {
 	const browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
-		await page.goto('http://localhost:8888/');
+		await page.goto(`http://localhost:${port}/`);
 		await sleep(300);
 		const found = await page.evaluate(() => {
 			/* global document */
@@ -160,7 +161,7 @@ it('Webworkers + Polyfills', async() => {
 	const browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
-		await page.goto('http://localhost:8888/');
+		await page.goto(`http://localhost:${port}/`);
 		await sleep(300);
 		const found = await page.evaluate(() => {
 			/* global document */

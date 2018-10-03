@@ -12,6 +12,7 @@ const rootFolder = join(__dirname, 'fixtures');
 const outputFolder = join(__dirname, '../out-assets');
 let app;
 let server;
+const port = 8880;
 
 
 /**
@@ -50,7 +51,7 @@ async function testFixture(options){
 beforeAll(() => {
 	app = express();
 	app.use(express.static(outputFolder));
-	server = app.listen(8880);
+	server = app.listen(port);
 	jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
 });
 
@@ -90,7 +91,7 @@ it('CSS Modules', async() => {
 	const browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
-		await page.goto('http://localhost:8888/');
+		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
 			/* global document */
 			/* global window */
@@ -133,7 +134,7 @@ it('CSS without CSS Modules', async() => {
 	const browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
-		await page.goto('http://localhost:8888/');
+		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
 			/* global document */
 			/* global window */
@@ -183,7 +184,7 @@ it('Assets', async() => {
 	const browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
-		await page.goto('http://localhost:8888/');
+		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
 			/* global document */
 			const container = document.getElementById('assets');
@@ -327,7 +328,7 @@ it('CSS Reset', async() => {
 	const browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
-		await page.goto('http://localhost:8888/');
+		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
 			/* global document */
 			/* global window */

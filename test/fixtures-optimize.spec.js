@@ -12,6 +12,7 @@ const rootFolder = join(__dirname, 'fixtures');
 const outputFolder = join(__dirname, '../out-optimize');
 let app;
 let server;
+const port = 8882;
 
 
 /**
@@ -62,7 +63,7 @@ async function testFixture(options){
 beforeAll(() => {
 	app = express();
 	app.use(express.static(outputFolder));
-	server = app.listen(8882);
+	server = app.listen(port);
 	jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
 });
 
@@ -175,7 +176,7 @@ it('Minify', async() => {
 	const browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
-		await page.goto('http://localhost:8888/');
+		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
 			/* global document */
 			const el0 = document.getElementById('hello');
@@ -263,7 +264,7 @@ it('Minify & skipHashes', async() => {
 	const browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
-		await page.goto('http://localhost:8888/');
+		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
 			/* global document */
 			const el0 = document.getElementById('hello');
@@ -331,7 +332,7 @@ it('Chunks', async() => {
 	const browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
-		await page.goto('http://localhost:8888/');
+		await page.goto(`http://localhost:${port}/`);
 		await sleep(300);
 		const found = await page.evaluate(() => {
 			/* global document */
@@ -377,7 +378,7 @@ it('Chunks & Polyfill', async() => {
 	const browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
-		await page.goto('http://localhost:8888/');
+		await page.goto(`http://localhost:${port}/`);
 		await sleep(300);
 		const found = await page.evaluate(() => {
 			/* global document */

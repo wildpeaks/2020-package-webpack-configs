@@ -12,6 +12,7 @@ const rootFolder = join(__dirname, 'fixtures');
 const outputFolder = join(__dirname, '../out-core');
 let app;
 let server;
+const port = 8881;
 
 
 /**
@@ -50,7 +51,7 @@ async function testFixture(options){
 beforeAll(() => {
 	app = express();
 	app.use(express.static(outputFolder));
-	server = app.listen(8881);
+	server = app.listen(port);
 	jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
 });
 
@@ -87,7 +88,7 @@ it('Basic', async() => {
 	const browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
-		await page.goto('http://localhost:8888/');
+		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
 			/* global document */
 			const el = document.getElementById('hello');
@@ -153,7 +154,7 @@ it('Multiple independant entries', async() => {
 	let browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
-		await page.goto(`http://localhost:8888/app1.html`);
+		await page.goto(`http://localhost:${port}/app1.html`);
 		const found = await page.evaluate(() => {
 			/* global document */
 			const el = document.getElementById('hello');
@@ -173,7 +174,7 @@ it('Multiple independant entries', async() => {
 	browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
-		await page.goto(`http://localhost:8888/app2.html`);
+		await page.goto(`http://localhost:${port}/app2.html`);
 		const found = await page.evaluate(() => {
 			/* global document */
 			const el = document.getElementById('hello');
@@ -193,7 +194,7 @@ it('Multiple independant entries', async() => {
 	browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
-		await page.goto(`http://localhost:8888/app3.html`);
+		await page.goto(`http://localhost:${port}/app3.html`);
 		const found = await page.evaluate(() => {
 			/* global document */
 			const el = document.getElementById('hello');
@@ -231,7 +232,7 @@ it('Local Modules', async() => {
 	const browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
-		await page.goto('http://localhost:8888/');
+		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
 			/* global document */
 			const el = document.getElementById('hello');
@@ -275,7 +276,7 @@ it('Polyfills', async() => {
 	const browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
-		await page.goto('http://localhost:8888/');
+		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
 			/* global document */
 			/* global window */
@@ -390,7 +391,7 @@ it('Inject Patterns', async() => {
 			}
 			request.continue();
 		});
-		await page.goto('http://localhost:8888/');
+		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
 			/* global document */
 			const bodyChildren = document.body.childNodes;
@@ -551,7 +552,7 @@ it('Multiple pages', async() => {
 		const page = await browser.newPage();
 
 		//region page1
-		await page.goto('http://localhost:8888/page1.html');
+		await page.goto(`http://localhost:${port}/page1.html`);
 		const found1 = await page.evaluate(() => {
 			/* global document */
 			if (document.title !== 'One'){
@@ -577,7 +578,7 @@ it('Multiple pages', async() => {
 		//endregion
 
 		//region page2
-		await page.goto('http://localhost:8888/page2.html');
+		await page.goto(`http://localhost:${port}/page2.html`);
 		const found2 = await page.evaluate(() => {
 			/* global document */
 			if (document.title !== 'Two'){
@@ -603,7 +604,7 @@ it('Multiple pages', async() => {
 		//endregion
 
 		//region page3
-		await page.goto('http://localhost:8888/page3.html');
+		await page.goto(`http://localhost:${port}/page3.html`);
 		const found3 = await page.evaluate(() => {
 			/* global document */
 			if (document.title !== 'Three'){
@@ -632,7 +633,7 @@ it('Multiple pages', async() => {
 		//endregion
 
 		//region page4
-		await page.goto('http://localhost:8888/subfolder/page4.html');
+		await page.goto(`http://localhost:${port}/subfolder/page4.html`);
 		const found4 = await page.evaluate(() => {
 			/* global document */
 			if (document.title !== 'Four'){
@@ -661,7 +662,7 @@ it('Multiple pages', async() => {
 		//endregion
 
 		//region page5
-		await page.goto('http://localhost:8888/page5.html');
+		await page.goto(`http://localhost:${port}/page5.html`);
 		const found5 = await page.evaluate(() => {
 			/* global document */
 			if (document.title !== 'Five'){
@@ -708,7 +709,7 @@ it('Multiple pages', async() => {
 		//endregion
 
 		//region page6
-		await page.goto('http://localhost:8888/page6.html');
+		await page.goto(`http://localhost:${port}/page6.html`);
 		const found6 = await page.evaluate(() => {
 			/* global document */
 			if (document.title !== 'Six - Customized'){
