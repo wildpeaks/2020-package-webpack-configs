@@ -312,7 +312,7 @@ module.exports = function getConfig({
 		);
 	}
 	loaders.push({
-		test: /\.css$/,
+		test: /\.(scss|css)$/,
 		use: [
 			MiniCssExtractPlugin.loader,
 			{
@@ -328,7 +328,8 @@ module.exports = function getConfig({
 					ident: 'postcss',
 					plugins: postcssPlugins
 				}
-			}
+			},
+			'sass-loader'
 		]
 	});
 	plugins.push(

@@ -201,10 +201,6 @@ it('CSS Reset', async() => {
 	}
 });
 
-//
-// TODO SCSS tests
-//
-
-it('SCSS Variables');
-it('SCSS Import');
+// it('SCSS Variables');
+// it('SCSS Import');
 
