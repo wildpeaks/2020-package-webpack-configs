@@ -31,8 +31,8 @@ function getRegex(extensions){
  * @property {String} publicPath Path prepended to url references, e.g. `/` or `/mysite/`
  * @property {String} mode Use `production` to optimize the output, `development` for faster builds
  * @property {Number} port Port for Webpack Dev Server
- * @property {Object} cssVariables CSS Variables, e.g. `{themeBackground: 'rebeccapurple'}`
  * @property {Boolean} cssModules Enables CSS Modules
+ * @property {String} scss Arbitrary SCSS code prepended to every .css and .scss file. Useful for setting variables.
  * @property {String[]} browsers Target browsers for CSS Autoprefixer
  * @property {String[]} embedLimit Filesize limit to embed assets
  * @property {String[]} embedExtensions File extensions of files to embed as base64 (if small enough) or just copy as-is (if large)
@@ -61,8 +61,8 @@ module.exports = function getConfig({
 	publicPath = '/',
 	mode = 'production',
 	port = 8000,
-	cssVariables = {},
 	cssModules = true,
+	scss = '',
 	browsers = ['>0.25%', 'ie >= 11'],
 	embedLimit = 5000,
 	embedExtensions = ['jpg', 'png', 'gif', 'svg'],
@@ -113,13 +113,8 @@ module.exports = function getConfig({
 	strictEqual(isNaN(port), false, '"port" must not be NaN');
 	strictEqual(port > 0, true, '"port" should be a positive number');
 
-	strictEqual(cssVariables === null, false, '"cssVariables" should not be null');
-	strictEqual(Array.isArray(cssVariables), false, '"cssVariables" should not be an Array');
-	strictEqual(cssVariables instanceof Promise, false, '"cssVariables" should not be a Promise');
-	strictEqual(cssVariables instanceof RegExp, false, '"cssVariables" should not be a RegExp');
-	strictEqual(cssVariables instanceof Symbol, false, '"cssVariables" should not be a Symbol');
-	strictEqual(typeof cssVariables, 'object', '"cssVariables" should be an Object');
 	strictEqual(typeof cssModules, 'boolean', '"cssModules" should be a Boolean');
+	strictEqual(typeof scss, 'string', '"scss" should be a String');
 
 	strictEqual(Array.isArray(browsers), true, '"browsers" should be an Array');
 	strictEqual(browsers.length > 0, true, '"browsers" should not be empty');
@@ -306,14 +301,7 @@ module.exports = function getConfig({
 
 	//region CSS
 	const postcssPlugins = [
-		postcssPresetEnv({
-			browsers,
-			features: {
-				'custom-properties': {
-					variables: cssVariables
-				}
-			}
-		})
+		postcssPresetEnv({browsers})
 	];
 	if (!skipPostprocess && minify){
 		postcssPlugins.push(
@@ -326,25 +314,37 @@ module.exports = function getConfig({
 			})
 		);
 	}
-	loaders.push({
-		test: /\.css$/,
-		use: [
-			MiniCssExtractPlugin.loader,
-			{
-				loader: 'css-loader',
-				options: {
-					minimize: minify,
-					modules: cssModules
-				}
-			},
-			{
-				loader: 'postcss-loader',
-				options: {
-					ident: 'postcss',
-					plugins: postcssPlugins
-				}
+	const cssLoaders = [
+		MiniCssExtractPlugin.loader,
+		{
+			loader: 'css-loader',
+			options: {
+				minimize: minify,
+				modules: cssModules
 			}
-		]
+		},
+		{
+			loader: 'postcss-loader',
+			options: {
+				ident: 'postcss',
+				plugins: postcssPlugins
+			}
+		}
+	];
+
+	if (scss !== ''){
+		cssLoaders.push({
+			loader: 'sass-loader',
+			options: {
+				data: scss
+			}
+		});
+	} else {
+		cssLoaders.push('sass-loader');
+	}
+	loaders.push({
+		test: /\.(scss|css)$/,
+		use: cssLoaders
 	});
 	plugins.push(
 		new MiniCssExtractPlugin({

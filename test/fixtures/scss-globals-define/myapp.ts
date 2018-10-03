@@ -1,8 +1,7 @@
 /* eslint-env browser */
-import './myapp.css';
 
+// nothing to do
 const mydiv = document.createElement('div');
 mydiv.setAttribute('id', 'hello');
-mydiv.className = 'myclass';
 mydiv.innerText = 'Hello World';
 document.body.appendChild(mydiv);

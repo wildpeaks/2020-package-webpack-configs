@@ -33,7 +33,7 @@ package.json:
 	"webpack-dev-server": "...",
 
 	// Application-specific dependencies
-	"whatwg-fetch": "..."
+	"unfetch": "..."
 }
 
 ````
@@ -54,7 +54,7 @@ module.exports = function(_env, {mode = 'production'} = {}) {
 		outputFolder: join(__dirname, 'dist'),
 		polyfills: [
 			'core-js/fn/promise',
-			'whatwg-fetch'
+			'unfetch'
 		]
 	});
 };
@@ -93,6 +93,7 @@ Example:
 	}
 
 See [Entry Points](https://webpack.js.org/concepts/entry-points/) in the Webpack documentation.
+
 
 ---
 ### `pages`: Object[]
@@ -206,16 +207,6 @@ See [devServer.port](https://webpack.js.org/configuration/dev-server/#devserver-
 
 
 ---
-### `cssVariables`: Object
-
-CSS Variables, e.g. `{themeBackground: 'rebeccapurple'}`.
-
-Default: `{}`.
-
-See [customProperties](http://cssnext.io/usage/#features) in the CSSNext documentation.
-
-
----
 ### `cssModules`: Boolean
 
 The **CSS Modules** option makes classnames and identifiers globally unique at build time.
@@ -223,6 +214,48 @@ The **CSS Modules** option makes classnames and identifiers globally unique at b
 Default: `true`.
 
 See [Modules](https://github.com/webpack-contrib/css-loader#modules) in the `css-loader` documentation.
+
+
+### `scss`: String
+
+Prepends arbitrary SCSS (or plain CSS) code to all `.css` and `.scss` files.
+
+Useful for defining globals or adding a framework:
+ - *SCSS Variables* for build-time variables
+ - *CSS Custom properties* for runtime variables
+
+Default: `""`.
+
+Examples:
+```js
+// Define SASS variables
+scss: `
+	$primary: rgb(0, 255, 0);
+	$secondary: rgb(0, 128, 0);
+`
+```
+
+```js
+// Import a SASS stylesheet
+scss: '@import "variables.scss";'
+```
+
+```js
+// Imports a CSS reset and multiple stylesheets from a framework
+polyfills: [
+	'./src/reset.css'
+]
+scss: `
+	@import "myframework/functions";
+	@import "myframework/variables";
+`
+```
+
+See [CSS Custom Properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_variables) in MDN
+and [SASS Variables](https://sass-lang.com/guide#topic-2) in SASS documentation.
+
+Note that given this is prepended to every file, this is a good fit for theme variables.
+However you would use `polyfills` instead to add a CSS Reset once per entry.
 
 
 ---
@@ -276,12 +309,12 @@ Examples:
 {from: 'models', to: 'assets'}
 
 // Copy specific files:
-// "extras/models/example.ext" is copied to "assets/extras/models/example.ext"
-{from: 'extras/**/*.3d', to: 'assets'}
+// "extras/models/example.gltf" is copied to "assets/extras/models/example.gltf"
+{from: 'extras/**/*.gltf', to: 'assets'}
 
 // Copy specific files:
-// "extras/models/example.ext" is copied to "assets/models/example.ext"
-{from: '**/*.3d', to: 'assets', context: 'extras'}
+// "extras/models/example.gltf" is copied to "assets/models/example.gltf"
+{from: '**/*.gltf', to: 'assets', context: 'extras'}
 
 // Ignore some files
 {from: 'textures', to: 'assets', ignore: ['Thumbs.db']}
@@ -379,9 +412,17 @@ Default: `false`
 List of modules or files to automatically prepend to every entry.
 They are resolved from `rootFolder`.
 
-Note: given this handle any filetype the loaders do, you could also have a **CSS Reset** stylesheet in this list for example.
-
 Default: `['core-js/fn/promise']`
+
+Note: given this accepts any extensions the loaders to, you could also use it to add a **CSS Reset**, example:
+````ts
+//...
+polyfills: [
+	'core-js/fn/promise',
+	'./src/reset.css'
+],
+//...
+````
 
 
 ---
