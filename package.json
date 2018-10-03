@@ -14,6 +14,7 @@
   "scripts": {
     "test:params": "jasmine test/params-*.spec.js",
     "test:assets": "jasmine test/fixtures-assets.spec.js",
+    "test:css": "jasmine test/fixtures-css.spec.js",
     "test:core": "jasmine test/fixtures-core.spec.js",
     "test:optimize": "jasmine test/fixtures-optimize.spec.js",
     "test:webworkers": "jasmine test/fixtures-webworkers.spec.js",
