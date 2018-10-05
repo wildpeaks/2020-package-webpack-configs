@@ -288,6 +288,16 @@ Default: `["jpg", "png", "gif", "svg"]`.
 
 
 ---
+### `rawExtensions`: String[]
+
+File extensions of files to import as raw String, for files referenced by `import` or `require`.
+
+Default: `[]`.
+
+Example: `["txt", "html", "md"]`.
+
+
+---
 ### `copyExtensions`: String[]
 
 File extensions of files to just copy as-is, for files referenced by `import` or `require`.
