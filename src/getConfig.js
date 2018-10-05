@@ -36,6 +36,7 @@ function getRegex(extensions){
  * @property {String[]} browsers Target browsers for CSS Autoprefixer
  * @property {String[]} embedLimit Filesize limit to embed assets
  * @property {String[]} embedExtensions File extensions of files to embed as base64 (if small enough) or just copy as-is (if large)
+ * @property {String[]} rawExtensions File extensions of files to load as raw string
  * @property {String[]} copyExtensions File extensions of files to just copy as-is
  * @property {Object[]} copyPatterns Files and directories to copy as-is, without having to reference them in the code
  * @property {Object[]} injectPatterns Additional scripts and stylesheets to inject in HTML
@@ -66,6 +67,7 @@ module.exports = function getConfig({
 	browsers = ['>0.25%', 'ie >= 11'],
 	embedLimit = 5000,
 	embedExtensions = ['jpg', 'png', 'gif', 'svg'],
+	rawExtensions = ['txt'],
 	copyExtensions = ['woff'],
 	copyPatterns = [],
 	injectPatterns = [],
@@ -123,6 +125,7 @@ module.exports = function getConfig({
 	strictEqual(isNaN(embedLimit), false, '"embedLimit" must not be NaN');
 
 	strictEqual(Array.isArray(embedExtensions), true, '"embedExtensions" should be an Array');
+	strictEqual(Array.isArray(rawExtensions), true, '"rawExtensions" should be an Array');
 	strictEqual(Array.isArray(copyExtensions), true, '"copyExtensions" should be an Array');
 	strictEqual(Array.isArray(copyPatterns), true, '"copyPatterns" should be an Array');
 	strictEqual(Array.isArray(injectPatterns), true, '"injectPatterns" should be an Array');
@@ -386,6 +389,17 @@ module.exports = function getConfig({
 	//endregion
 
 	//region Raw assets imported in code
+	if (rawExtensions.length > 0){
+		loaders.push({
+			test: getRegex(rawExtensions),
+			use: {
+				loader: 'raw-loader'
+			}
+		});
+	}
+	//endregion
+
+	//region Assets imported in code
 	if (copyExtensions.length > 0){
 		if (copyExtensions.includes('json')){
 			loaders.push({

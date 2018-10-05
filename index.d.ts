@@ -24,3 +24,12 @@ declare module '*.gif' {
 	const _: string;
 	export = _;
 }
+
+declare module '*.txt' {
+	const _: string;
+	export = _;
+}
+declare module '*.liquid' {
+	const _: string;
+	export = _;
+}

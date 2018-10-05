@@ -216,3 +216,51 @@ it('Copy Patterns', async() => {
 	];
 	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
 });
+
+
+it('Raw imports', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		mode: 'development',
+		entry: {
+			myapp: './raw/myapp.ts'
+		},
+		rawExtensions: ['txt', 'liquid']
+	});
+	const expectedFiles = [
+		'index.html',
+		'myapp.js',
+		'myapp.js.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+
+	const browser = await puppeteer.launch();
+	try {
+		const page = await browser.newPage();
+		await page.goto(`http://localhost:${port}/`);
+		const found = await page.evaluate(() => {
+			/* global document */
+			const el1 = document.getElementById('hello1');
+			if (el1 === null){
+				return '#hello1 not found';
+			}
+			if (el1.innerText !== 'Hello world\n'){
+				return `Bad #hello1.innerText: ${el1.innerText}`;
+			}
+
+			const el2 = document.getElementById('hello2');
+			if (el2 === null){
+				return '#hello2 not found';
+			}
+			if (el2.innerText !== 'Hello {{ world }}\n'){
+				return `Bad #hello2.innerText: ${el2.innerText}`;
+			}
+			return 'ok';
+		});
+		expect(found).toBe('ok', 'DOM tests');
+	} finally {
+		await browser.close();
+	}
+});
