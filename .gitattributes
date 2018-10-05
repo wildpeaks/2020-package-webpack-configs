@@ -6,6 +6,9 @@
 LICENSE         text
 *.html          text
 *.md            text
+*.txt           text
+*.liquid        text
+
 *.js            text
 *.ts            text
 *.json          text
