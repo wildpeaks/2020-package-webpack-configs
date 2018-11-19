@@ -1,6 +1,6 @@
 {
   "name": "@wildpeaks/webpack-config-web",
-  "version": "2.0.9",
+  "version": "2.0.10",
   "description": "Webpack base config generator for Web apps",
   "author": "Cecile Muller",
   "license": "MIT",
@@ -31,7 +31,7 @@
   },
   "homepage": "https://github.com/wildpeaks/package-webpack-config-web#readme",
   "dependencies": {
-    "clean-webpack-plugin": "0.1.19",
+    "clean-webpack-plugin": "1.0.0",
     "copy-webpack-plugin": "4.6.0",
     "core-js": "2.5.7",
     "css-loader": "1.0.1",
@@ -56,14 +56,14 @@
   "devDependencies": {
     "@types/node": "10.12.5",
     "@wildpeaks/eslint-config-commonjs": "5.2.0",
-    "eslint": "5.8.0",
+    "eslint": "5.9.0",
     "express": "4.16.4",
     "jasmine": "3.3.0",
     "puppeteer": "1.10.0",
     "recursive-readdir": "2.2.2",
     "rimraf": "2.6.2",
     "typescript": "3.1.6",
-    "webpack": "4.25.1"
+    "webpack": "4.26.0"
   },
   "peerDependencies": {
     "typescript": "*",
