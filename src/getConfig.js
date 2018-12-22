@@ -322,7 +322,6 @@ module.exports = function getConfig({
 		{
 			loader: 'css-loader',
 			options: {
-				minimize: minify,
 				modules: cssModules
 			}
 		},
