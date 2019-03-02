@@ -29,7 +29,7 @@ function testFixture(title, browsers, expectThrows){
 }
 
 testFixture('Valid: ["last 2 versions"]', ['last 2 versions'], false);
-testFixture('Invalid: ["dummy"]', ['dummy'], false);
+testFixture('Invalid: ["dummy"]', ['dummy'], true);
 testFixture('Invalid: []', [], true);
 testFixture('Invalid: {}', {}, true);
 testFixture('Invalid: 123', 123, true);
