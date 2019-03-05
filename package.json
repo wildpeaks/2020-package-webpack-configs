@@ -59,7 +59,7 @@
     "eslint": "5.15.0",
     "express": "4.16.4",
     "jasmine": "3.3.1",
-    "puppeteer": "1.12.2",
+    "puppeteer": "1.13.0",
     "recursive-readdir": "2.2.2",
     "rimraf": "2.6.3",
     "typescript": "3.3.3333",
