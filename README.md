@@ -53,7 +53,7 @@ module.exports = function(_env, {mode = 'production'} = {}) {
 		rootFolder: __dirname,
 		outputFolder: join(__dirname, 'dist'),
 		polyfills: [
-			'core-js/fn/promise',
+			'core-js/stable/promise',
 			'unfetch'
 		]
 	});
@@ -422,13 +422,13 @@ Default: `false`
 List of modules or files to automatically prepend to every entry.
 They are resolved from `rootFolder`.
 
-Default: `['core-js/fn/promise']`
+Default: `['core-js/stable/promise']`
 
 Note: given this accepts any extensions the loaders to, you could also use it to add a **CSS Reset**, example:
 ````ts
 //...
 polyfills: [
-	'core-js/fn/promise',
+	'core-js/stable/promise',
 	'./src/reset.css'
 ],
 //...
@@ -446,7 +446,7 @@ are resolved from each webworker unlike `polyfills` (because `worker-loader` doe
 an option to have an array for its internal compilation, unlike main "entry" points,
 so the `webworkerPolyfills` references are imported directly in the code).
 
-Default: `['core-js/fn/promise']`
+Default: `['core-js/stable/promise']`
 
 
 ---
