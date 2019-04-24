@@ -32,7 +32,7 @@
   "homepage": "https://github.com/wildpeaks/package-webpack-config-web#readme",
   "dependencies": {
     "clean-webpack-plugin": "1.0.1",
-    "copy-webpack-plugin": "5.0.2",
+    "copy-webpack-plugin": "5.0.3",
     "core-js": "3.0.1",
     "css-loader": "2.1.1",
     "cssnano": "4.1.10",
