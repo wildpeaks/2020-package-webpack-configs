@@ -422,7 +422,7 @@ it('Inject Patterns', async() => {
 				return `Wrong head.children[6] tagName: "${headChild6.tagName}"`;
 			}
 			const headChild6Href = String(headChild6.getAttribute('href'));
-			if (headChild6Href !== '/mypublic/override-styles-1.css'){
+			if ((headChild6Href !== '/mypublic/override-styles-1.css') && (headChild6Href !== '\\mypublic\\override-styles-1.css')){
 				return `Wrong head.children[6] href: "${headChild6Href}"`;
 			}
 
@@ -440,7 +440,7 @@ it('Inject Patterns', async() => {
 				return `Wrong head.children[8] tagName: "${headChild8.tagName}"`;
 			}
 			const headChild8Href = String(headChild8.getAttribute('href'));
-			if (headChild8Href !== 'custom/override-styles-3.css'){
+			if ((headChild8Href !== 'custom/override-styles-3.css') && (headChild8Href !== 'custom\\override-styles-3.css')){
 				return `Wrong head.children[8] href: "${headChild8Href}"`;
 			}
 
@@ -458,7 +458,7 @@ it('Inject Patterns', async() => {
 				return `Wrong body.children[2] tagName: "${bodyChild2.tagName}"`;
 			}
 			const bodyChild2Src = String(bodyChild2.getAttribute('src'));
-			if (bodyChild2Src !== '/mypublic/thirdparty/three.min.js'){
+			if ((bodyChild2Src !== '/mypublic/thirdparty/three.min.js') && (bodyChild2Src !== '\\mypublic\\thirdparty\\three.min.js')){
 				return `Wrong body.children[2] src: "${bodyChild2Src}"`;
 			}
 
@@ -467,7 +467,7 @@ it('Inject Patterns', async() => {
 				return `Wrong body.children[3] tagName: "${bodyChild3.tagName}"`;
 			}
 			const bodyChild3Src = String(bodyChild3.getAttribute('src'));
-			if (bodyChild3Src !== '/mypublic/thirdparty/OrbitControls.js'){
+			if ((bodyChild3Src !== '/mypublic/thirdparty/OrbitControls.js') && (bodyChild3Src !== '\\mypublic\\thirdparty\\OrbitControls.js')){
 				return `Wrong body.children[3] src: "${bodyChild3Src}"`;
 			}
 
