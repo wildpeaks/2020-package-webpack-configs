@@ -304,7 +304,7 @@ module.exports = function getConfig({
 
 	//region CSS
 	const postcssPlugins = [
-		postcssPresetEnv({browsers})
+		postcssPresetEnv({overrideBrowserslist: browsers})
 	];
 	if (!skipPostprocess && minify){
 		postcssPlugins.push(
