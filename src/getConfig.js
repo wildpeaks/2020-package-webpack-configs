@@ -64,7 +64,6 @@ module.exports = function getConfig({
 	port = 8000,
 	cssModules = true,
 	scss = '',
-	browsers = ['>0.25%', 'ie >= 11'],
 	embedLimit = 5000,
 	embedExtensions = ['jpg', 'png', 'gif', 'svg'],
 	rawExtensions = ['txt'],
@@ -117,9 +116,6 @@ module.exports = function getConfig({
 
 	strictEqual(typeof cssModules, 'boolean', '"cssModules" should be a Boolean');
 	strictEqual(typeof scss, 'string', '"scss" should be a String');
-
-	strictEqual(Array.isArray(browsers), true, '"browsers" should be an Array');
-	strictEqual(browsers.length > 0, true, '"browsers" should not be empty');
 
 	strictEqual(typeof embedLimit, 'number', '"embedLimit" should be a Number');
 	strictEqual(isNaN(embedLimit), false, '"embedLimit" must not be NaN');
@@ -304,7 +300,7 @@ module.exports = function getConfig({
 
 	//region CSS
 	const postcssPlugins = [
-		postcssPresetEnv({overrideBrowserslist: browsers})
+		postcssPresetEnv()
 	];
 	if (!skipPostprocess && minify){
 		postcssPlugins.push(

@@ -259,16 +259,6 @@ However you would use `polyfills` instead to add a CSS Reset once per entry.
 
 
 ---
-### `browsers`: String[]
-
-Target browsers for **CSS Autoprefixer**.
-
-Default: `[">0.25%", "ie >= 11"]`.
-
-See [browsers](http://cssnext.io/usage/#browsers) in the CSSNext documentation.
-
-
----
 ### `embedLimit`: String[]
 
 Filesize limit to embed assets.
@@ -464,6 +454,32 @@ If `true`, mode "production" won't add SRI hashes to `<script>` and `<link>` tag
 and filenames will not contain a cache-busting hash.
 
 Default: `false`
+
+
+-------------------------------------------------------------------------------
+
+## CSS Autoprefixer
+
+The property `browsers` has been removed in v3.0.0,
+but PostCSS can still autoprefix based on a browsers list.
+
+Your project should either contain a `.browserslistrc` file, for example:
+
+````
+>0.25%
+ie >= 11
+````
+
+or a `browserlist` section in your `package.json`, for example:
+
+````json
+"browserslist": [
+  ">0.25%",
+  "ie >= 11"
+]
+````
+
+More information at [Browserslist](https://github.com/browserslist/browserslist#readme).
 
 
 -------------------------------------------------------------------------------
