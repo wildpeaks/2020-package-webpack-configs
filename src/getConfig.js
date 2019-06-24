@@ -3,7 +3,7 @@
 'use strict';
 const {strictEqual} = require('assert');
 const {basename, join, isAbsolute} = require('path');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
 const SriPlugin = require('webpack-subresource-integrity');
@@ -195,11 +195,11 @@ module.exports = function getConfig({
 	//region Reset the output
 	if (!skipPostprocess){
 		plugins.push(
-			new CleanWebpackPlugin([
-				basename(actualOutputFolder)
-			], {
-				root: join(actualOutputFolder, '..'),
-				verbose: false
+			new CleanWebpackPlugin({
+				verbose: false,
+				cleanOnceBeforeBuildPatterns: [
+					basename(actualOutputFolder)
+				]
 			})
 		);
 	}
