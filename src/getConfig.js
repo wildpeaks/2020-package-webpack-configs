@@ -5,7 +5,7 @@ const {strictEqual} = require('assert');
 const {basename, join, isAbsolute} = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const HtmlWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plugin');
+const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
 const SriPlugin = require('webpack-subresource-integrity');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const postcssPresetEnv = require('postcss-preset-env');
@@ -438,7 +438,7 @@ module.exports = function getConfig({
 	if (injectPatterns.length > 0){
 		for (const injectPattern of injectPatterns){
 			plugins.push(
-				new HtmlWebpackIncludeAssetsPlugin(injectPattern)
+				new HtmlWebpackTagsPlugin(injectPattern)
 			);
 		}
 	}

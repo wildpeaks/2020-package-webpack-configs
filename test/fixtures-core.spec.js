@@ -323,26 +323,26 @@ it('Inject Patterns', async() => {
 		injectPatterns: [
 			{
 				append: false,
-				assets: ['thirdparty/three.min.js', 'thirdparty/OrbitControls.js']
+				tags: ['thirdparty/three.min.js', 'thirdparty/OrbitControls.js']
 			},
 			{
 				append: true,
-				assets: ['override-styles-1.css']
+				tags: ['override-styles-1.css']
 			},
 			{
 				append: true,
 				publicPath: false,
-				assets: ['override-styles-2.css']
+				tags: ['override-styles-2.css']
 			},
 			{
 				append: true,
 				publicPath: 'custom/',
-				assets: ['override-styles-3.css']
+				tags: ['override-styles-3.css']
 			},
 			{
 				append: false,
 				publicPath: false,
-				assets: [
+				tags: [
 					{
 						type: 'css',
 						path: 'http://example.com/stylesheet',

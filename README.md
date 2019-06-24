@@ -344,7 +344,7 @@ Examples:
 {
 	append: false,
 	publicPath: false,
-	assets: [
+	tags: [
 		{
 			type: 'css',
 			path: 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css',
@@ -367,17 +367,17 @@ Examples:
 // `append: false` to add at the beginning
 {
 	append: false,
-	assets: ['thirdparty/three.min.js', 'thirdparty/OrbitControls.js']
+	tags: ['thirdparty/three.min.js', 'thirdparty/OrbitControls.js']
 }
 
 // `append: true` to add at the end
 {
 	append: true,
-	assets: ['override-styles.css']
+	tags: ['override-styles.css']
 }
 ````
 
-See [Options](https://github.com/jharris4/html-webpack-include-assets-plugin#options) in the `html-webpack-include-assets-plugin` documentation.
+See [Options](https://www.npmjs.com/package/html-webpack-tags-plugin#options) in the `html-webpack-tags-plugin` documentation.
 
 
 ---
