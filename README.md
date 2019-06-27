@@ -259,16 +259,6 @@ However you would use `polyfills` instead to add a CSS Reset once per entry.
 
 
 ---
-### `browsers`: String[]
-
-Target browsers for **CSS Autoprefixer**.
-
-Default: `[">0.25%", "ie >= 11"]`.
-
-See [browsers](http://cssnext.io/usage/#browsers) in the CSSNext documentation.
-
-
----
 ### `embedLimit`: String[]
 
 Filesize limit to embed assets.
@@ -354,7 +344,7 @@ Examples:
 {
 	append: false,
 	publicPath: false,
-	assets: [
+	tags: [
 		{
 			type: 'css',
 			path: 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css',
@@ -377,17 +367,17 @@ Examples:
 // `append: false` to add at the beginning
 {
 	append: false,
-	assets: ['thirdparty/three.min.js', 'thirdparty/OrbitControls.js']
+	tags: ['thirdparty/three.min.js', 'thirdparty/OrbitControls.js']
 }
 
 // `append: true` to add at the end
 {
 	append: true,
-	assets: ['override-styles.css']
+	tags: ['override-styles.css']
 }
 ````
 
-See [Options](https://github.com/jharris4/html-webpack-include-assets-plugin#options) in the `html-webpack-include-assets-plugin` documentation.
+See [Options](https://www.npmjs.com/package/html-webpack-tags-plugin#options) in the `html-webpack-tags-plugin` documentation.
 
 
 ---
@@ -464,6 +454,84 @@ If `true`, mode "production" won't add SRI hashes to `<script>` and `<link>` tag
 and filenames will not contain a cache-busting hash.
 
 Default: `false`
+
+
+-------------------------------------------------------------------------------
+
+## Import CSS / SCSS / Images
+
+By default, Typescript doesn't know what importing CSS or images return.
+
+This is not needed for building the bundles, however VSCode wouldn't have proper autocompletion.
+Therefore you should add generic type definitions (for example in `/src/index.d.ts`):
+
+````ts
+// CSS Modules Loader
+declare module '*.css' {
+	const _: {
+		[key: string]: string;
+	};
+	export = _;
+}
+declare module '*.scss' {
+	const _: {
+		[key: string]: string;
+	};
+	export = _;
+}
+
+// URL Loader
+declare module '*.jpg' {
+	const _: string;
+	export = _;
+}
+declare module '*.png' {
+	const _: string;
+	export = _;
+}
+````
+
+This is already enough, but you can go even further with CSS Modules by typecasting it after import:
+
+````ts
+// "styles.css" contains classes `mybutton` and `mycontainer`
+import * as rawCSS from './styles.css';
+
+// Typecast to specify which properties exist
+const typedCSS = rawCSS as {
+	mybutton: string;
+	mycontainer: string;
+};
+
+console.log( rawCSS.fake );        // the error is not detected
+console.log( typedCSS.fake );      // the error is detected
+````
+
+
+-------------------------------------------------------------------------------
+
+## CSS Autoprefixer
+
+The property `browsers` has been removed in v3.0.0,
+but PostCSS can still autoprefix based on a browsers list.
+
+Your project should either contain a `.browserslistrc` file, for example:
+
+````
+>0.25%
+ie >= 11
+````
+
+or a `browserlist` section in your `package.json`, for example:
+
+````json
+"browserslist": [
+  ">0.25%",
+  "ie >= 11"
+]
+````
+
+More information at [Browserslist](https://github.com/browserslist/browserslist#readme).
 
 
 -------------------------------------------------------------------------------

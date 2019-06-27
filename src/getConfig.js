@@ -3,9 +3,9 @@
 'use strict';
 const {strictEqual} = require('assert');
 const {basename, join, isAbsolute} = require('path');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const HtmlWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plugin');
+const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
 const SriPlugin = require('webpack-subresource-integrity');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const postcssPresetEnv = require('postcss-preset-env');
@@ -64,7 +64,6 @@ module.exports = function getConfig({
 	port = 8000,
 	cssModules = true,
 	scss = '',
-	browsers = ['>0.25%', 'ie >= 11'],
 	embedLimit = 5000,
 	embedExtensions = ['jpg', 'png', 'gif', 'svg'],
 	rawExtensions = ['txt'],
@@ -117,9 +116,6 @@ module.exports = function getConfig({
 
 	strictEqual(typeof cssModules, 'boolean', '"cssModules" should be a Boolean');
 	strictEqual(typeof scss, 'string', '"scss" should be a String');
-
-	strictEqual(Array.isArray(browsers), true, '"browsers" should be an Array');
-	strictEqual(browsers.length > 0, true, '"browsers" should not be empty');
 
 	strictEqual(typeof embedLimit, 'number', '"embedLimit" should be a Number');
 	strictEqual(isNaN(embedLimit), false, '"embedLimit" must not be NaN');
@@ -199,11 +195,11 @@ module.exports = function getConfig({
 	//region Reset the output
 	if (!skipPostprocess){
 		plugins.push(
-			new CleanWebpackPlugin([
-				basename(actualOutputFolder)
-			], {
-				root: join(actualOutputFolder, '..'),
-				verbose: false
+			new CleanWebpackPlugin({
+				verbose: false,
+				cleanOnceBeforeBuildPatterns: [
+					basename(actualOutputFolder)
+				]
 			})
 		);
 	}
@@ -304,7 +300,7 @@ module.exports = function getConfig({
 
 	//region CSS
 	const postcssPlugins = [
-		postcssPresetEnv({overrideBrowserslist: browsers})
+		postcssPresetEnv()
 	];
 	if (!skipPostprocess && minify){
 		postcssPlugins.push(
@@ -442,7 +438,7 @@ module.exports = function getConfig({
 	if (injectPatterns.length > 0){
 		for (const injectPattern of injectPatterns){
 			plugins.push(
-				new HtmlWebpackIncludeAssetsPlugin(injectPattern)
+				new HtmlWebpackTagsPlugin(injectPattern)
 			);
 		}
 	}
