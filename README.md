@@ -458,6 +458,58 @@ Default: `false`
 
 -------------------------------------------------------------------------------
 
+## Import CSS / SCSS / Images
+
+By default, Typescript doesn't know what importing CSS or images return.
+
+This is not needed for building the bundles, however VSCode wouldn't have proper autocompletion.
+Therefore you should add generic type definitions (for example in `/src/index.d.ts`):
+
+````ts
+// CSS Modules Loader
+declare module '*.css' {
+	const _: {
+		[key: string]: string;
+	};
+	export = _;
+}
+declare module '*.scss' {
+	const _: {
+		[key: string]: string;
+	};
+	export = _;
+}
+
+// URL Loader
+declare module '*.jpg' {
+	const _: string;
+	export = _;
+}
+declare module '*.png' {
+	const _: string;
+	export = _;
+}
+````
+
+This is already enough, but you can go even further with CSS Modules by typecasting it after import:
+
+````ts
+// "styles.css" contains classes `mybutton` and `mycontainer`
+import * as rawCSS from './styles.css';
+
+// Typecast to specify which properties exist
+const typedCSS = rawCSS as {
+	mybutton: string;
+	mycontainer: string;
+};
+
+console.log( rawCSS.fake );        // the error is not detected
+console.log( typedCSS.fake );      // the error is detected
+````
+
+
+-------------------------------------------------------------------------------
+
 ## CSS Autoprefixer
 
 The property `browsers` has been removed in v3.0.0,
