@@ -442,5 +442,6 @@ declare module "@wildpeaks/webpack-config-web" {
 	/**
 	 * Generates a Webpack 4 config for Typescript webapps.
 	 */
-	export default function getConfig(options: GetConfigOptions): Configuration;
+	function getConfig(options: GetConfigOptions): Configuration;
+	export = getConfig;
 }
