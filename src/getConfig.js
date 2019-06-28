@@ -22,38 +22,6 @@ function getRegex(extensions){
 }
 
 
-/**
- * @typedef GetConfigOptions
- * @property {Object} entry Webpack entries
- * @property {Object[]} pages List of HTML pages to output
- * @property {String} rootFolder Absolute path to the root context folder
- * @property {String} outputFolder Absolute path to the folder where files are emitted
- * @property {String} publicPath Path prepended to url references, e.g. `/` or `/mysite/`
- * @property {String} mode Use `production` to optimize the output, `development` for faster builds
- * @property {Number} port Port for Webpack Dev Server
- * @property {Boolean} cssModules Enables CSS Modules
- * @property {String} scss Arbitrary SCSS code prepended to every .css and .scss file. Useful for setting variables.
- * @property {String[]} browsers Target browsers for CSS Autoprefixer
- * @property {String[]} embedLimit Filesize limit to embed assets
- * @property {String[]} embedExtensions File extensions of files to embed as base64 (if small enough) or just copy as-is (if large)
- * @property {String[]} rawExtensions File extensions of files to load as raw string
- * @property {String[]} copyExtensions File extensions of files to just copy as-is
- * @property {Object[]} copyPatterns Files and directories to copy as-is, without having to reference them in the code
- * @property {Object[]} injectPatterns Additional scripts and stylesheets to inject in HTML
- * @property {String} assetsRelativePath File extensions of files to just copy as-is
- * @property {Boolean} sourcemaps `true` to generate sourcemaps for scripts & stylesheets, `false` to skip them
- * @property {Boolean} skipPostprocess `true` for the lightweight config (for tests), `false` for the whole config
- * @property {String[]} polyfills List of modules or files to automatically prepend to every entry
- * @property {String[]} webworkerPolyfills List of modules or files to automatically prepend to every webworker
- * @property {RegExp} webworkerPattern RegExp test for the Web Worker loader
- * @property {Boolean} skipHashes If `true`, it will not add `[hash]` in filenames in production mode.
- */
-
-/**
- * Generates a Webpack 4 config for Web apps.
- * @param {GetConfigOptions} options
- * @returns {Object}
- */
 module.exports = function getConfig({
 	entry = {application: './src/index.ts'},
 	pages = [{title: 'Index', filename: 'index.html'}],
