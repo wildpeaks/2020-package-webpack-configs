@@ -98,7 +98,7 @@ See [Entry Points](https://webpack.js.org/concepts/entry-points/) in the Webpack
 ---
 ### `pages`: Object[]
 
-List of HTML pages to generate.
+List of **HTML pages** to generate.
 
 Default: `{title: 'Index', filename: "index.html"}`.
 
@@ -165,7 +165,7 @@ See [Options](https://github.com/jantimon/html-webpack-plugin#options) in the `h
 ---
 ### `rootFolder`: String
 
-Absolute path to the root context folder.
+**Absolute path to the root** folder context.
 Defaults to the process current working directory.
 
 Examples: `"C:/Example"` or `/usr/share/www/example`
@@ -175,7 +175,7 @@ See [context](https://webpack.js.org/configuration/entry-context/#context) in th
 ---
 ### `outputFolder`: String
 
-Absolute path to the folder where files are emitted.
+**Absolute path to the output** folder, where files are emitted.
 
 Defaults to subfolder `dist` in `rootFolder`.
 
@@ -199,7 +199,9 @@ See [publicPath](https://webpack.js.org/guides/public-path/) in the Webpack docu
 ---
 ### `port`: Number
 
-Port for Webpack Dev Server.
+**Port number** for the Webpack Dev Server.
+
+So `port: 8000` means it runs at `http://localhost:8000`.
 
 Default: `8000`.
 
@@ -209,7 +211,12 @@ See [devServer.port](https://webpack.js.org/configuration/dev-server/#devserver-
 ---
 ### `cssModules`: Boolean
 
-The **CSS Modules** option makes classnames and identifiers globally unique at build time.
+The **CSS Modules** option makes classnames and identifiers globally unique at build time,
+and importing a stylesheet returns an object with the generated unique classnames.
+
+For example, two components could use a `.button` class.
+In regular CSS, this would conflict because one would overwrite the other.
+But this option renames both classes during the build, so they can co-exist.
 
 Default: `true`.
 
@@ -224,44 +231,53 @@ Useful for defining globals or adding a framework:
  - *SCSS Variables* for build-time variables
  - *CSS Custom properties* for runtime variables
 
+Note: this is **prepended to every file**, so this is a good fit for theme variables.
+Use `polyfills` instead to add a CSS Reset (or `:root` CSS Variables) **once per Entry**.
+
 Default: `""`.
 
 Examples:
 ```js
 // Define SASS variables
-scss: `
-	$primary: rgb(0, 255, 0);
-	$secondary: rgb(0, 128, 0);
-`
+{
+	scss: `
+		$primary: rgb(0, 255, 0);
+		$secondary: rgb(0, 128, 0);
+	`
+}
 ```
 
 ```js
 // Import a SASS stylesheet
-scss: '@import "variables.scss";'
+{
+	scss: '@import "variables.scss";'
+}
 ```
 
 ```js
 // Imports a CSS reset and multiple stylesheets from a framework
-polyfills: [
-	'./src/reset.css'
-]
-scss: `
-	@import "myframework/functions";
-	@import "myframework/variables";
-`
+{
+	polyfills: [
+		'./src/reset.css'
+	],
+	scss: `
+		@import "myframework/functions";
+		@import "myframework/variables";
+	`
+}
 ```
 
 See [CSS Custom Properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_variables) in MDN
 and [SASS Variables](https://sass-lang.com/guide#topic-2) in SASS documentation.
 
-Note that given this is prepended to every file, this is a good fit for theme variables.
-However you would use `polyfills` instead to add a CSS Reset once per entry.
-
 
 ---
-### `embedLimit`: String[]
+### `embedLimit`: number
 
-Filesize limit to embed assets.
+Filesize limit to **embed assets**.
+
+Beyond the limit, assets are considered external files
+(copied to the output folder and referenced by path).
 
 Default: `5000`.
 
@@ -271,8 +287,9 @@ See [limit](https://github.com/webpack-contrib/url-loader#limit) in the `url-loa
 ---
 ### `embedExtensions`: String[]
 
-File extensions of files to embed as base64 (if small enough) or just copy as-is (if large),
-for files referenced by `import` or `require`.
+File extensions of files to embed as base64 (when small enough)
+or just copy as-is (when too large), for files referenced
+by `import` or `require`.
 
 Default: `["jpg", "png", "gif", "svg"]`.
 
@@ -298,7 +315,7 @@ Default: `["woff"]`.
 ---
 ### `copyPatterns`: Object[]
 
-Files and folders to copy as-is, despite not being referenced by `import` or `require`.
+Additional files & folders to copy as-is, despite not being referenced by `import` or `require`.
 
 Default: `[]`.
 
@@ -327,14 +344,16 @@ See [patterns](https://github.com/webpack-contrib/copy-webpack-plugin#patterns) 
 
 ### `injectPatterns`: Object[]
 
-Additional scripts and stylesheets to inject in HTML.
+List of **pre-built scripts & stylesheets** to inject in HTML.
 
-This is especially useful for adding large precompiled libraries (local or from a CDN) without having them be part of the build
-which can **drastically speed up the build**. You can use `copyPatterns` to copy arbitrary files to the output
-if the injected patterns use relative paths instead of urls.
+Useful for large libraries (local or CDN), it **drastically speeds up the build**
+when they're not part of the build itself.
 
-Note that the **resulting script/link tags won't have automatic Subresource Integrity hashes**,
-you have to specify them manually using `attributes`.
+You can use `copyPatterns` to copy arbitrary files to the output if the injected patterns
+use relative paths instead of urls.
+
+Note that the resulting script/link tags **don't have automatic Subresource Integrity hashes**,
+you should specify the hash manually using `attributes` (CDN hosts usually provide them along the urls).
 
 Default: `[]`
 
@@ -373,7 +392,7 @@ Examples:
 // `append: true` to add at the end
 {
 	append: true,
-	tags: ['override-styles.css']
+	tags: ['override-styles.min.css']
 }
 ````
 
@@ -383,8 +402,9 @@ See [Options](https://www.npmjs.com/package/html-webpack-tags-plugin#options) in
 ---
 ### `assetsRelativePath`: String
 
-Relative path to copy files to.
-Note that it only applies to `copyExtensions` and large `embedExtensions` files;
+Relative **path to copy files to**.
+
+Note that it only applies to `copyExtensions` and large `embedExtensions` files.
 `copyPatterns` specifies the output path in each pattern instead.
 
 Default: `"assets/"`
@@ -399,14 +419,6 @@ Default: `true`
 
 
 ---
-### `skipPostprocess`: Boolean
-
-Use `true` for the lightweight config (for tests), `false` for the whole config.
-
-Default: `false`
-
-
----
 ### `polyfills`: String[]
 
 List of modules or files to automatically prepend to every entry.
@@ -414,14 +426,17 @@ They are resolved from `rootFolder`.
 
 Default: `['core-js/stable/promise']`
 
-Note: given this accepts any extensions the loaders to, you could also use it to add a **CSS Reset**, example:
+Note: given this accepts any extensions the loaders to,
+this can can also be used to prepend a **CSS Reset**.
+
 ````ts
-//...
-polyfills: [
-	'core-js/stable/promise',
-	'./src/reset.css'
-],
-//...
+// Example: ES6 Promise polyfill & a CSS Reset
+{
+	polyfills: [
+		'core-js/stable/promise',
+		'./src/reset.css'
+	]
+}
 ````
 
 
@@ -448,6 +463,14 @@ Default: `/\.webworker\.ts$/`
 
 
 ---
+### `skipPostprocess`: Boolean
+
+Use `true` for the lightweight config (for tests), `false` for the whole config.
+
+Default: `false`
+
+
+---
 ### `skipHashes`: Boolean
 
 If `true`, mode "production" won't add SRI hashes to `<script>` and `<link>` tags,
@@ -462,7 +485,7 @@ Default: `false`
 
 By default, Typescript doesn't know what importing CSS or images return.
 
-This is not needed for building the bundles, however VSCode wouldn't have proper autocompletion.
+This is not needed for building the bundles, but VSCode wouldn't have proper autocompletion.
 Therefore you should add generic type definitions (for example in `/src/index.d.ts`):
 
 ````ts
