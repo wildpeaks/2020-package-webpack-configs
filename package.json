@@ -56,7 +56,7 @@
   },
   "devDependencies": {
     "@types/node": "12.0.11",
-    "@wildpeaks/eslint-config-commonjs": "6.1.0",
+    "@wildpeaks/eslint-config-commonjs": "6.2.0",
     "eslint": "6.0.1",
     "express": "4.17.1",
     "jasmine": "3.4.0",
