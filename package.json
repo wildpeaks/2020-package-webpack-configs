@@ -55,7 +55,7 @@
     "worker-loader": "2.0.0"
   },
   "devDependencies": {
-    "@types/node": "12.6.2",
+    "@types/node": "12.6.3",
     "@wildpeaks/eslint-config-commonjs": "6.2.0",
     "eslint": "6.0.1",
     "express": "4.17.1",
