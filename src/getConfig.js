@@ -44,7 +44,8 @@ module.exports = function getConfig({
 	polyfills = ['core-js/stable/promise'],
 	webworkerPolyfills = ['core-js/stable/promise'],
 	webworkerPattern = /\.webworker\.ts$/,
-	skipHashes = false
+	skipHashes = false,
+	skipReset = false
 } = {}){
 	strictEqual(typeof rootFolder, 'string', '"rootFolder" should be a String');
 	let actualRootFolder = rootFolder;
@@ -161,7 +162,7 @@ module.exports = function getConfig({
 	//endregion
 
 	//region Reset the output
-	if (!skipPostprocess){
+	if (!skipReset){
 		plugins.push(
 			new CleanWebpackPlugin({
 				verbose: false,
