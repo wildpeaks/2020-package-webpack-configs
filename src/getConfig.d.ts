@@ -437,6 +437,15 @@ declare module "@wildpeaks/webpack-config-web" {
 		 * @default false
 		 */
 		skipHashes: boolean;
+
+		/**
+		 * If `true`, it will not empty the output folder at the start.
+		 * This is useful if you have multiple configs at the same time
+		 * and are emptying the output folder before starting Webpack.
+		 *
+		 * @default false
+		 */
+		skipReset: boolean;
 	};
 
 	/**
