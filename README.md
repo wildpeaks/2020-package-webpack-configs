@@ -477,6 +477,15 @@ and filenames will not contain a cache-busting hash.
 Default: `false`
 
 
+---
+### `skipReset`: Boolean
+
+If `true`, it will not empty the output folder at the start.
+This is useful if you have multiple configs at the same time and are emptying the output folder before starting Webpack.
+
+Default: `false`.
+
+
 -------------------------------------------------------------------------------
 
 ## Import CSS / SCSS / Images

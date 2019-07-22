@@ -44,7 +44,8 @@ module.exports = function getConfig({
 	polyfills = ['core-js/stable/promise'],
 	webworkerPolyfills = ['core-js/stable/promise'],
 	webworkerPattern = /\.webworker\.ts$/,
-	skipHashes = false
+	skipHashes = false,
+	skipReset = false
 } = {}){
 	strictEqual(typeof rootFolder, 'string', '"rootFolder" should be a String');
 	let actualRootFolder = rootFolder;
@@ -99,7 +100,8 @@ module.exports = function getConfig({
 	strictEqual(typeof skipPostprocess, 'boolean', '"skipPostprocess" should be a Boolean');
 	strictEqual(Array.isArray(polyfills), true, '"polyfills" should be an Array');
 	strictEqual(Array.isArray(webworkerPolyfills), true, '"webworkerPolyfills" should be an Array');
-	strictEqual(typeof skipHashes, 'boolean', '"webworkerPolyfills" should be a Boolean');
+	strictEqual(typeof skipHashes, 'boolean', '"skipHashes" should be a Boolean');
+	strictEqual(typeof skipReset, 'boolean', '"skipReset" should be a Boolean');
 
 	strictEqual(typeof assetsRelativePath, 'string', '"assetsRelativePath" should be a String');
 	if ((assetsRelativePath !== '') && !assetsRelativePath.endsWith('/')){
@@ -161,7 +163,7 @@ module.exports = function getConfig({
 	//endregion
 
 	//region Reset the output
-	if (!skipPostprocess){
+	if (!skipReset){
 		plugins.push(
 			new CleanWebpackPlugin({
 				verbose: false,
