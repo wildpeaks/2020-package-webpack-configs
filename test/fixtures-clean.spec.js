@@ -9,7 +9,7 @@ const webpack = require('webpack');
 // const puppeteer = require('puppeteer');
 const getConfig = require('..');
 const rootFolder = join(__dirname, 'fixtures');
-const outputFolder = join(__dirname, '../out-core');
+const outputFolder = join(__dirname, '../out-clean');
 let app;
 let server;
 const port = 8881;
@@ -69,7 +69,30 @@ beforeEach(done => {
 });
 
 
-it('Skip Reset', async() => {
+it('skipReset: false', async() => {
+	writeFileSync(join(outputFolder, 'extra-1.txt'), 'Hello World');
+	writeFileSync(join(outputFolder, 'extra-2.js'), 'Hello World');
+	writeFileSync(join(outputFolder, 'extra-3.ts'), 'Hello World');
+
+	const actualFiles = await testFixture({
+		skipReset: false,
+		rootFolder,
+		outputFolder,
+		mode: 'development',
+		entry: {
+			myapp: './basic/myapp.ts'
+		}
+	});
+	const expectedFiles = [
+		'index.html',
+		'myapp.js',
+		'myapp.js.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+});
+
+
+it('skipReset: true', async() => {
 	writeFileSync(join(outputFolder, 'extra-1.txt'), 'Hello World');
 	writeFileSync(join(outputFolder, 'extra-2.js'), 'Hello World');
 	writeFileSync(join(outputFolder, 'extra-3.ts'), 'Hello World');
