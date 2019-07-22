@@ -168,7 +168,7 @@ module.exports = function getConfig({
 			new CleanWebpackPlugin({
 				verbose: false,
 				cleanOnceBeforeBuildPatterns: [
-					basename(actualOutputFolder)
+					actualOutputFolder
 				]
 			})
 		);
