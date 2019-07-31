@@ -107,6 +107,45 @@ it('Basic', async() => {
 });
 
 
+it('Custom filename', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		jsFilename: 'subfolder/custom.[name].js',
+		mode: 'development',
+		entry: {
+			myapp: './basic/myapp.ts'
+		}
+	});
+	const expectedFiles = [
+		'index.html',
+		'subfolder/custom.myapp.js',
+		'subfolder/custom.myapp.js.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const browser = await puppeteer.launch();
+	try {
+		const page = await browser.newPage();
+		await page.goto(`http://localhost:${port}/`);
+		const found = await page.evaluate(() => {
+			/* global document */
+			const el = document.getElementById('hello');
+			if (el === null){
+				return '#hello not found';
+			}
+			if (el.innerText !== 'Hello World'){
+				return `Bad #hello.innerText: ${el.innerText}`;
+			}
+			return 'ok';
+		});
+		expect(found).toBe('ok', 'DOM tests');
+	} finally {
+		await browser.close();
+	}
+});
+
+
 it('Multiple independant entries', async() => {
 	const actualFiles = await testFixture({
 		rootFolder,
