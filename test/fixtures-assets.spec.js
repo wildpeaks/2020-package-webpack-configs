@@ -1,4 +1,5 @@
 /* eslint-env node, jasmine */
+/* global document */
 'use strict';
 const {join, relative} = require('path');
 const {mkdirSync} = require('fs');
@@ -100,7 +101,6 @@ it('Assets', async() => {
 		const page = await browser.newPage();
 		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
-			/* global document */
 			const container = document.getElementById('assets');
 			if (container === null){
 				return '#assets not found';
@@ -241,7 +241,6 @@ it('Raw imports', async() => {
 		const page = await browser.newPage();
 		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
-			/* global document */
 			const el1 = document.getElementById('hello1');
 			if (el1 === null){
 				return '#hello1 not found';

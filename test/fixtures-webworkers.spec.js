@@ -1,4 +1,5 @@
 /* eslint-env node, jasmine */
+/* global document */
 'use strict';
 const {join, relative} = require('path');
 const {mkdirSync} = require('fs');
@@ -107,7 +108,6 @@ it('Webworker: Basic', async() => {
 		await page.goto(`http://localhost:${port}/`);
 		await sleep(300);
 		const found = await page.evaluate(() => {
-			/* global document */
 			const el1 = document.getElementById('hello1');
 			if (el1 === null){
 				return '#hello1 not found';
@@ -158,7 +158,6 @@ it('Webworker: Filename', async() => {
 		await page.goto(`http://localhost:${port}/`);
 		await sleep(300);
 		const found = await page.evaluate(() => {
-			/* global document */
 			const el1 = document.getElementById('hello1');
 			if (el1 === null){
 				return '#hello1 not found';
@@ -215,7 +214,6 @@ it('Webworker: Polyfills', async() => {
 		await page.goto(`http://localhost:${port}/`);
 		await sleep(300);
 		const found = await page.evaluate(() => {
-			/* global document */
 			const el1 = document.getElementById('hello1');
 			if (el1 === null){
 				return '#hello1 not found';

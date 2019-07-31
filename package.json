@@ -13,6 +13,7 @@
     "src"
   ],
   "scripts": {
+    "test:eslint": "eslint src",
     "test:params": "jasmine test/params-*.spec.js",
     "test:assets": "jasmine test/fixtures-assets.spec.js",
     "test:clean": "jasmine test/fixtures-clean.spec.js",
@@ -20,7 +21,7 @@
     "test:core": "jasmine test/fixtures-core.spec.js",
     "test:optimize": "jasmine test/fixtures-optimize.spec.js",
     "test:webworkers": "jasmine test/fixtures-webworkers.spec.js",
-    "test": "npm run test:params && npm run test:assets&& npm run test:clean && npm run test:core && npm run test:optimize && npm run test:webworkers"
+    "test": "npm run test:eslint && npm run test:params && npm run test:assets&& npm run test:clean && npm run test:core && npm run test:optimize && npm run test:webworkers"
   },
   "repository": "https://github.com/wildpeaks/package-webpack-config-web",
   "keywords": [

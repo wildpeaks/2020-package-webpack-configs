@@ -1,4 +1,6 @@
 /* eslint-env node, jasmine */
+/* global document */
+/* global window */
 'use strict';
 const {join, relative} = require('path');
 const {mkdirSync} = require('fs');
@@ -90,7 +92,6 @@ it('Basic', async() => {
 		const page = await browser.newPage();
 		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
-			/* global document */
 			const el = document.getElementById('hello');
 			if (el === null){
 				return '#hello not found';
@@ -129,7 +130,6 @@ it('Custom filename', async() => {
 		const page = await browser.newPage();
 		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
-			/* global document */
 			const el = document.getElementById('hello');
 			if (el === null){
 				return '#hello not found';
@@ -195,7 +195,6 @@ it('Multiple independant entries', async() => {
 		const page = await browser.newPage();
 		await page.goto(`http://localhost:${port}/app1.html`);
 		const found = await page.evaluate(() => {
-			/* global document */
 			const el = document.getElementById('hello');
 			if (el === null){
 				return '#hello not found';
@@ -215,7 +214,6 @@ it('Multiple independant entries', async() => {
 		const page = await browser.newPage();
 		await page.goto(`http://localhost:${port}/app2.html`);
 		const found = await page.evaluate(() => {
-			/* global document */
 			const el = document.getElementById('hello');
 			if (el === null){
 				return '#hello not found';
@@ -235,7 +233,6 @@ it('Multiple independant entries', async() => {
 		const page = await browser.newPage();
 		await page.goto(`http://localhost:${port}/app3.html`);
 		const found = await page.evaluate(() => {
-			/* global document */
 			const el = document.getElementById('hello');
 			if (el === null){
 				return '#hello not found';
@@ -273,7 +270,6 @@ it('Local Modules', async() => {
 		const page = await browser.newPage();
 		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
-			/* global document */
 			const el = document.getElementById('hello');
 			if (el === null){
 				return '#hello not found';
@@ -317,8 +313,6 @@ it('Polyfills', async() => {
 		const page = await browser.newPage();
 		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
-			/* global document */
-			/* global window */
 			if (typeof window.EXAMPLE_FAKE_POLYFILL !== 'undefined'){
 				return 'Fake polyfill exists';
 			}
@@ -432,7 +426,6 @@ it('Inject Patterns', async() => {
 		});
 		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
-			/* global document */
 			const bodyChildren = document.body.childNodes;
 			if (bodyChildren.length !== 6){
 				return `Wrong body.children.length: ${bodyChildren.length}`;
@@ -593,7 +586,6 @@ it('Multiple pages', async() => {
 		//region page1
 		await page.goto(`http://localhost:${port}/page1.html`);
 		const found1 = await page.evaluate(() => {
-			/* global document */
 			if (document.title !== 'One'){
 				return `Wrong title: "${document.title}"`;
 			}
@@ -619,7 +611,6 @@ it('Multiple pages', async() => {
 		//region page2
 		await page.goto(`http://localhost:${port}/page2.html`);
 		const found2 = await page.evaluate(() => {
-			/* global document */
 			if (document.title !== 'Two'){
 				return `Wrong title: "${document.title}"`;
 			}
@@ -645,7 +636,6 @@ it('Multiple pages', async() => {
 		//region page3
 		await page.goto(`http://localhost:${port}/page3.html`);
 		const found3 = await page.evaluate(() => {
-			/* global document */
 			if (document.title !== 'Three'){
 				return `Wrong title: "${document.title}"`;
 			}
@@ -674,7 +664,6 @@ it('Multiple pages', async() => {
 		//region page4
 		await page.goto(`http://localhost:${port}/subfolder/page4.html`);
 		const found4 = await page.evaluate(() => {
-			/* global document */
 			if (document.title !== 'Four'){
 				return `Wrong title: "${document.title}"`;
 			}
@@ -703,7 +692,6 @@ it('Multiple pages', async() => {
 		//region page5
 		await page.goto(`http://localhost:${port}/page5.html`);
 		const found5 = await page.evaluate(() => {
-			/* global document */
 			if (document.title !== 'Five'){
 				return `Wrong title: "${document.title}"`;
 			}
@@ -750,7 +738,6 @@ it('Multiple pages', async() => {
 		//region page6
 		await page.goto(`http://localhost:${port}/page6.html`);
 		const found6 = await page.evaluate(() => {
-			/* global document */
 			if (document.title !== 'Six - Customized'){
 				return `Wrong title: "${document.title}"`;
 			}
