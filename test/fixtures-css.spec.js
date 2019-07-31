@@ -112,6 +112,50 @@ it('CSS Modules', async() => {
 });
 
 
+it('CSS Filename', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		cssFilename: 'subfolder/custom.[name].css',
+		mode: 'development',
+		entry: {
+			myapp: './css-modules/myapp.ts'
+		},
+		cssModules: true
+	});
+	const expectedFiles = [
+		'index.html',
+		'subfolder/custom.myapp.css',
+		'subfolder/custom.myapp.css.map',
+		'myapp.js',
+		'myapp.js.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const browser = await puppeteer.launch();
+	try {
+		const page = await browser.newPage();
+		await page.goto(`http://localhost:${port}/`);
+		const found = await page.evaluate(() => {
+			/* global document */
+			/* global window */
+			const el = document.getElementById('hello');
+			if (el === null){
+				return '#hello not found';
+			}
+			const computed = window.getComputedStyle(el);
+			if (computed.getPropertyValue('color') !== 'rgb(0, 128, 0)'){
+				return 'Bad color: ' + computed.getPropertyValue('color');
+			}
+			return 'ok';
+		});
+		expect(found).toBe('ok', 'DOM tests');
+	} finally {
+		await browser.close();
+	}
+});
+
+
 it('CSS without CSS Modules', async() => {
 	const actualFiles = await testFixture({
 		rootFolder,
