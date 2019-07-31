@@ -352,7 +352,7 @@ it('Inject Patterns', async() => {
 		sourcemaps: false,
 		polyfills: [],
 		publicPath: '/mypublic/',
-		assetsRelativePath: 'myassets/',
+		assetFilename: 'myassets/[name].[ext]',
 		injectPatterns: [
 			{
 				append: false,

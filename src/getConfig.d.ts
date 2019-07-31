@@ -154,12 +154,9 @@ declare module "@wildpeaks/webpack-config-web" {
 		 *
 		 * By default, files are named `chunk.[id].js` (development mode) or `[hash].chunk.[id].js` (production mode).
 		 *
-		 * For example, this generates `assets/scripts/chunk.GENERATED_ID.js`:
+		 * For example, this generates `assets/scripts/chunk.0.js`:
 		 * ````json
 		 * {
-		 * 	"entry": {
-		 * 		"app1": "./src/example.ts"
-		 * 	},
 		 * 	"jsChunkFilename": "assets/scripts/chunk.[id].js"
 		 * }
 		 * ````
@@ -171,12 +168,9 @@ declare module "@wildpeaks/webpack-config-web" {
 		 *
 		 * By default, files are named `[name].js` (development mode) or `[hash].[name].js` (production mode).
 		 *
-		 * For example, this generates `assets/scripts/app1.webworker.js`:
+		 * For example, this generates `assets/scripts/example.webworker.js` for file `example.webworker.js`:
 		 * ````json
 		 * {
-		 * 	"entry": {
-		 * 		"app1": "./src/example.ts"
-		 * 	},
 		 * 	"webworkerFilename": "assets/scripts/[name].js"
 		 * }
 		 * ````
@@ -188,13 +182,13 @@ declare module "@wildpeaks/webpack-config-web" {
 		 *
 		 * By default, files are named `[name].css` (development mode) or `[hash].[name].css` (production mode).
 		 *
-		 * For example, this generates `assets/scripts/app1.css`:
+		 * For example, this generates `assets/stylesheets/app1.css`:
 		 * ````json
 		 * {
 		 * 	"entry": {
 		 * 		"app1": "./src/example.ts"
 		 * 	},
-		 * 	"cssFilename": "assets/scripts/[name].css"
+		 * 	"cssFilename": "assets/stylesheets/[name].css"
 		 * }
 		 * ````
 		 */
@@ -203,9 +197,30 @@ declare module "@wildpeaks/webpack-config-web" {
 		/**
 		 * Custom **filename for CSS chunks**.
 		 *
-		 * By default, files are named `'[id].css'`.
+		 * By default, files are named `chunk.[id].css` (development mode) or `[hash].chunk.[id].css` (production mode).
+		 *
+		 * For example, this generates `assets/stylesheets/chunk.0.js`:
+		 * ````json
+		 * {
+		 * 	"cssChunkFilename": "assets/stylesheets/chunk.[id].js"
+		 * }
+		 * ````
 		 */
 		cssChunkFilename?: string;
+
+		/**
+		 * Custom **filename for assets** (images, json, etc..).
+		 *
+		 * By default, files are named `assets/[name].[ext]` (development mode) or `assets/[hash].[name].[ext]` (production mode).
+		 *
+		 * For example, this generates `files/asset.image.jpg` for file `image.jpg`:
+		 * ````json
+		 * {
+		 * 	"assetFilename": "files/asset.[name].[ext]"
+		 * }
+		 * ````
+		 */
+		assetFilename?: string;
 
 		/**
 		 * **Absolute path to the root** folder context.
@@ -437,16 +452,6 @@ declare module "@wildpeaks/webpack-config-web" {
 			// links: any;
 			// scripts: any;
 		}[];
-
-		/**
-		 * Relative **path to copy files to**.
-		 *
-		 * Note that it only applies to `copyExtensions` and large `embedExtensions` files.
-		 * `copyPatterns` specifies the output path in each pattern instead.
-		 *
-		 * @default "assets/"
-		 */
-		assetsRelativePath?: string;
 
 		/**
 		 * **Sourcemaps** for scripts & stylesheets.

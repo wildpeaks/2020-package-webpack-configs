@@ -81,7 +81,7 @@ it('Assets', async() => {
 		embedLimit: 5000,
 		embedExtensions: ['jpg', 'png'],
 		copyExtensions: ['gif', 'json'],
-		assetsRelativePath: 'myimages/'
+		assetFilename: 'myimages/[name].[ext]'
 	});
 	const expectedFiles = [
 		'index.html',

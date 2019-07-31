@@ -30,6 +30,7 @@ module.exports = function getConfig({
 	cssFilename,
 	cssChunkFilename,
 	webworkerFilename,
+	assetFilename,
 	rootFolder = '',
 	outputFolder = '',
 	publicPath = '/',
@@ -43,7 +44,6 @@ module.exports = function getConfig({
 	copyExtensions = ['woff'],
 	copyPatterns = [],
 	injectPatterns = [],
-	assetsRelativePath = 'assets/',
 	sourcemaps = true,
 	skipPostprocess = false,
 	polyfills = ['core-js/stable/promise'],
@@ -99,6 +99,9 @@ module.exports = function getConfig({
 	if ((typeof webworkerFilename !== 'string') && (typeof webworkerFilename !== 'undefined')){
 		throw new Error(`"webworkerFilename" should be a String or undefined`);
 	}
+	if ((typeof assetFilename !== 'string') && (typeof assetFilename !== 'undefined')){
+		throw new Error(`"assetFilename" should be a String or undefined`);
+	}
 
 	strictEqual(typeof port, 'number', '"port" should be a Number');
 	strictEqual(isNaN(port), false, '"port" must not be NaN');
@@ -123,11 +126,6 @@ module.exports = function getConfig({
 	strictEqual(Array.isArray(webworkerPolyfills), true, '"webworkerPolyfills" should be an Array');
 	strictEqual(typeof skipHashes, 'boolean', '"skipHashes" should be a Boolean');
 	strictEqual(typeof skipReset, 'boolean', '"skipReset" should be a Boolean');
-
-	strictEqual(typeof assetsRelativePath, 'string', '"assetsRelativePath" should be a String');
-	if ((assetsRelativePath !== '') && !assetsRelativePath.endsWith('/')){
-		throw new Error('"assetsRelativePath" must end with "/" when not empty');
-	}
 
 	if (!(webworkerPattern instanceof RegExp)){
 		throw new Error('"webworkerPattern" should be a RegExp');
@@ -170,6 +168,11 @@ module.exports = function getConfig({
 	let actualCssChunkFilename = cssChunkFilename;
 	if (typeof actualCssChunkFilename !== 'string'){
 		actualCssChunkFilename = (minify && !skipHashes) ? '[hash].chunk.[id].css' : 'chunk.[id].css';
+	}
+
+	let actualAssetFilename = assetFilename;
+	if (typeof actualAssetFilename !== 'string'){
+		actualAssetFilename = (minify && !skipHashes) ? 'assets/[hash].[name].[ext]' : 'assets/[name].[ext]';
 	}
 
 	const config = {
@@ -380,7 +383,7 @@ module.exports = function getConfig({
 					loader: 'url-loader',
 					options: {
 						limit: embedLimit,
-						name: (minify && !skipHashes) ? `${assetsRelativePath}[hash].[name].[ext]` : `${assetsRelativePath}[name].[ext]`
+						name: actualAssetFilename
 					}
 				}
 			});
@@ -393,7 +396,7 @@ module.exports = function getConfig({
 					loader: 'url-loader',
 					options: {
 						limit: embedLimit,
-						name: (minify && !skipHashes) ? `${assetsRelativePath}[hash].[name].[ext]` : `${assetsRelativePath}[name].[ext]`
+						name: actualAssetFilename
 					}
 				}
 			});
@@ -421,7 +424,7 @@ module.exports = function getConfig({
 				use: {
 					loader: 'file-loader',
 					options: {
-						name: (minify && !skipHashes) ? `${assetsRelativePath}[hash].[name].[ext]` : `${assetsRelativePath}[name].[ext]`
+						name: actualAssetFilename
 					}
 				}
 			});
@@ -433,7 +436,7 @@ module.exports = function getConfig({
 				use: {
 					loader: 'file-loader',
 					options: {
-						name: (minify && !skipHashes) ? `${assetsRelativePath}[hash].[name].[ext]` : `${assetsRelativePath}[name].[ext]`
+						name: actualAssetFilename
 					}
 				}
 			});
