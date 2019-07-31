@@ -25,6 +25,11 @@ function getRegex(extensions){
 module.exports = function getConfig({
 	entry = {application: './src/index.ts'},
 	pages = [{title: 'Index', filename: 'index.html'}],
+	jsFilename,
+	jsChunkFilename,
+	cssFilename,
+	cssChunkFilename,
+	webworkerFilename,
 	rootFolder = '',
 	outputFolder = '',
 	publicPath = '/',
@@ -79,6 +84,22 @@ module.exports = function getConfig({
 
 	strictEqual(Array.isArray(pages), true, '"pages" should be an Array');
 
+	if ((typeof jsFilename !== 'string') && (typeof jsFilename !== 'undefined')){
+		throw new Error(`"jsFilename" should be a String or undefined`);
+	}
+	if ((typeof jsChunkFilename !== 'string') && (typeof jsChunkFilename !== 'undefined')){
+		throw new Error(`"jsChunkFilename" should be a String or undefined`);
+	}
+	if ((typeof cssFilename !== 'string') && (typeof cssFilename !== 'undefined')){
+		throw new Error(`"cssFilename" should be a String or undefined`);
+	}
+	if ((typeof cssChunkFilename !== 'string') && (typeof cssChunkFilename !== 'undefined')){
+		throw new Error(`"cssChunkFilename" should be a String or undefined`);
+	}
+	if ((typeof webworkerFilename !== 'string') && (typeof webworkerFilename !== 'undefined')){
+		throw new Error(`"webworkerFilename" should be a String or undefined`);
+	}
+
 	strictEqual(typeof port, 'number', '"port" should be a Number');
 	strictEqual(isNaN(port), false, '"port" must not be NaN');
 	strictEqual(port > 0, true, '"port" should be a positive number');
@@ -120,10 +141,37 @@ module.exports = function getConfig({
 	}
 	//endregion
 
+
+	//region Base Config
 	const minify = (mode === 'production');
 	const loaders = [];
 	const plugins = [];
-	//region Base Config
+
+	let actualJsFilename = jsFilename;
+	if (typeof actualJsFilename !== 'string'){
+		actualJsFilename = (minify && !skipHashes) ? '[hash].[name].js' : '[name].js';
+	}
+
+	let actualJsChunkFilename = jsChunkFilename;
+	if (typeof actualJsChunkFilename !== 'string'){
+		actualJsChunkFilename = (minify && !skipHashes) ? '[hash].chunk.[id].js' : 'chunk.[id].js';
+	}
+
+	let actualWebworkerFilename = webworkerFilename;
+	if (typeof actualWebworkerFilename !== 'string'){
+		actualWebworkerFilename = (minify && !skipHashes) ? '[hash].[name].js' : '[name].js';
+	}
+
+	let actualCssFilename = cssFilename;
+	if (typeof actualCssFilename !== 'string'){
+		actualCssFilename = (minify && !skipHashes) ? '[hash].[name].css' : '[name].css';
+	}
+
+	let actualCssChunkFilename = cssChunkFilename;
+	if (typeof actualCssChunkFilename !== 'string'){
+		actualCssChunkFilename = '[id].css';
+	}
+
 	const config = {
 		//region Input
 		target: 'web',
@@ -140,8 +188,8 @@ module.exports = function getConfig({
 			path: actualOutputFolder,
 			pathinfo: false,
 			publicPath,
-			filename: (minify && !skipHashes) ? '[hash].[name].js' : '[name].js',
-			chunkFilename: (minify && !skipHashes) ? '[hash].chunk.[id].js' : 'chunk.[id].js'
+			filename: actualJsFilename,
+			chunkFilename: actualJsChunkFilename
 		},
 		//endregion
 		//region Hints
@@ -250,7 +298,7 @@ module.exports = function getConfig({
 				loader: 'worker-loader',
 				options: {
 					inline: false,
-					name: (minify && !skipHashes) ? '[hash].[name].js' : '[name].js'
+					name: actualWebworkerFilename
 				}
 			}
 		]
@@ -316,8 +364,8 @@ module.exports = function getConfig({
 	});
 	plugins.push(
 		new MiniCssExtractPlugin({
-			filename: (minify && !skipHashes) ? '[hash].[name].css' : '[name].css',
-			chunkFilename: '[id].css'
+			filename: actualCssFilename,
+			chunkFilename: actualCssChunkFilename
 		})
 	);
 	//endregion

@@ -48,7 +48,7 @@ declare module "@wildpeaks/webpack-config-web" {
 		 *
 		 * @see [Entry Points](https://webpack.js.org/concepts/entry-points/) in the Webpack documentation
 		 */
-		entry: Entry;
+		entry?: Entry;
 
 		/**
 		 * List of **HTML pages** to output.
@@ -130,6 +130,82 @@ declare module "@wildpeaks/webpack-config-web" {
 			inject?: boolean;
 			showErrors?: boolean;
 		}[];
+
+
+		/**
+		 * Custom **filename for JS** bundles.
+		 *
+		 * By default, files are named `[name].js` (development mode) or `[hash].[name].js` (production mode).
+		 *
+		 * For example, this generates `assets/scripts/app1.js`:
+		 * ````json
+		 * {
+		 * 	"entry": {
+		 * 		"app1": "./src/example.ts"
+		 * 	},
+		 * 	"jsFilename": "assets/scripts/[name].js"
+		 * }
+		 * ````
+		 */
+		jsFilename?: string;
+
+		/**
+		 * Custom **filename for JS chunks**.
+		 *
+		 * By default, files are named `chunk.[id].js` (development mode) or `[hash].chunk.[id].js` (production mode).
+		 *
+		 * For example, this generates `assets/scripts/chunk.GENERATED_ID.js`:
+		 * ````json
+		 * {
+		 * 	"entry": {
+		 * 		"app1": "./src/example.ts"
+		 * 	},
+		 * 	"chunkFilename": "assets/scripts/chunk.[id].js"
+		 * }
+		 * ````
+		 */
+		jsChunkFilename?: string;
+
+		/**
+		 * Custom **filename for Web Worker** bundles.
+		 *
+		 * By default, files are named `[name].js` (development mode) or `[hash].[name].js` (production mode).
+		 *
+		 * For example, this generates `assets/scripts/app1.webworker.js`:
+		 * ````json
+		 * {
+		 * 	"entry": {
+		 * 		"app1": "./src/example.ts"
+		 * 	},
+		 * 	"webworkerFilename": "assets/scripts/[name].js"
+		 * }
+		 * ````
+		 */
+		webworkerFilename?: string;
+
+		/**
+		 * Custom **filename for CSS** bundles.
+		 *
+		 * By default, files are named `[name].css` (development mode) or `[hash].[name].css` (production mode).
+		 *
+		 * For example, this generates `assets/scripts/app1.css`:
+		 * ````json
+		 * {
+		 * 	"entry": {
+		 * 		"app1": "./src/example.ts"
+		 * 	},
+		 * 	"cssFilename": "assets/scripts/[name].css"
+		 * }
+		 * ````
+		 */
+		cssFilename?: string;
+
+		/**
+		 * Custom **filename for CSS chunks**.
+		 *
+		 * By default, files are named `'[id].css'`.
+		 */
+		cssChunkFilename?: string;
 
 		/**
 		 * **Absolute path to the root** folder context.
