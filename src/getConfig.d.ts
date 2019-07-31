@@ -160,7 +160,7 @@ declare module "@wildpeaks/webpack-config-web" {
 		 * 	"entry": {
 		 * 		"app1": "./src/example.ts"
 		 * 	},
-		 * 	"chunkFilename": "assets/scripts/chunk.[id].js"
+		 * 	"jsChunkFilename": "assets/scripts/chunk.[id].js"
 		 * }
 		 * ````
 		 */

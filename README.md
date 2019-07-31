@@ -161,6 +161,84 @@ See [Options](https://github.com/jantimon/html-webpack-plugin#options) in the `h
 
 
 ---
+### `jsFilename`: String
+
+Custom **filename for JS** bundles.
+
+By default, files are named `[name].js` (development mode) or `[hash].[name].js` (production mode).
+
+For example, this generates `assets/scripts/app1.js`:
+````json
+{
+	"entry": {
+		"app1": "./src/example.ts"
+	},
+	"jsFilename": "assets/scripts/[name].js"
+}
+````
+
+---
+### `jsChunkFilename`: String
+
+Custom **filename for JS chunks**.
+
+By default, files are named `chunk.[id].js` (development mode) or `[hash].chunk.[id].js` (production mode).
+
+For example, this generates `assets/scripts/chunk.GENERATED_ID.js`:
+````json
+{
+	"entry": {
+		"app1": "./src/example.ts"
+	},
+	"jsChunkFilename": "assets/scripts/chunk.[id].js"
+}
+````
+
+
+---
+### `webworkerFilename`: String
+
+Custom **filename for Web Worker** bundles.
+
+By default, files are named `[name].js` (development mode) or `[hash].[name].js` (production mode).
+
+For example, this generates `assets/scripts/app1.webworker.js`:
+````json
+{
+	"entry": {
+		"app1": "./src/example.ts"
+	},
+	"webworkerFilename": "assets/scripts/[name].js"
+}
+````
+
+
+---
+### `cssFilename`: String
+
+Custom **filename for CSS** bundles.
+
+By default, files are named `[name].css` (development mode) or `[hash].[name].css` (production mode).
+
+For example, this generates `assets/scripts/app1.css`:
+````json
+{
+	"entry": {
+		"app1": "./src/example.ts"
+	},
+	"cssFilename": "assets/scripts/[name].css"
+}
+````
+
+---
+### `cssChunkFilename`: String
+
+Custom **filename for CSS chunks**.
+
+By default, files are named `'[id].css'`.
+
+
+---
 ### `rootFolder`: String
 
 **Absolute path to the root** folder context.
