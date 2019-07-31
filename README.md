@@ -235,7 +235,7 @@ For example, this generates `assets/scripts/app1.css`:
 
 Custom **filename for CSS chunks**.
 
-By default, files are named `'[id].css'`.
+By default, files are named `chunk.[id].css` (development mode) or `[hash].chunk.[id].css` (production mode).
 
 
 ---

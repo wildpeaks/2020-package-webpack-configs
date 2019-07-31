@@ -2,7 +2,7 @@
 /* eslint-disable max-statements */
 'use strict';
 const {strictEqual} = require('assert');
-const {basename, join, isAbsolute} = require('path');
+const {join, isAbsolute} = require('path');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
@@ -169,7 +169,7 @@ module.exports = function getConfig({
 
 	let actualCssChunkFilename = cssChunkFilename;
 	if (typeof actualCssChunkFilename !== 'string'){
-		actualCssChunkFilename = '[id].css';
+		actualCssChunkFilename = (minify && !skipHashes) ? '[hash].chunk.[id].css' : 'chunk.[id].css';
 	}
 
 	const config = {
