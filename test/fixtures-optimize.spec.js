@@ -1,4 +1,6 @@
 /* eslint-env node, jasmine */
+/* global document */
+/* global window */
 'use strict';
 const {join, relative} = require('path');
 const {readFileSync, mkdirSync} = require('fs');
@@ -178,7 +180,6 @@ it('Minify', async() => {
 		const page = await browser.newPage();
 		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
-			/* global document */
 			const el0 = document.getElementById('hello');
 			if (el0 === null){
 				return '#hello not found';
@@ -266,7 +267,6 @@ it('Minify & skipHashes', async() => {
 		const page = await browser.newPage();
 		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
-			/* global document */
 			const el0 = document.getElementById('hello');
 			if (el0 === null){
 				return '#hello not found';
@@ -335,7 +335,47 @@ it('Chunks', async() => {
 		await page.goto(`http://localhost:${port}/`);
 		await sleep(300);
 		const found = await page.evaluate(() => {
-			/* global document */
+			const el = document.getElementById('hello');
+			if (el === null){
+				return '#hello not found';
+			}
+			if (el.innerText !== 'Delayed 100123'){
+				return `Bad #hello.innerText: ${el.innerText}`;
+			}
+			return 'ok';
+		});
+		expect(found).toBe('ok', 'DOM tests');
+	} finally {
+		await browser.close();
+	}
+});
+
+
+it('Chunk Filename', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		jsChunkFilename: 'subfolder/custom.chunk.[id].js',
+		mode: 'development',
+		entry: {
+			myapp: './chunks/myapp.ts'
+		}
+	});
+	const expectedFiles = [
+		'index.html',
+		'myapp.js',
+		'myapp.js.map',
+		'subfolder/custom.chunk.0.js',
+		'subfolder/custom.chunk.0.js.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const browser = await puppeteer.launch();
+	try {
+		const page = await browser.newPage();
+		await page.goto(`http://localhost:${port}/`);
+		await sleep(300);
+		const found = await page.evaluate(() => {
 			const el = document.getElementById('hello');
 			if (el === null){
 				return '#hello not found';
@@ -381,8 +421,6 @@ it('Chunks & Polyfill', async() => {
 		await page.goto(`http://localhost:${port}/`);
 		await sleep(300);
 		const found = await page.evaluate(() => {
-			/* global document */
-			/* global window */
 			if (typeof window.EXAMPLE_FAKE_POLYFILL !== 'undefined'){
 				return 'Fake polyfill exists';
 			}

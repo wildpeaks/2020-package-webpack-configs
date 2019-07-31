@@ -1,6 +1,6 @@
 {
   "name": "@wildpeaks/webpack-config-web",
-  "version": "3.4.0",
+  "version": "4.0.0",
   "description": "Webpack base config generator for Web apps",
   "author": "Cecile Muller",
   "license": "MIT",
@@ -13,6 +13,7 @@
     "src"
   ],
   "scripts": {
+    "test:eslint": "eslint src",
     "test:params": "jasmine test/params-*.spec.js",
     "test:assets": "jasmine test/fixtures-assets.spec.js",
     "test:clean": "jasmine test/fixtures-clean.spec.js",
@@ -20,7 +21,7 @@
     "test:core": "jasmine test/fixtures-core.spec.js",
     "test:optimize": "jasmine test/fixtures-optimize.spec.js",
     "test:webworkers": "jasmine test/fixtures-webworkers.spec.js",
-    "test": "npm run test:params && npm run test:assets&& npm run test:clean && npm run test:core && npm run test:optimize && npm run test:webworkers"
+    "test": "npm run test:eslint && npm run test:params && npm run test:assets&& npm run test:clean && npm run test:core && npm run test:optimize && npm run test:webworkers"
   },
   "repository": "https://github.com/wildpeaks/package-webpack-config-web",
   "keywords": [
@@ -34,7 +35,7 @@
   "homepage": "https://github.com/wildpeaks/package-webpack-config-web#readme",
   "dependencies": {
     "clean-webpack-plugin": "3.0.0",
-    "copy-webpack-plugin": "5.0.3",
+    "copy-webpack-plugin": "5.0.4",
     "core-js": "3.1.4",
     "css-loader": "3.1.0",
     "cssnano": "4.1.10",
@@ -65,7 +66,7 @@
     "recursive-readdir": "2.2.2",
     "rimraf": "2.6.3",
     "typescript": "3.5.3",
-    "webpack": "4.37.0"
+    "webpack": "4.38.0"
   },
   "peerDependencies": {
     "typescript": "*",

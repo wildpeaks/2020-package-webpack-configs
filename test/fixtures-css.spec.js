@@ -1,4 +1,6 @@
 /* eslint-env node, jasmine */
+/* global document */
+/* global window */
 'use strict';
 const {join, relative} = require('path');
 const {mkdirSync} = require('fs');
@@ -9,10 +11,22 @@ const webpack = require('webpack');
 const puppeteer = require('puppeteer');
 const getConfig = require('..');
 const rootFolder = join(__dirname, 'fixtures');
-const outputFolder = join(__dirname, '../out-assets');
+const outputFolder = join(__dirname, '../out-css');
 let app;
 let server;
 const port = 8884;
+
+
+/**
+ * @param {Number} duration
+ */
+function sleep(duration){
+	return new Promise(resolve => {
+		setTimeout(() => {
+			resolve();
+		}, duration);
+	});
+}
 
 
 /**
@@ -93,8 +107,48 @@ it('CSS Modules', async() => {
 		const page = await browser.newPage();
 		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
-			/* global document */
-			/* global window */
+			const el = document.getElementById('hello');
+			if (el === null){
+				return '#hello not found';
+			}
+			const computed = window.getComputedStyle(el);
+			if (computed.getPropertyValue('color') !== 'rgb(0, 128, 0)'){
+				return 'Bad color: ' + computed.getPropertyValue('color');
+			}
+			return 'ok';
+		});
+		expect(found).toBe('ok', 'DOM tests');
+	} finally {
+		await browser.close();
+	}
+});
+
+
+it('CSS Filename', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		cssFilename: 'subfolder/custom.[name].css',
+		mode: 'development',
+		entry: {
+			myapp: './css-modules/myapp.ts'
+		},
+		cssModules: true
+	});
+	const expectedFiles = [
+		'index.html',
+		'subfolder/custom.myapp.css',
+		'subfolder/custom.myapp.css.map',
+		'myapp.js',
+		'myapp.js.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const browser = await puppeteer.launch();
+	try {
+		const page = await browser.newPage();
+		await page.goto(`http://localhost:${port}/`);
+		const found = await page.evaluate(() => {
 			const el = document.getElementById('hello');
 			if (el === null){
 				return '#hello not found';
@@ -136,8 +190,6 @@ it('CSS without CSS Modules', async() => {
 		const page = await browser.newPage();
 		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
-			/* global document */
-			/* global window */
 			const el = document.getElementById('hello');
 			if (el === null){
 				return '#hello not found';
@@ -181,8 +233,6 @@ it('CSS Reset', async() => {
 		const page = await browser.newPage();
 		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
-			/* global document */
-			/* global window */
 			const el = document.createElement('div');
 			const computed1 = window.getComputedStyle(el);
 			if (computed1.getPropertyValue('color') === 'rgb(0, 0, 128)'){
@@ -228,8 +278,6 @@ it('SCSS: Reset', async() => {
 		const page = await browser.newPage();
 		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
-			/* global document */
-			/* global window */
 			const el = document.createElement('div');
 			const computed1 = window.getComputedStyle(el);
 			if (computed1.getPropertyValue('color') === 'rgb(0, 128, 0)'){
@@ -276,8 +324,6 @@ it('SCSS Global Import', async() => {
 		const page = await browser.newPage();
 		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
-			/* global document */
-			/* global window */
 			const el = document.createElement('div');
 			const computed1 = window.getComputedStyle(el);
 			if (computed1.getPropertyValue('color') === 'rgb(128, 0, 0)'){
@@ -324,8 +370,6 @@ it('SCSS Global Variables', async() => {
 		const page = await browser.newPage();
 		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
-			/* global document */
-			/* global window */
 			const el = document.createElement('div');
 			const computed1 = window.getComputedStyle(el);
 			if (computed1.getPropertyValue('color') === 'rgb(128, 128, 0)'){
@@ -369,8 +413,6 @@ it('SCSS Basic', async() => {
 		const page = await browser.newPage();
 		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
-			/* global document */
-			/* global window */
 			const el = document.getElementById('hello');
 			if (el === null){
 				return '#hello not found';
@@ -412,8 +454,6 @@ it('SCSS Import File', async() => {
 		const page = await browser.newPage();
 		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
-			/* global document */
-			/* global window */
 			const el = document.getElementById('hello');
 			if (el === null){
 				return '#hello not found';
@@ -455,8 +495,6 @@ it('SCSS Import Module', async() => {
 		const page = await browser.newPage();
 		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
-			/* global document */
-			/* global window */
 			const el = document.getElementById('hello');
 			if (el === null){
 				return '#hello not found';
@@ -468,6 +506,307 @@ it('SCSS Import Module', async() => {
 			return 'ok';
 		});
 		expect(found).toBe('ok', 'DOM tests');
+	} finally {
+		await browser.close();
+	}
+});
+
+
+it('CSS Chunks', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		mode: 'development',
+		entry: {
+			myapp: './css-chunks/myapp.ts'
+		},
+		cssModules: true
+	});
+	const expectedFiles = [
+		'index.html',
+		'myapp.css',
+		'myapp.css.map',
+		'myapp.js',
+		'myapp.js.map',
+		'chunk.0.js',
+		'chunk.0.js.map',
+		'chunk.0.css',
+		'chunk.0.css.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const browser = await puppeteer.launch();
+	try {
+		const page = await browser.newPage();
+		await page.goto(`http://localhost:${port}/`);
+		const result1 = await page.evaluate(() => {
+			const el = document.getElementById('hello');
+			if (el === null){
+				return '#hello not found';
+			}
+			const computed = window.getComputedStyle(el);
+			if (computed.getPropertyValue('color') !== 'rgb(0, 255, 0)'){
+				return 'Bad color: ' + computed.getPropertyValue('color');
+			}
+			return 'ok';
+		});
+		expect(result1).toBe('ok', 'Sync color');
+
+		await sleep(300);
+		const result2 = await page.evaluate(() => {
+			const el = document.getElementById('hello');
+			if (el === null){
+				return '#hello not found';
+			}
+			const computed = window.getComputedStyle(el);
+			if (computed.getPropertyValue('color') !== 'rgb(0, 0, 255)'){
+				return 'Bad color: ' + computed.getPropertyValue('color');
+			}
+			return 'ok';
+		});
+		expect(result2).toBe('ok', 'Async color');
+	} finally {
+		await browser.close();
+	}
+});
+
+
+it('CSS Chunk Filename', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		cssChunkFilename: 'subfolder/custom.chunk.[id].css',
+		mode: 'development',
+		entry: {
+			myapp: './css-chunks/myapp.ts'
+		},
+		cssModules: true
+	});
+	const expectedFiles = [
+		'index.html',
+		'myapp.css',
+		'myapp.css.map',
+		'myapp.js',
+		'myapp.js.map',
+		'chunk.0.js',
+		'chunk.0.js.map',
+		'subfolder/custom.chunk.0.css',
+		'subfolder/custom.chunk.0.css.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const browser = await puppeteer.launch();
+	try {
+		const page = await browser.newPage();
+		await page.goto(`http://localhost:${port}/`);
+		const result1 = await page.evaluate(() => {
+			const el = document.getElementById('hello');
+			if (el === null){
+				return '#hello not found';
+			}
+			const computed = window.getComputedStyle(el);
+			if (computed.getPropertyValue('color') !== 'rgb(0, 255, 0)'){
+				return 'Bad color: ' + computed.getPropertyValue('color');
+			}
+			return 'ok';
+		});
+		expect(result1).toBe('ok', 'Sync color');
+
+		await sleep(300);
+		const result2 = await page.evaluate(() => {
+			const el = document.getElementById('hello');
+			if (el === null){
+				return '#hello not found';
+			}
+			const computed = window.getComputedStyle(el);
+			if (computed.getPropertyValue('color') !== 'rgb(0, 0, 255)'){
+				return 'Bad color: ' + computed.getPropertyValue('color');
+			}
+			return 'ok';
+		});
+		expect(result2).toBe('ok', 'Async color');
+	} finally {
+		await browser.close();
+	}
+});
+
+
+it('SCSS Chunks', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		mode: 'development',
+		entry: {
+			myapp: './scss-chunks/myapp.ts'
+		},
+		cssModules: true
+	});
+	const expectedFiles = [
+		'index.html',
+		'myapp.css',
+		'myapp.css.map',
+		'myapp.js',
+		'myapp.js.map',
+		'chunk.0.js',
+		'chunk.0.js.map',
+		'chunk.0.css',
+		'chunk.0.css.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const browser = await puppeteer.launch();
+	try {
+		const page = await browser.newPage();
+		await page.goto(`http://localhost:${port}/`);
+		const result1 = await page.evaluate(() => {
+			const el = document.getElementById('hello');
+			if (el === null){
+				return '#hello not found';
+			}
+			const computed = window.getComputedStyle(el);
+			if (computed.getPropertyValue('color') !== 'rgb(0, 255, 0)'){
+				return 'Bad color: ' + computed.getPropertyValue('color');
+			}
+			return 'ok';
+		});
+		expect(result1).toBe('ok', 'Sync color');
+
+		await sleep(300);
+		const result2 = await page.evaluate(() => {
+			const el = document.getElementById('hello');
+			if (el === null){
+				return '#hello not found';
+			}
+			const computed = window.getComputedStyle(el);
+			if (computed.getPropertyValue('color') !== 'rgb(0, 0, 255)'){
+				return 'Bad color: ' + computed.getPropertyValue('color');
+			}
+			return 'ok';
+		});
+		expect(result2).toBe('ok', 'Async color');
+	} finally {
+		await browser.close();
+	}
+});
+
+
+it('SCSS Chunk Filename', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		cssChunkFilename: 'subfolder/custom.chunk.[id].css',
+		mode: 'development',
+		entry: {
+			myapp: './scss-chunks/myapp.ts'
+		},
+		cssModules: true
+	});
+	const expectedFiles = [
+		'index.html',
+		'myapp.css',
+		'myapp.css.map',
+		'myapp.js',
+		'myapp.js.map',
+		'chunk.0.js',
+		'chunk.0.js.map',
+		'subfolder/custom.chunk.0.css',
+		'subfolder/custom.chunk.0.css.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const browser = await puppeteer.launch();
+	try {
+		const page = await browser.newPage();
+		await page.goto(`http://localhost:${port}/`);
+		const result1 = await page.evaluate(() => {
+			const el = document.getElementById('hello');
+			if (el === null){
+				return '#hello not found';
+			}
+			const computed = window.getComputedStyle(el);
+			if (computed.getPropertyValue('color') !== 'rgb(0, 255, 0)'){
+				return 'Bad color: ' + computed.getPropertyValue('color');
+			}
+			return 'ok';
+		});
+		expect(result1).toBe('ok', 'Sync color');
+
+		await sleep(300);
+		const result2 = await page.evaluate(() => {
+			const el = document.getElementById('hello');
+			if (el === null){
+				return '#hello not found';
+			}
+			const computed = window.getComputedStyle(el);
+			if (computed.getPropertyValue('color') !== 'rgb(0, 0, 255)'){
+				return 'Bad color: ' + computed.getPropertyValue('color');
+			}
+			return 'ok';
+		});
+		expect(result2).toBe('ok', 'Async color');
+	} finally {
+		await browser.close();
+	}
+});
+
+
+it('SCSS Chunk + SCSS variables', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		scss: `
+			$color1: rgb(0, 128, 0);
+			$color2: rgb(0, 0, 128);
+		`,
+		mode: 'development',
+		entry: {
+			myapp: './scss-chunks-variables/myapp.ts'
+		},
+		cssModules: true
+	});
+	const expectedFiles = [
+		'index.html',
+		'myapp.css',
+		'myapp.css.map',
+		'myapp.js',
+		'myapp.js.map',
+		'chunk.0.js',
+		'chunk.0.js.map',
+		'chunk.0.css',
+		'chunk.0.css.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const browser = await puppeteer.launch();
+	try {
+		const page = await browser.newPage();
+		await page.goto(`http://localhost:${port}/`);
+		const result1 = await page.evaluate(() => {
+			const el = document.getElementById('hello');
+			if (el === null){
+				return '#hello not found';
+			}
+			const computed = window.getComputedStyle(el);
+			if (computed.getPropertyValue('color') !== 'rgb(0, 128, 0)'){
+				return 'Bad color: ' + computed.getPropertyValue('color');
+			}
+			return 'ok';
+		});
+		expect(result1).toBe('ok', 'Sync color');
+
+		await sleep(300);
+		const result2 = await page.evaluate(() => {
+			const el = document.getElementById('hello');
+			if (el === null){
+				return '#hello not found';
+			}
+			const computed = window.getComputedStyle(el);
+			if (computed.getPropertyValue('color') !== 'rgb(0, 0, 128)'){
+				return 'Bad color: ' + computed.getPropertyValue('color');
+			}
+			return 'ok';
+		});
+		expect(result2).toBe('ok', 'Async color');
 	} finally {
 		await browser.close();
 	}

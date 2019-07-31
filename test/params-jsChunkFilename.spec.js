@@ -6,10 +6,10 @@ const getConfig = require('..');
 
 /**
  * @param {String} title
- * @param {String} assetsRelativePath
+ * @param {String} jsChunkFilename
  * @param {Boolean} expectThrows
  */
-function testFixture(title, assetsRelativePath, expectThrows){
+function testFixture(title, jsChunkFilename, expectThrows){
 	it(title, () => {
 		let actualThrows = false;
 		try {
@@ -19,7 +19,7 @@ function testFixture(title, assetsRelativePath, expectThrows){
 				},
 				rootFolder: __dirname,
 				outputFolder: join(__dirname, 'dummy'),
-				assetsRelativePath
+				jsChunkFilename
 			});
 		} catch(e){
 			actualThrows = true;
@@ -28,9 +28,9 @@ function testFixture(title, assetsRelativePath, expectThrows){
 	});
 }
 
+testFixture('Valid: undefined', undefined, false); // eslint-disable-line no-undefined
 testFixture('Valid: ""', '', false);
-testFixture('Valid: "hello/"', 'hello/', false);
-testFixture('Invalid: "hello"', 'hello', true);
+testFixture('Valid: "hello"', 'hello', false);
 testFixture('Invalid: 123', 123, true);
 testFixture('Invalid: {}', {}, true);
 testFixture('Invalid: NaN', NaN, true);
