@@ -315,6 +315,7 @@ Default: `true`.
 See [Modules](https://github.com/webpack-contrib/css-loader#modules) in the `css-loader` documentation.
 
 
+---
 ### `scss`: String
 
 Prepends arbitrary SCSS (or plain CSS) code to all `.css` and `.scss` files.
@@ -326,7 +327,7 @@ Useful for defining globals or adding a framework:
 Note: this is **prepended to every file**, so this is a good fit for theme variables.
 Use `polyfills` instead to add a CSS Reset (or `:root` CSS Variables) **once per Entry**.
 
-Default: `""`.
+Default: `undefined`.
 
 Examples:
 ```js
@@ -359,8 +360,21 @@ Examples:
 }
 ```
 
-See [CSS Custom Properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_variables) in MDN
-and [SASS Variables](https://sass-lang.com/guide#topic-2) in SASS documentation.
+```js
+// It can be a function too
+{
+	scss: loaderContext => `
+		$primary: rgb(0, 255, 0);
+		$secondary: rgb(0, 128, 0);
+	`
+}
+```
+
+
+See:
+ - [CSS Custom Properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_variables) in MDN
+ - [SASS Variables](https://sass-lang.com/guide#topic-2) in SASS documentation
+ - [Environment Variables](https://github.com/webpack-contrib/sass-loader#environment-variables) in sass-loader documentation
 
 
 ---

@@ -811,3 +811,210 @@ it('SCSS Chunk + SCSS variables', async() => {
 		await browser.close();
 	}
 });
+
+
+it('SCSS data only', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		scss: 'body{color: rgb(0, 255, 0)}',
+		mode: 'development',
+		entry: {
+			myapp: './basic/myapp.ts'
+		}
+	});
+
+	// Data alone isn't enough to produce a .css: at least one entry must contain
+	// an import or polyfill to a stylesheet, otherwise the loader skips
+	// extracting styles, unfortunately.
+	const expectedFiles = [
+		'index.html',
+		'myapp.js',
+		'myapp.js.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const browser = await puppeteer.launch();
+	try {
+		const page = await browser.newPage();
+		await page.goto(`http://localhost:${port}/`);
+		const found = await page.evaluate(() => {
+			const computed = window.getComputedStyle(document.body);
+			if (computed.getPropertyValue('color') === 'rgb(0, 255, 0)'){
+				return 'Unexpected inline style';
+			}
+			return 'ok';
+		});
+		expect(found).toBe('ok', 'DOM tests');
+	} finally {
+		await browser.close();
+	}
+});
+
+
+it('SCSS data + import', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		scss: 'body{color: rgb(0, 255, 0)}',
+		mode: 'development',
+		entry: {
+			myapp: './scss-data-import/myapp.ts'
+		}
+	});
+	const expectedFiles = [
+		'index.html',
+		'myapp.css',
+		'myapp.css.map',
+		'myapp.js',
+		'myapp.js.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const browser = await puppeteer.launch();
+	try {
+		const page = await browser.newPage();
+		await page.goto(`http://localhost:${port}/`);
+		const found = await page.evaluate(() => {
+			const computed1 = window.getComputedStyle(document.body);
+			if (computed1.getPropertyValue('color') !== 'rgb(0, 255, 0)'){
+				return 'Wrong body color: ' + computed1.getPropertyValue('color');
+			}
+			const el = document.getElementById('hello');
+			if (el === null){
+				return '#hello not found';
+			}
+			const computed2 = window.getComputedStyle(el);
+			if (computed2.getPropertyValue('color') !== 'rgb(0, 0, 255)'){
+				return 'Wrong element color: ' + computed2.getPropertyValue('color');
+			}
+			return 'ok';
+		});
+		expect(found).toBe('ok', 'DOM tests');
+	} finally {
+		await browser.close();
+	}
+});
+
+
+it('SCSS data function', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		scss: () => 'body{color: rgb(255, 0, 0)}',
+		mode: 'development',
+		entry: {
+			myapp: './scss-data-import/myapp.ts'
+		}
+	});
+	const expectedFiles = [
+		'index.html',
+		'myapp.css',
+		'myapp.css.map',
+		'myapp.js',
+		'myapp.js.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const browser = await puppeteer.launch();
+	try {
+		const page = await browser.newPage();
+		await page.goto(`http://localhost:${port}/`);
+		const found = await page.evaluate(() => {
+			const computed1 = window.getComputedStyle(document.body);
+			if (computed1.getPropertyValue('color') !== 'rgb(255, 0, 0)'){
+				return 'Wrong body color: ' + computed1.getPropertyValue('color');
+			}
+			const el = document.getElementById('hello');
+			if (el === null){
+				return '#hello not found';
+			}
+			const computed2 = window.getComputedStyle(el);
+			if (computed2.getPropertyValue('color') !== 'rgb(0, 0, 255)'){
+				return 'Wrong element color: ' + computed2.getPropertyValue('color');
+			}
+			return 'ok';
+		});
+		expect(found).toBe('ok', 'DOM tests');
+	} finally {
+		await browser.close();
+	}
+});
+
+
+it('SCSS + Image', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		mode: 'development',
+		entry: {
+			myapp: './scss-image/myapp.ts'
+		}
+	});
+	const expectedFiles = [
+		'index.html',
+		'assets/large.jpg',
+		'myapp.css',
+		'myapp.css.map',
+		'myapp.js',
+		'myapp.js.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const browser = await puppeteer.launch();
+	try {
+		let ok = false;
+		const page = await browser.newPage();
+		await page.setRequestInterception(true);
+		page.on('request', interceptedRequest => {
+			const requestUrl = interceptedRequest.url();
+			if (requestUrl === `http://localhost:${port}/assets/large.jpg`){
+				ok = true;
+			}
+			interceptedRequest.continue();
+		});
+		await page.goto(`http://localhost:${port}/`);
+		expect(ok).toBe(true, 'Image was requested');
+	} finally {
+		await browser.close();
+	}
+});
+
+
+it('CSS + Image', async() => {
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		mode: 'development',
+		entry: {
+			myapp: './css-image/myapp.ts'
+		}
+	});
+	const expectedFiles = [
+		'index.html',
+		'assets/large.jpg',
+		'myapp.css',
+		'myapp.css.map',
+		'myapp.js',
+		'myapp.js.map'
+	];
+	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+
+	const browser = await puppeteer.launch();
+	try {
+		let ok = false;
+		const page = await browser.newPage();
+		await page.setRequestInterception(true);
+		page.on('request', interceptedRequest => {
+			const requestUrl = interceptedRequest.url();
+			if (requestUrl === `http://localhost:${port}/assets/large.jpg`){
+				ok = true;
+			}
+			interceptedRequest.continue();
+		});
+		await page.goto(`http://localhost:${port}/`);
+		expect(ok).toBe(true, 'Image was requested');
+	} finally {
+		await browser.close();
+	}
+});
