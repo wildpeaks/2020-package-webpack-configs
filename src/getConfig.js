@@ -37,7 +37,7 @@ module.exports = function getConfig({
 	mode = 'production',
 	port = 8000,
 	cssModules = true,
-	scss = '',
+	scss,
 	embedLimit = 5000,
 	embedExtensions = ['jpg', 'png', 'gif', 'svg'],
 	rawExtensions = ['txt'],
@@ -108,7 +108,7 @@ module.exports = function getConfig({
 	strictEqual(port > 0, true, '"port" should be a positive number');
 
 	strictEqual(typeof cssModules, 'boolean', '"cssModules" should be a Boolean');
-	strictEqual(typeof scss, 'string', '"scss" should be a String');
+	strictEqual((typeof scss === 'string') || (typeof scss === 'function') || (typeof scss === 'undefined'), true, '"scss" should be a String or Function');
 
 	strictEqual(typeof embedLimit, 'number', '"embedLimit" should be a Number');
 	strictEqual(isNaN(embedLimit), false, '"embedLimit" must not be NaN');
@@ -351,7 +351,7 @@ module.exports = function getConfig({
 		}
 	];
 
-	if (scss !== ''){
+	if (typeof scss !== 'undefined'){
 		cssLoaders.push({
 			loader: 'sass-loader',
 			options: {
