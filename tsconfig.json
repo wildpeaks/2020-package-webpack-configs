@@ -15,7 +15,7 @@
 
 		"moduleResolution": "node",
 		"allowJs": true,
-		"module": "commonjs",
+		"module": "esnext",
 		"lib": ["es2017", "dom"],
 		"target": "es5",
 		"sourceMap": true
