@@ -1,6 +1,7 @@
 {
 	"compilerOptions": {
-		"moduleResolution": "node",
+		"noEmit": true,
+
 		"newLine": "LF",
 		"alwaysStrict": true,
 		"noEmitOnError": true,
@@ -11,11 +12,17 @@
 		"noUnusedParameters": true,
 		"strictNullChecks": true,
 		"preserveConstEnums": true,
-		"removeComments": true,
-		"sourceMap": true,
-		"module": "esnext",
-		"target": "es5",
+
+		"moduleResolution": "node",
+		"allowJs": true,
+		"module": "commonjs",
 		"lib": ["es2017", "dom"],
-		"allowJs": true
-	}
+		"target": "es5",
+		"sourceMap": true
+	},
+	"exclude": [],
+	"include": [
+		"./src/**/*.*",
+		"./test/**/*.*"
+	]
 }
