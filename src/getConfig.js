@@ -355,7 +355,7 @@ module.exports = function getConfig({
 		cssLoaders.push({
 			loader: 'sass-loader',
 			options: {
-				data: scss
+				prependData: scss
 			}
 		});
 	} else {
