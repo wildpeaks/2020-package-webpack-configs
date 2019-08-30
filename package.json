@@ -1,6 +1,6 @@
 {
   "name": "@wildpeaks/webpack-config-web",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "description": "Webpack base config generator for Web apps",
   "author": "Cecile Muller",
   "license": "MIT",
@@ -21,7 +21,7 @@
     "test:core": "jasmine test/fixtures-core.spec.js",
     "test:optimize": "jasmine test/fixtures-optimize.spec.js",
     "test:webworkers": "jasmine test/fixtures-webworkers.spec.js",
-    "test": "npm run test:eslint && npm run test:params && npm run test:assets&& npm run test:clean && npm run test:core && npm run test:optimize && npm run test:webworkers"
+    "test": "npm run test:eslint && npm run test:params && npm run test:assets && npm run test:clean && npm run test:css && npm run test:core && npm run test:optimize && npm run test:webworkers"
   },
   "repository": "https://github.com/wildpeaks/package-webpack-config-web",
   "keywords": [
@@ -48,7 +48,7 @@
     "postcss-loader": "3.0.0",
     "postcss-preset-env": "6.7.0",
     "raw-loader": "3.1.0",
-    "sass-loader": "7.3.1",
+    "sass-loader": "8.0.0",
     "source-map-loader": "0.2.4",
     "style-loader": "1.0.0",
     "ts-loader": "6.0.4",
@@ -65,7 +65,7 @@
     "puppeteer": "1.19.0",
     "recursive-readdir": "2.2.2",
     "rimraf": "3.0.0",
-    "typescript": "3.5.3",
+    "typescript": "3.6.2",
     "webpack": "4.39.3"
   },
   "peerDependencies": {
