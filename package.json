@@ -7,6 +7,12 @@
   "eslintConfig": {
     "extends": "@wildpeaks/commonjs"
   },
+  "greenkeeper": {
+    "commitMessages": {
+      "dependencyUpdate": "fix: Update ${dependency}",
+      "devDependencyUpdate": "chore: Update ${dependency}"
+    }
+  },
   "types": "src/getConfig.d.ts",
   "main": "src/getConfig.js",
   "files": [
