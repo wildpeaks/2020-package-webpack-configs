@@ -19,7 +19,6 @@
     }
   },
   "scripts": {
-    "setup": "node test/setup.js",
     "test:lint": "eslint packages",
     "test:params": "mocha --exit test/params-*.spec.js"
   },
