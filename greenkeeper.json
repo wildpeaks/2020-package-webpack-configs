@@ -1,0 +1,10 @@
+{
+  "groups": {
+    "configs": {
+      "packages": [
+        "package.json",
+        "packages/webpack-config-web/package.json"
+      ]
+    }
+  }
+}
