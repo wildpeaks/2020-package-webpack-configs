@@ -1,9 +1,9 @@
-import {Configuration, Entry} from 'webpack';
+import {Configuration, Entry} from "webpack";
 
 
 type InjectTag = {
 	path: string;
-	type?: 'css' | 'js';
+	type?: "css" | "js";
 	attributes?: {[key: string]: string};
 
 	glob?: string;
