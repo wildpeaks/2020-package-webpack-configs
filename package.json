@@ -6,6 +6,12 @@
   "eslintConfig": {
     "extends": "@wildpeaks/commonjs"
   },
+  "prettier": {
+    "printWidth": 120,
+    "tabWidth": 4,
+    "useTabs": true,
+    "bracketSpacing": false
+  },
   "greenkeeper": {
     "commitMessages": {
       "dependencyUpdate": "feat: update ${dependency}",
@@ -48,10 +54,11 @@
   },
   "devDependencies": {
     "@types/node": "12.12.14",
-    "@wildpeaks/eslint-config-commonjs": "7.2.0",
+    "@wildpeaks/eslint-config-commonjs": "8.0.0-alpha4",
     "eslint": "6.7.2",
     "express": "4.17.1",
     "jasmine": "3.5.0",
+    "prettier": "1.19.1",
     "puppeteer": "2.0.0",
     "recursive-readdir": "2.2.2",
     "rimraf": "3.0.0",
