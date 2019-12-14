@@ -10,6 +10,7 @@
 !/.gitignore
 !/.github
 !/.npmrc
+!/.prettierignore
 !/.vscode
 !/test
 !/packages
