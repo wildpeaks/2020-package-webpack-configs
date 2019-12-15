@@ -77,7 +77,7 @@ beforeEach(done => {
 	});
 });
 
-it("Webworker: require", /* @this */ async function() {
+it("Webworker: basic", /* @this */ async function() {
 	this.slow(10000);
 	this.timeout(10000);
 	const actualFiles = await testFixture({
@@ -85,7 +85,7 @@ it("Webworker: require", /* @this */ async function() {
 		outputFolder,
 		mode: "development",
 		entry: {
-			myapp: "./webworker-require/myapp.ts"
+			myapp: "./webworker/myapp.ts"
 		}
 	});
 	const expectedFiles = [
@@ -118,48 +118,7 @@ it("Webworker: require", /* @this */ async function() {
 	}
 });
 
-it("Webworker: require + no export", /* @this */ async function() {
-	this.slow(10000);
-	this.timeout(10000);
-	const actualFiles = await testFixture({
-		rootFolder,
-		outputFolder,
-		mode: "development",
-		entry: {
-			myapp: "./webworker-require-without-export/myapp.ts"
-		}
-	});
-	const expectedFiles = [
-		"index.html",
-		"myapp.js",
-		"myapp.js.map",
-		"myworker.webworker.js",
-		"myworker.webworker.js.map"
-	];
-	deepStrictEqual(actualFiles.sort(), expectedFiles.sort());
-
-	const browser = await puppeteer.launch();
-	try {
-		const page = await browser.newPage();
-		await page.goto(`http://localhost:${port}/`);
-		await sleep(300);
-		const found = await page.evaluate(() => {
-			const el = document.getElementById("hello");
-			if (el === null) {
-				return "#hello not found";
-			}
-			if (el.innerText !== "WORKER replies HELLO") {
-				return `Bad #hello.innerText: ${el.innerText}`;
-			}
-			return "ok";
-		});
-		strictEqual(found, "ok", "DOM tests");
-	} finally {
-		await browser.close();
-	}
-});
-
-it("Webworker: require + filename", /* @this */ async function() {
+it("Webworker: custom filename", /* @this */ async function() {
 	this.slow(10000);
 	this.timeout(10000);
 	const actualFiles = await testFixture({
@@ -168,7 +127,7 @@ it("Webworker: require + filename", /* @this */ async function() {
 		webworkerFilename: "subfolder/custom.[name].js",
 		mode: "development",
 		entry: {
-			myapp: "./webworker-require/myapp.ts"
+			myapp: "./webworker/myapp.ts"
 		}
 	});
 	const expectedFiles = [
@@ -201,7 +160,7 @@ it("Webworker: require + filename", /* @this */ async function() {
 	}
 });
 
-it("Webworker: require + polyfills", /* @this */ async function() {
+it("Webworker: polyfills", /* @this */ async function() {
 	this.slow(10000);
 	this.timeout(10000);
 	const actualFiles = await testFixture({
@@ -209,11 +168,11 @@ it("Webworker: require + polyfills", /* @this */ async function() {
 		outputFolder,
 		mode: "development",
 		entry: {
-			myapp: "./webworker-require-polyfills/myapp.ts"
+			myapp: "./webworker-polyfills/myapp.ts"
 		},
 		polyfills: [
-			"./webworker-require-polyfills/both.polyfill.ts",
-			"./webworker-require-polyfills/only-main.polyfill.ts"
+			"./webworker-polyfills/both.polyfill.ts",
+			"./webworker-polyfills/only-main.polyfill.ts"
 		],
 		webworkerPolyfills: ["./both.polyfill", "./only-worker.polyfill", "module-self-polyfill"]
 	});
@@ -239,6 +198,47 @@ it("Webworker: require + polyfills", /* @this */ async function() {
 			}
 			if (el2.innerText !== "BOTH once WORKER once undefined MODULE once") {
 				return `Bad #hello2.innerText: ${el2.innerText}`;
+			}
+			return "ok";
+		});
+		strictEqual(found, "ok", "DOM tests");
+	} finally {
+		await browser.close();
+	}
+});
+
+it("Webworker: without export {}", /* @this */ async function() {
+	this.slow(10000);
+	this.timeout(10000);
+	const actualFiles = await testFixture({
+		rootFolder,
+		outputFolder,
+		mode: "development",
+		entry: {
+			myapp: "./webworker-no-export/myapp.ts"
+		}
+	});
+	const expectedFiles = [
+		"index.html",
+		"myapp.js",
+		"myapp.js.map",
+		"myworker.webworker.js",
+		"myworker.webworker.js.map"
+	];
+	deepStrictEqual(actualFiles.sort(), expectedFiles.sort());
+
+	const browser = await puppeteer.launch();
+	try {
+		const page = await browser.newPage();
+		await page.goto(`http://localhost:${port}/`);
+		await sleep(300);
+		const found = await page.evaluate(() => {
+			const el = document.getElementById("hello");
+			if (el === null) {
+				return "#hello not found";
+			}
+			if (el.innerText !== "WORKER replies HELLO") {
+				return `Bad #hello.innerText: ${el.innerText}`;
 			}
 			return "ok";
 		});
