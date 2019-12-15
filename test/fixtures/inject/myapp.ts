@@ -1,1 +1,4 @@
-console.log('myapp');
+/* eslint-env browser */
+console.log("myapp");
+
+export {};

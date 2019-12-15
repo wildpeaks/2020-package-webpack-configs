@@ -1,11 +1,13 @@
 /* eslint-env browser */
-import * as css from './myapp.scss';
+import * as css from "./myapp.scss";
 const {myclass} = css as {
 	myclass: string;
 };
 
-const mydiv = document.createElement('div');
-mydiv.setAttribute('id', 'hello');
+const mydiv = document.createElement("div");
+mydiv.setAttribute("id", "hello");
 mydiv.className = myclass;
-mydiv.innerText = 'Hello World';
+mydiv.innerText = "Hello World";
 document.body.appendChild(mydiv);
+
+export {};

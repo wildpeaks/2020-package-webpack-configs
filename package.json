@@ -1,49 +1,38 @@
 {
-  "name": "@wildpeaks/webpack-config-web",
-  "version": "4.11.0",
+  "private": true,
   "description": "Webpack 4 base config generator for Web apps",
   "author": "Cecile Muller",
   "license": "MIT",
   "eslintConfig": {
     "extends": "@wildpeaks/commonjs"
   },
+  "prettier": {
+    "printWidth": 120,
+    "tabWidth": 4,
+    "useTabs": true,
+    "bracketSpacing": false
+  },
   "greenkeeper": {
     "commitMessages": {
-      "dependencyUpdate": "fix: Update ${dependency}",
-      "devDependencyUpdate": "chore: Update ${dependency}"
+      "dependencyUpdate": "feat: update ${dependency}",
+      "devDependencyUpdate": "chore: update ${dependency}"
     }
   },
-  "types": "src/getConfig.d.ts",
-  "main": "src/getConfig.js",
-  "files": [
-    "src"
-  ],
   "scripts": {
-    "test:eslint": "eslint src",
-    "test:params": "jasmine test/params-*.spec.js",
-    "test:assets": "jasmine test/fixtures-assets.spec.js",
-    "test:clean": "jasmine test/fixtures-clean.spec.js",
-    "test:css": "jasmine test/fixtures-css.spec.js",
-    "test:core": "jasmine test/fixtures-core.spec.js",
-    "test:optimize": "jasmine test/fixtures-optimize.spec.js",
-    "test:webworkers": "jasmine test/fixtures-webworkers.spec.js",
-    "test": "npm run test:eslint && npm run test:params && npm run test:assets && npm run test:clean && npm run test:css && npm run test:core && npm run test:optimize && npm run test:webworkers"
+    "test:lint": "eslint packages",
+    "test:params": "mocha --exit test/params-*.spec.js",
+    "test:assets": "mocha --exit test/fixtures-assets.spec.js",
+    "test:clean": "mocha --exit test/fixtures-clean.spec.js",
+    "test:core": "mocha --exit test/fixtures-core.spec.js",
+    "test:css": "mocha --exit test/fixtures-css.spec.js",
+    "test:optimize": "mocha --exit test/fixtures-optimize.spec.js",
+    "test:webworkers": "mocha --exit test/fixtures-webworkers.spec.js"
   },
-  "repository": "https://github.com/wildpeaks/package-webpack-config-web",
-  "keywords": [
-    "wildpeaks",
-    "webpack",
-    "config"
-  ],
-  "bugs": {
-    "url": "https://github.com/wildpeaks/package-webpack-config-web/issues"
-  },
-  "homepage": "https://github.com/wildpeaks/package-webpack-config-web#readme",
   "dependencies": {
     "clean-webpack-plugin": "3.0.0",
-    "copy-webpack-plugin": "5.0.5",
-    "core-js": "3.4.7",
-    "css-loader": "3.2.1",
+    "copy-webpack-plugin": "5.1.1",
+    "core-js": "3.5.0",
+    "css-loader": "3.3.2",
     "cssnano": "4.1.10",
     "file-loader": "5.0.2",
     "html-webpack-plugin": "3.2.0",
@@ -63,19 +52,16 @@
     "worker-loader": "2.0.0"
   },
   "devDependencies": {
-    "@types/node": "12.12.14",
-    "@wildpeaks/eslint-config-commonjs": "7.2.0",
+    "@types/node": "12.12.17",
+    "@wildpeaks/eslint-config-commonjs": "8.0.0-alpha6",
     "eslint": "6.7.2",
     "express": "4.17.1",
-    "jasmine": "3.5.0",
+    "fs-extra": "8.1.0",
+    "mocha": "6.2.2",
+    "prettier": "1.19.1",
     "puppeteer": "2.0.0",
     "recursive-readdir": "2.2.2",
-    "rimraf": "3.0.0",
-    "typescript": "3.7.2",
+    "typescript": "3.7.3",
     "webpack": "4.41.2"
-  },
-  "peerDependencies": {
-    "typescript": "*",
-    "webpack": "*"
   }
 }

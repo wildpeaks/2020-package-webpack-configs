@@ -1,28 +1,28 @@
-/* eslint-env node, jasmine */
+/* eslint-env node, mocha */
 /* global document */
-'use strict';
-const {join, relative} = require('path');
-const {mkdirSync} = require('fs');
-const express = require('express');
-const rimraf = require('rimraf');
-const rreaddir = require('recursive-readdir');
-const webpack = require('webpack');
-const puppeteer = require('puppeteer');
-const getConfig = require('..');
-const rootFolder = join(__dirname, 'fixtures');
-const outputFolder = join(__dirname, '../out-assets');
+"use strict";
+const {strictEqual, deepStrictEqual} = require("assert");
+const {join, relative} = require("path");
+const {mkdirSync} = require("fs");
+const express = require("express");
+const rimraf = require("rimraf");
+const rreaddir = require("recursive-readdir");
+const webpack = require("webpack");
+const puppeteer = require("puppeteer");
+const getConfig = require("../packages/webpack-config-web");
+const rootFolder = join(__dirname, "fixtures");
+const outputFolder = join(__dirname, "../tmp-assets");
 let app;
 let server;
 const port = 8880;
 
-
 /**
  * @param {webpack.Configuration} config
  */
-function compile(config){
+function compile(config) {
 	return new Promise((resolve, reject) => {
 		webpack(config, (err, stats) => {
-			if (err){
+			if (err) {
 				reject(err);
 			} else {
 				resolve(stats);
@@ -31,32 +31,29 @@ function compile(config){
 	});
 }
 
-
 /**
  * @param {Object} options
  * @returns {String[]}
  */
-async function testFixture(options){
+async function testFixture(options) {
 	const config = getConfig(options);
-	expect(typeof options).toBe('object');
+	strictEqual(typeof options, "object");
 
 	const stats = await compile(config);
-	expect(stats.compilation.errors).toEqual([]);
+	deepStrictEqual(stats.compilation.errors, []);
 
 	let actualFiles = await rreaddir(outputFolder);
-	actualFiles = actualFiles.map(filepath => relative(outputFolder, filepath).replace(/\\/g, '/'));
+	actualFiles = actualFiles.map(filepath => relative(outputFolder, filepath).replace(/\\/g, "/"));
 	return actualFiles;
 }
 
-
-beforeAll(() => {
+before(() => {
 	app = express();
 	app.use(express.static(outputFolder));
 	server = app.listen(port);
-	jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
 });
 
-afterAll(done => {
+after(done => {
 	server.close(() => {
 		done();
 	});
@@ -69,196 +66,194 @@ beforeEach(done => {
 	});
 });
 
-
-it('Assets', async() => {
+it("Assets", /* @this */ async function() {
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
-		mode: 'development',
+		mode: "development",
 		entry: {
-			myapp: './assets/myapp.ts'
+			myapp: "./assets/myapp.ts"
 		},
 		embedLimit: 5000,
-		embedExtensions: ['jpg', 'png'],
-		copyExtensions: ['gif', 'json'],
-		assetFilename: 'myimages/[name].[ext]'
+		embedExtensions: ["jpg", "png"],
+		copyExtensions: ["gif", "json"],
+		assetFilename: "myimages/[name].[ext]"
 	});
 	const expectedFiles = [
-		'index.html',
-		'myapp.js',
-		'myapp.js.map',
-		'myimages/large.jpg',
-		'myimages/large.png',
-		'myimages/small.gif',
-		'myimages/large.gif',
-		'myimages/small.json',
-		'myimages/large.json'
+		"index.html",
+		"myapp.js",
+		"myapp.js.map",
+		"myimages/large.jpg",
+		"myimages/large.png",
+		"myimages/small.gif",
+		"myimages/large.gif",
+		"myimages/small.json",
+		"myimages/large.json"
 	];
-	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+	deepStrictEqual(actualFiles.sort(), expectedFiles.sort());
 
 	const browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
 		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
-			const container = document.getElementById('assets');
-			if (container === null){
-				return '#assets not found';
+			const container = document.getElementById("assets");
+			if (container === null) {
+				return "#assets not found";
 			}
-			if (container.childNodes.length !== 8){
+			if (container.childNodes.length !== 8) {
 				return `Wrong #assets.childNodes.length: ${container.childNodes.length}`;
 			}
-			for (let i = 0; i < 6; i++){
+			for (let i = 0; i < 6; i++) {
 				const img = container.childNodes[i];
-				if (img.nodeName !== 'IMG'){
+				if (img.nodeName !== "IMG") {
 					return `#assets.childNodes[${i}] isn't an IMG: ${img.nodeName}`;
 				}
 			}
-			for (let i = 6; i < 8; i++){
+			for (let i = 6; i < 8; i++) {
 				const div = container.childNodes[i];
-				if (div.nodeName !== 'DIV'){
+				if (div.nodeName !== "DIV") {
 					return `#assets.childNodes[${i}] isn't a DIV: ${div.nodeName}`;
 				}
 			}
 
-			const img0 = container.childNodes[0].getAttribute('src');
-			const img1 = container.childNodes[1].getAttribute('src');
-			const img2 = container.childNodes[2].getAttribute('src');
-			const img3 = container.childNodes[3].getAttribute('src');
-			const img4 = container.childNodes[4].getAttribute('src');
-			const img5 = container.childNodes[5].getAttribute('src');
+			const img0 = container.childNodes[0].getAttribute("src");
+			const img1 = container.childNodes[1].getAttribute("src");
+			const img2 = container.childNodes[2].getAttribute("src");
+			const img3 = container.childNodes[3].getAttribute("src");
+			const img4 = container.childNodes[4].getAttribute("src");
+			const img5 = container.childNodes[5].getAttribute("src");
 			const div0 = container.childNodes[6];
 			const div1 = container.childNodes[7];
 
-			if (!img0.startsWith('data:image/jpeg;base64')){
+			if (!img0.startsWith("data:image/jpeg;base64")) {
 				return `#assets.childNodes[0] is not a base64 embed: ${img0}`;
 			}
-			if (!img2.startsWith('data:image/png;base64')){
+			if (!img2.startsWith("data:image/png;base64")) {
 				return `#assets.childNodes[2] is not a base64 embed: ${img2}`;
 			}
-			if (img1 !== '/myimages/large.jpg'){
+			if (img1 !== "/myimages/large.jpg") {
 				return `Wrong url for #assets.childNodes[1]: ${img1}`;
 			}
-			if (img3 !== '/myimages/large.png'){
+			if (img3 !== "/myimages/large.png") {
 				return `Wrong url for #assets.childNodes[3]: ${img3}`;
 			}
-			if (img4 !== '/myimages/small.gif'){
+			if (img4 !== "/myimages/small.gif") {
 				return `Wrong url for #assets.childNodes[4]: ${img4}`;
 			}
-			if (img5 !== '/myimages/large.gif'){
+			if (img5 !== "/myimages/large.gif") {
 				return `Wrong url for #assets.childNodes[5]: ${img5}`;
 			}
-			if (div0.innerText !== '/myimages/small.json'){
+			if (div0.innerText !== "/myimages/small.json") {
 				return `Wrong url for #assets.childNodes[6].innerText: ${div0.innerText}`;
 			}
-			if (div1.innerText !== '/myimages/large.json'){
+			if (div1.innerText !== "/myimages/large.json") {
 				return `Wrong url for #assets.childNodes[7].innerText: ${div1.innerText}`;
 			}
-			return 'ok';
+			return "ok";
 		});
-		expect(found).toBe('ok', 'DOM tests');
+		strictEqual(found, "ok", "DOM tests");
 	} finally {
 		await browser.close();
 	}
 });
 
-
-it('Copy Patterns', async() => {
+it("Copy Patterns", /* @this */ async function() {
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
-		mode: 'development',
+		mode: "development",
 		entry: {
-			myapp: './copy-patterns/myapp.ts'
+			myapp: "./copy-patterns/myapp.ts"
 		},
 		copyPatterns: [
 			// Without "**", "from" is the context:
-			{from: 'copy-patterns/myfolder-1', to: 'copied-1'},
-			{from: 'copy-patterns/myfolder-1', to: 'copied-2/'},
-			{from: 'copy-patterns/myfolder-1', to: 'copied-3', toType: 'dir'},
-			{from: 'copy-patterns/myfolder-1', to: 'copied-4/subfolder'},
+			{from: "copy-patterns/myfolder-1", to: "copied-1"},
+			{from: "copy-patterns/myfolder-1", to: "copied-2/"},
+			{from: "copy-patterns/myfolder-1", to: "copied-3", toType: "dir"},
+			{from: "copy-patterns/myfolder-1", to: "copied-4/subfolder"},
 
 			// With "**", it copies using the whole path (hence creates a "copy-patterns/myfolder-2" folder in output).
 			// Use "context" to make it use only the end of the path.
-			{from: 'copy-patterns/myfolder-2/**/*.example-1', to: 'copied-5'},
-			{from: '**/*.example-1', to: 'copied-6', context: 'copy-patterns/myfolder-2'},
+			{from: "copy-patterns/myfolder-2/**/*.example-1", to: "copied-5"},
+			{from: "**/*.example-1", to: "copied-6", context: "copy-patterns/myfolder-2"},
 
 			// File-looking folder name
-			{from: 'copy-patterns/myfolder-3.ext', to: 'copied-7'},
+			{from: "copy-patterns/myfolder-3.ext", to: "copied-7"},
 
 			// Folder-looking filename
-			{from: 'copy-patterns/file9', to: 'copied-8'}
+			{from: "copy-patterns/file9", to: "copied-8"}
 		]
 	});
 	const expectedFiles = [
-		'index.html',
-		'myapp.js',
-		'myapp.js.map',
+		"index.html",
+		"myapp.js",
+		"myapp.js.map",
 
-		'copied-1/file1.example-1',
-		'copied-1/file2.example-1',
-		'copied-2/file1.example-1',
-		'copied-2/file2.example-1',
-		'copied-3/file1.example-1',
-		'copied-3/file2.example-1',
-		'copied-4/subfolder/file1.example-1',
-		'copied-4/subfolder/file2.example-1',
+		"copied-1/file1.example-1",
+		"copied-1/file2.example-1",
+		"copied-2/file1.example-1",
+		"copied-2/file2.example-1",
+		"copied-3/file1.example-1",
+		"copied-3/file2.example-1",
+		"copied-4/subfolder/file1.example-1",
+		"copied-4/subfolder/file2.example-1",
 
-		'copied-5/copy-patterns/myfolder-2/hello/file3.example-1',
-		'copied-5/copy-patterns/myfolder-2/hello/file5.example-1',
-		'copied-6/hello/file3.example-1',
-		'copied-6/hello/file5.example-1',
+		"copied-5/copy-patterns/myfolder-2/hello/file3.example-1",
+		"copied-5/copy-patterns/myfolder-2/hello/file5.example-1",
+		"copied-6/hello/file3.example-1",
+		"copied-6/hello/file5.example-1",
 
-		'copied-7/file7.example',
-		'copied-7/file8.example',
+		"copied-7/file7.example",
+		"copied-7/file8.example",
 
-		'copied-8/file9'
+		"copied-8/file9"
 	];
-	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
+	deepStrictEqual(actualFiles.sort(), expectedFiles.sort());
 });
 
-
-it('Raw imports', async() => {
+it("Raw imports", /* @this */ async function() {
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
-		mode: 'development',
+		mode: "development",
 		entry: {
-			myapp: './raw/myapp.ts'
+			myapp: "./raw/myapp.ts"
 		},
-		rawExtensions: ['txt', 'liquid']
+		rawExtensions: ["txt", "liquid"]
 	});
-	const expectedFiles = [
-		'index.html',
-		'myapp.js',
-		'myapp.js.map'
-	];
-	expect(actualFiles.sort()).toEqual(expectedFiles.sort());
-
+	const expectedFiles = ["index.html", "myapp.js", "myapp.js.map"];
+	deepStrictEqual(actualFiles.sort(), expectedFiles.sort());
 
 	const browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
 		await page.goto(`http://localhost:${port}/`);
 		const found = await page.evaluate(() => {
-			const el1 = document.getElementById('hello1');
-			if (el1 === null){
-				return '#hello1 not found';
+			const el1 = document.getElementById("hello1");
+			if (el1 === null) {
+				return "#hello1 not found";
 			}
-			if (el1.innerText !== 'Hello world\n'){
+			if (el1.innerText !== "Hello world\n") {
 				return `Bad #hello1.innerText: ${el1.innerText}`;
 			}
 
-			const el2 = document.getElementById('hello2');
-			if (el2 === null){
-				return '#hello2 not found';
+			const el2 = document.getElementById("hello2");
+			if (el2 === null) {
+				return "#hello2 not found";
 			}
-			if (el2.innerText !== 'Hello {{ world }}\n'){
+			if (el2.innerText !== "Hello {{ world }}\n") {
 				return `Bad #hello2.innerText: ${el2.innerText}`;
 			}
-			return 'ok';
+			return "ok";
 		});
-		expect(found).toBe('ok', 'DOM tests');
+		strictEqual(found, "ok", "DOM tests");
 	} finally {
 		await browser.close();
 	}

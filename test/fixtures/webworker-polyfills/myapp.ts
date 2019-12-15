@@ -1,8 +1,8 @@
 /* eslint-disable */
-const MyWorker = require('./myapp.webworker');
+const MyWorker = require("./myapp.webworker");
 
-const mydiv1 = document.createElement('div');
-mydiv1.setAttribute('id', 'hello1');
+const mydiv1 = document.createElement("div");
+mydiv1.setAttribute("id", "hello1");
 // @ts-ignore
 mydiv1.innerText = [
 	// @ts-ignore
@@ -13,12 +13,12 @@ mydiv1.innerText = [
 	String(window.EXAMPLE_MAIN_POLYFILL),
 	// @ts-ignore
 	String(window.EXAMPLE_MODULE_POLYFILL)
-].join(' ');
+].join(" ");
 document.body.appendChild(mydiv1);
 
-const mydiv2 = document.createElement('div');
-mydiv2.setAttribute('id', 'hello2');
-mydiv2.innerText = 'Initially';
+const mydiv2 = document.createElement("div");
+mydiv2.setAttribute("id", "hello2");
+mydiv2.innerText = "Initially";
 document.body.appendChild(mydiv2);
 
 const myworker: Worker = new MyWorker();
@@ -28,3 +28,5 @@ myworker.onmessage = response => {
 myworker.postMessage({
 	hello: 123
 });
+
+export {};

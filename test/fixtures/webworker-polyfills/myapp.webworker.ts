@@ -1,7 +1,7 @@
 /* eslint-disable */
 const worker: Worker = self as any;
 
-worker.addEventListener('message', e => {
+worker.addEventListener("message", _e => {
 	const response = [
 		// @ts-ignore
 		String(self.EXAMPLE_BOTH_POLYFILL),
@@ -11,6 +11,6 @@ worker.addEventListener('message', e => {
 		String(self.EXAMPLE_MAIN_POLYFILL),
 		// @ts-ignore
 		String(self.EXAMPLE_MODULE_POLYFILL)
-	].join(' ');
+	].join(" ");
 	worker.postMessage(response);
 });

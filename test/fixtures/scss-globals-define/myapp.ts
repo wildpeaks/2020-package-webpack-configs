@@ -1,7 +1,7 @@
 /* eslint-env browser */
-
-// nothing to do
-const mydiv = document.createElement('div');
-mydiv.setAttribute('id', 'hello');
-mydiv.innerText = 'Hello World';
+const mydiv = document.createElement("div");
+mydiv.setAttribute("id", "hello");
+mydiv.innerText = "Hello World";
 document.body.appendChild(mydiv);
+
+export {};

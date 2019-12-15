@@ -4,18 +4,28 @@
 .gitattributes  text
 .gitignore      text
 LICENSE         text
+
 *.html          text
 *.md            text
 *.txt           text
 *.liquid        text
+*.sh            text
+*.xml           text
+*.yml           text
 
 *.js            text
 *.ts            text
 *.json          text
-*.yml           text
-*.svg           text
+*.css           text
+*.scss          text
 
+*.svg           text
 *.jpg           binary
-*.png           binary
 *.gif           binary
+*.png           binary
+*.mp4           binary
+
+*.eot           binary
+*.ttf           binary
 *.woff          binary
+*.woff2         binary
