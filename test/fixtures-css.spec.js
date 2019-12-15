@@ -79,8 +79,8 @@ beforeEach(done => {
 });
 
 it("CSS Modules", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -115,8 +115,8 @@ it("CSS Modules", /* @this */ async function() {
 });
 
 it("CSS Filename", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -158,8 +158,8 @@ it("CSS Filename", /* @this */ async function() {
 });
 
 it("CSS without CSS Modules", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -194,8 +194,8 @@ it("CSS without CSS Modules", /* @this */ async function() {
 });
 
 it("CSS Reset", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -232,8 +232,8 @@ it("CSS Reset", /* @this */ async function() {
 });
 
 it("SCSS: Reset", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -270,8 +270,8 @@ it("SCSS: Reset", /* @this */ async function() {
 });
 
 it("SCSS Global Import", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -309,8 +309,8 @@ it("SCSS Global Import", /* @this */ async function() {
 });
 
 it("SCSS Global Variables", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -348,8 +348,8 @@ it("SCSS Global Variables", /* @this */ async function() {
 });
 
 it("SCSS Basic", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -384,8 +384,8 @@ it("SCSS Basic", /* @this */ async function() {
 });
 
 it("SCSS Import File", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -420,8 +420,8 @@ it("SCSS Import File", /* @this */ async function() {
 });
 
 it("SCSS Import Module", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -456,8 +456,8 @@ it("SCSS Import Module", /* @this */ async function() {
 });
 
 it("CSS Chunks", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -516,8 +516,8 @@ it("CSS Chunks", /* @this */ async function() {
 });
 
 it("CSS Chunk Filename", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -577,8 +577,8 @@ it("CSS Chunk Filename", /* @this */ async function() {
 });
 
 it("SCSS Chunks", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -637,8 +637,8 @@ it("SCSS Chunks", /* @this */ async function() {
 });
 
 it("SCSS Chunk Filename", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -698,8 +698,8 @@ it("SCSS Chunk Filename", /* @this */ async function() {
 });
 
 it("SCSS Chunk + SCSS variables", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -762,8 +762,8 @@ it("SCSS Chunk + SCSS variables", /* @this */ async function() {
 });
 
 it("SCSS data only", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -798,8 +798,8 @@ it("SCSS data only", /* @this */ async function() {
 });
 
 it("SCSS data + import", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -838,8 +838,8 @@ it("SCSS data + import", /* @this */ async function() {
 });
 
 it("SCSS data function", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -878,8 +878,8 @@ it("SCSS data function", /* @this */ async function() {
 });
 
 it("SCSS + Image", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -911,8 +911,8 @@ it("SCSS + Image", /* @this */ async function() {
 });
 
 it("CSS + Image", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,

@@ -67,8 +67,8 @@ beforeEach(done => {
 });
 
 it("Assets", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -161,8 +161,8 @@ it("Assets", /* @this */ async function() {
 });
 
 it("Copy Patterns", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -217,8 +217,8 @@ it("Copy Patterns", /* @this */ async function() {
 });
 
 it("Raw imports", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,

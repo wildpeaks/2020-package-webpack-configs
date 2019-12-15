@@ -79,8 +79,8 @@ beforeEach(done => {
 });
 
 it("Enable sourcemaps", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -102,8 +102,8 @@ it("Enable sourcemaps", /* @this */ async function() {
 });
 
 it("Disable sourcemaps", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -125,8 +125,8 @@ it("Disable sourcemaps", /* @this */ async function() {
 });
 
 it("Minify", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -212,8 +212,8 @@ it("Minify", /* @this */ async function() {
 });
 
 it("Minify & skipHashes", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -295,8 +295,8 @@ it("Minify & skipHashes", /* @this */ async function() {
 });
 
 it("Chunks", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -330,8 +330,8 @@ it("Chunks", /* @this */ async function() {
 });
 
 it("Chunk Filename", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -372,8 +372,8 @@ it("Chunk Filename", /* @this */ async function() {
 });
 
 it("Chunks & Polyfill", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -420,8 +420,8 @@ it("Chunks & Polyfill", /* @this */ async function() {
 });
 
 it("Skip Postprocessing", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,

@@ -65,8 +65,8 @@ beforeEach(done => {
 });
 
 it("skipReset: false", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	writeFileSync(join(outputFolder, "extra-1.txt"), "Hello World");
 	writeFileSync(join(outputFolder, "extra-2.js"), "Hello World");
 	writeFileSync(join(outputFolder, "extra-3.ts"), "Hello World");
@@ -85,8 +85,8 @@ it("skipReset: false", /* @this */ async function() {
 });
 
 it("skipReset: true", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	writeFileSync(join(outputFolder, "extra-1.txt"), "Hello World");
 	writeFileSync(join(outputFolder, "extra-2.js"), "Hello World");
 	writeFileSync(join(outputFolder, "extra-3.ts"), "Hello World");

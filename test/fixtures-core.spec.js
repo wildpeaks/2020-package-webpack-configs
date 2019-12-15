@@ -68,8 +68,8 @@ beforeEach(done => {
 });
 
 it("Basic", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -102,8 +102,8 @@ it("Basic", /* @this */ async function() {
 });
 
 it("Custom filename", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -137,8 +137,8 @@ it("Custom filename", /* @this */ async function() {
 });
 
 it("Multiple independant entries", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -241,8 +241,8 @@ it("Multiple independant entries", /* @this */ async function() {
 });
 
 it("Local Modules", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -275,8 +275,8 @@ it("Local Modules", /* @this */ async function() {
 });
 
 it("Polyfills", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
@@ -324,8 +324,8 @@ it("Polyfills", /* @this */ async function() {
 });
 
 it("Inject Patterns", /* @this */ async function() {
-	this.slow(5000);
-	this.timeout(5000);
+	this.slow(10000);
+	this.timeout(10000);
 	const actualFiles = await testFixture({
 		rootFolder,
 		outputFolder,
