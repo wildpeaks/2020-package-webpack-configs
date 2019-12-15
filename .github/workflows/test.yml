@@ -20,5 +20,26 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run tests
-        run: npm run test
+      - name: Test Eslint
+        run: npm run test:lint
+
+      - name: Test Params
+        run: npm run test:params
+
+      - name: Test Assets
+        run: npm run test:assets
+
+      - name: Test Clean
+        run: npm run test:clean
+
+      - name: Test Core
+        run: npm run test:core
+
+      - name: Test CSS
+        run: npm run test:css
+
+      - name: Test Optimize
+        run: npm run test:optimize
+
+      - name: Test Webworkers
+        run: npm run test:webworkers

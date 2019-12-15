@@ -26,8 +26,7 @@
     "test:core": "mocha --exit test/fixtures-core.spec.js",
     "test:css": "mocha --exit test/fixtures-css.spec.js",
     "test:optimize": "mocha --exit test/fixtures-optimize.spec.js",
-    "test:webworkers": "mocha --exit test/fixtures-webworkers.spec.js",
-    "test": "npm run test:lint && npm run test:params && npm run test:assets && npm run test:clean && npm run test:core && npm run test:css && npm run test:optimize && npm run test:webworkers"
+    "test:webworkers": "mocha --exit test/fixtures-webworkers.spec.js"
   },
   "dependencies": {
     "clean-webpack-plugin": "3.0.0",
