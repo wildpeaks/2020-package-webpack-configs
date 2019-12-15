@@ -9,7 +9,6 @@
 		".npmrc": true,
 		".editorconfig": true,
 		"package-lock.json": true,
-		"node_modules": true,
-		"test/tmp": true
+		"node_modules": true
 	}
 }

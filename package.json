@@ -21,6 +21,12 @@
   "scripts": {
     "test:lint": "eslint packages",
     "test:params": "mocha --exit test/params-*.spec.js",
+    "test:assets": "mocha --exit test/fixtures-assets.spec.js",
+    "test:clean": "mocha --exit test/fixtures-clean.spec.js",
+    "test:core": "mocha --exit test/fixtures-core.spec.js",
+    "test:css": "mocha --exit test/fixtures-css.spec.js",
+    "test:optimize": "mocha --exit test/fixtures-optimize.spec.js",
+    "test:webworkers": "mocha --exit test/fixtures-webworkers.spec.js",
     "test": "npm run test:lint && npm run test:params"
   },
   "dependencies": {
@@ -48,7 +54,7 @@
   },
   "devDependencies": {
     "@types/node": "12.12.17",
-    "@wildpeaks/eslint-config-commonjs": "8.0.0-alpha5",
+    "@wildpeaks/eslint-config-commonjs": "8.0.0-alpha6",
     "eslint": "6.7.2",
     "express": "4.17.1",
     "fs-extra": "8.1.0",
