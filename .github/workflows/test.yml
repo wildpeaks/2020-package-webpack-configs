@@ -20,8 +20,5 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Eslint the packages
-        run: npm run test:lint
-
-      - name: Test parameters
-        run: npm run test:params
+      - name: Run tests
+        run: npm run test

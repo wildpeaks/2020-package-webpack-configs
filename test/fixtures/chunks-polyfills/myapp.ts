@@ -5,7 +5,7 @@ mydiv.innerText = `Initially`;
 document.body.appendChild(mydiv);
 
 setTimeout(async () => {
-	const {mymodule} = await import("mymodule");
+	const {mymodule} = await import("./modules/mymodule");
 	mydiv.innerText = `Delayed ${mymodule(123)}`;
 });
 

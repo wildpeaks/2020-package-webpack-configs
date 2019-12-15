@@ -162,7 +162,7 @@ it("Minify", /* @this */ async function() {
 	}
 
 	const jsRaw = readFileSync(join(outputFolder, `${hash}.myapp.js`), "utf8");
-	strictEqual(jsRaw.startsWith("!function(e){"), true, "JS not minified");
+	strictEqual(jsRaw.startsWith("!function("), true, "JS not minified");
 
 	const browser = await puppeteer.launch();
 	try {
@@ -244,7 +244,7 @@ it("Minify & skipHashes", /* @this */ async function() {
 	}
 
 	const jsRaw = readFileSync(join(outputFolder, `myapp.js`), "utf8");
-	strictEqual(jsRaw.startsWith("!function(e){"), true, "JS not minified");
+	strictEqual(jsRaw.startsWith("!function("), true, "JS not minified");
 
 	const browser = await puppeteer.launch();
 	try {
