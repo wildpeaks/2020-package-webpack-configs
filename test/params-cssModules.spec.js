@@ -31,14 +31,17 @@ function testFixture(title, cssModules, expectThrows) {
 describe("cssModules", () => {
 	testFixture("Valid: true", true, false);
 	testFixture("Valid: false", true, false);
-	testFixture('Invalid: ""', "", true);
-	testFixture('Invalid: "true"', "true", true);
-	testFixture('Invalid: "false"', "false", true);
+
+	// It only checks for the data type, not the value inside
+	testFixture("Valid: {}", {}, false);
+	testFixture('Valid: ""', "", false);
+	testFixture('Valid: "true"', "true", false);
+	testFixture('Valid: "false"', "false", false);
+
 	testFixture("Invalid: 123", 123, true);
 	testFixture("Invalid: 0", 0, true);
 	testFixture("Invalid: NaN", NaN, true);
 	testFixture("Invalid: -1", -1, true);
-	testFixture("Invalid: {}", {}, true);
 	testFixture("Invalid: null", null, true);
 	testFixture("Invalid: Symbol", Symbol("true"), true);
 });

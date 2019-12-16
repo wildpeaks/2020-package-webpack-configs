@@ -301,7 +301,7 @@ See [devServer.port](https://webpack.js.org/configuration/dev-server/#devserver-
 
 
 ---
-### `cssModules`: Boolean
+### `cssModules`: Boolean or String or Object
 
 The **CSS Modules** option makes classnames and identifiers globally unique at build time,
 and importing a stylesheet returns an object with the generated unique classnames.

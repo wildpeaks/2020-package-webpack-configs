@@ -271,7 +271,14 @@ type GetConfigOptions = {
 	 * @default true
 	 * @see [Modules](https://github.com/webpack-contrib/css-loader#modules) in the `css-loader` documentation
 	 */
-	cssModules?: boolean;
+	cssModules?: boolean | 'global' | 'local' | 'pure' | {
+		mode?: 'global' | 'local' | 'pure';
+		localIdentName?: string;
+		context?: string;
+		hashPrefix?: string;
+		getLocalIdent?: any;
+		[key: string]: any;
+	};
 
 	/**
 	 * Prepends arbitrary SCSS (or plain CSS) code to all `.css` and `.scss` files.

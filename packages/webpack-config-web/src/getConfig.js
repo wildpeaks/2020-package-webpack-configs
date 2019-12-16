@@ -105,7 +105,14 @@ module.exports = function getConfig({
 	strictEqual(isNaN(port), false, '"port" must not be NaN');
 	strictEqual(port > 0, true, '"port" should be a positive number');
 
-	strictEqual(typeof cssModules, "boolean", '"cssModules" should be a Boolean');
+	const okCssModules = (
+		(cssModules !== null) && (
+			(typeof cssModules === "boolean") ||
+			(typeof cssModules === "object") ||
+			(typeof cssModules === "string")
+		)
+	);
+	strictEqual(okCssModules, true, '"cssModules" should be a Boolean');
 	strictEqual(
 		typeof scss === "string" || typeof scss === "function" || typeof scss === "undefined",
 		true,
