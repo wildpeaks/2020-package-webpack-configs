@@ -23,25 +23,26 @@ jobs:
               run: npm install
 
             - name: Test Eslint
-              run: npm run test:lint
+              run: npm run lint
 
-            - name: Test Params
-              run: npm run test:params
+            - name: Test Web Params
+              run: npm run test:web-params
 
-            - name: Test Assets
-              run: npm run test:assets
+            - name: Test Web Assets
+              run: npm run test:web-assets
 
-            - name: Test Clean
-              run: npm run test:clean
+            - name: Test Web Clean
+              run: npm run test:web-clean
 
-            - name: Test Core
-              run: npm run test:core
+            - name: Test Web Core
+              run: npm run test:web-core
 
-            - name: Test CSS
-              run: npm run test:css
+            - name: Test Web CSS
+              run: npm run test:web-css
 
-            - name: Test Optimize
-              run: npm run test:optimize
+            - name: Test Web Optimize
+              run: npm run test:web-optimize
 
-            - name: Test Webworkers
-              run: npm run test:webworkers
+            - name: Test Web Webworkers
+              run: npm run test:web-webworkers
+
