@@ -60,12 +60,10 @@ module.exports = function getConfig({
 
 	strictEqual(typeof outputFolder, "string", '"outputFolder" should be a String');
 	let actualOutputFolder = outputFolder;
-	if (!skipPostprocess) {
-		if (actualOutputFolder === "") {
-			actualOutputFolder = join(actualRootFolder, "dist");
-		} else if (!isAbsolute(actualOutputFolder)) {
-			throw new Error('"outputFolder" should be an absolute path');
-		}
+	if (actualOutputFolder === "") {
+		actualOutputFolder = join(actualRootFolder, "dist");
+	} else if (!isAbsolute(actualOutputFolder)) {
+		throw new Error('"outputFolder" should be an absolute path');
 	}
 
 	strictEqual(typeof mode, "string", '"mode" should be a String');
