@@ -9,7 +9,7 @@ const rreaddir = require("recursive-readdir");
 const webpack = require("webpack");
 const getConfig = require("../../packages/webpack-config-web");
 const rootFolder = join(__dirname, "fixtures");
-const outputFolder = join(__dirname, "../tmp-clean");
+const outputFolder = join(__dirname, "../../tmp-web-clean");
 let app;
 let server;
 const port = 8881;

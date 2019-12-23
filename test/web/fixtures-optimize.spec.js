@@ -12,7 +12,7 @@ const webpack = require("webpack");
 const puppeteer = require("puppeteer");
 const getConfig = require("../../packages/webpack-config-web");
 const rootFolder = join(__dirname, "fixtures");
-const outputFolder = join(__dirname, "../tmp-optimize");
+const outputFolder = join(__dirname, "../../tmp-web-optimize");
 let app;
 let server;
 const port = 8882;

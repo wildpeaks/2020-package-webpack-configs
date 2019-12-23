@@ -11,7 +11,7 @@ const webpack = require("webpack");
 const puppeteer = require("puppeteer");
 const getConfig = require("../../packages/webpack-config-web");
 const rootFolder = join(__dirname, "fixtures");
-const outputFolder = join(__dirname, "../tmp-webworkers");
+const outputFolder = join(__dirname, "../../tmp-web-webworkers");
 let app;
 let server;
 const port = 8883;
