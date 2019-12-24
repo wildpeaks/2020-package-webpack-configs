@@ -20,14 +20,9 @@
   },
   "scripts": {
     "lint": "eslint packages",
-    "test:node-params": "mocha --exit test/node/params-*.spec.js",
-    "test:web-params": "mocha --exit test/web/params-*.spec.js",
-    "test:web-assets": "mocha --exit test/web/fixtures-assets.spec.js",
-    "test:web-clean": "mocha --exit test/web/fixtures-clean.spec.js",
-    "test:web-core": "mocha --exit test/web/fixtures-core.spec.js",
-    "test:web-css": "mocha --exit test/web/fixtures-css.spec.js",
-    "test:web-optimize": "mocha --exit test/web/fixtures-optimize.spec.js",
-    "test:web-webworkers": "mocha --exit test/web/fixtures-webworkers.spec.js"
+    "setup": "node test/setup.js",
+    "test:web": "mocha test/web.spec.js",
+    "test:params": "mocha test/params/*.spec.js"
   },
   "dependencies": {
     "clean-webpack-plugin": "3.0.0",
