@@ -22,27 +22,11 @@ jobs:
             - name: Install dependencies
               run: npm install
 
-            - name: Test Eslint
+            - name: Eslint
               run: npm run lint
 
-            - name: Test Web Params
-              run: npm run test:web-params
+            - name: Params
+              run: npm run test:params
 
-            - name: Test Web Assets
-              run: npm run test:web-assets
-
-            - name: Test Web Clean
-              run: npm run test:web-clean
-
-            - name: Test Web Core
-              run: npm run test:web-core
-
-            - name: Test Web CSS
-              run: npm run test:web-css
-
-            - name: Test Web Optimize
-              run: npm run test:web-optimize
-
-            - name: Test Web Webworkers
-              run: npm run test:web-webworkers
-
+            # - name: Setup
+            #   run: npm run setup
