@@ -1,7 +1,5 @@
 {
 	"compilerOptions": {
-		"noEmit": true,
-
 		"newLine": "LF",
 		"alwaysStrict": true,
 		"noEmitOnError": true,
@@ -14,15 +12,10 @@
 		"preserveConstEnums": true,
 
 		"moduleResolution": "node",
-		"allowJs": true,
+		"allowJs": false,
 		"module": "esnext",
 		"lib": ["es2017", "dom"],
 		"target": "es5",
 		"sourceMap": true
-	},
-	"exclude": [],
-	"include": [
-		"./src/**/*.*",
-		"./test/**/*.*"
-	]
+	}
 }

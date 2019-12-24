@@ -22,11 +22,17 @@ jobs:
             - name: Install dependencies
               run: npm install
 
-            - name: Eslint
-              run: npm run lint
+            - name: Test Lint
+              run: npm run test:lint
 
-            - name: Params
+            - name: Test Params
               run: npm run test:params
 
-            # - name: Setup
-            #   run: npm run setup
+            - name: Test Setup
+              run: npm run test:setup
+
+            - name: Test Web
+              run: npm run test:web
+
+            - name: Test Node
+              run: npm run test:node
