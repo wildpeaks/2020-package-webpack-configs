@@ -89,10 +89,43 @@ async function getSnapshot(subpath = "") {
 	return tree.childNodes;
 }
 
+async function getSnapshotMultiple(subpath = "") {
+	let tree1;
+	let tree2;
+	const browser = await puppeteer.launch();
+	try {
+		const page = await browser.newPage();
+		await page.goto(localhost + subpath, {waitUntil: "load"});
+		await sleep(300);
+		await page.addScriptTag({path: script});
+		await sleep(300);
+		tree1 = await page.evaluate(() => {
+			const el1 = document.getElementById("mocha1");
+			if (el1) {
+				return window.snapshotToJson(el1).childNodes;
+			}
+			return "NOT FOUND";
+		});
+		tree2 = await page.evaluate(() => {
+			const el2 = document.getElementById("mocha2");
+			if (el2) {
+				return window.snapshotToJson(el2).childNodes;
+			}
+			return "NOT FOUND";
+		});
+	} finally {
+		await browser.close();
+	}
+	return {
+		mocha1: tree1,
+		mocha2: tree2
+	};
+}
+
 describe("Web: Core", function() {
 	it("Basic", /* @this */ async function() {
-		this.slow(15000);
-		this.timeout(15000);
+		this.slow(30000);
+		this.timeout(30000);
 		await testCompile({
 			id: "basic",
 			sources: [
@@ -333,6 +366,104 @@ describe("Web: Core", function() {
 				}
 			}
 		]);
+	});
+
+	it("Multiple pages", /* @this */ async function() {
+		this.slow(15000);
+		this.timeout(15000);
+		await testCompile({
+			id: "multiple_pages",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/template.html",
+				"src/first.ts",
+				"src/second.ts"
+			],
+			compiled: [
+				"dist/app-pages-1.js",
+				"dist/app-pages-2.js",
+				"dist/page1.html",
+				"dist/page2.html",
+				"dist/page3.html",
+				"dist/subfolder/page4.html",
+				"dist/page5.html",
+				"dist/page6.html"
+			]
+		});
+
+		const actual1 = await getSnapshotMultiple("page1.html");
+		const expected1 = {
+			mocha1: [{nodeName: "#text", nodeValue: "FIRST One"}],
+			mocha2: "NOT FOUND"
+		};
+		deepStrictEqual(actual1, expected1, "page1.html");
+
+		const actual2 = await getSnapshotMultiple("page2.html");
+		const expected2 = {
+			mocha1: "NOT FOUND",
+			mocha2: [{nodeName: "#text", nodeValue: "SECOND Two"}]
+		};
+		deepStrictEqual(actual2, expected2, "page2.html");
+
+		const actual3 = await getSnapshotMultiple("page3.html");
+		const expected3 = {
+			mocha1: [{nodeName: "#text", nodeValue: "FIRST Three"}],
+			mocha2: [{nodeName: "#text", nodeValue: "SECOND Three"}]
+		};
+		deepStrictEqual(actual3, expected3, "page3.html");
+
+		const actual4 = await getSnapshotMultiple("subfolder/page4.html");
+		const expected4 = {
+			mocha1: [{nodeName: "#text", nodeValue: "FIRST Four"}],
+			mocha2: [{nodeName: "#text", nodeValue: "SECOND Four"}]
+		};
+		deepStrictEqual(actual4, expected4, "page4.html");
+
+		let actual5;
+		const browser5 = await puppeteer.launch();
+		try {
+			const page5 = await browser5.newPage();
+			await page5.goto(localhost + "page5.html", {waitUntil: "load"});
+			await sleep(300);
+			await page5.addScriptTag({path: script});
+			await sleep(300);
+			actual5 = await page5.evaluate(() => {
+				const children = [...document.getElementsByTagName("meta")];
+				return children.map(window.snapshotToJson);
+			});
+		} finally {
+			await browser5.close();
+		}
+		const expected5 = [
+			{
+				attributes: {
+					charset: "UTF-8"
+				},
+				tagName: "meta"
+			},
+			{
+				attributes: {
+					param1: "Value 1"
+				},
+				tagName: "meta"
+			},
+			{
+				attributes: {
+					param2: "Value 2"
+				},
+				tagName: "meta"
+			}
+		];
+		deepStrictEqual(actual5, expected5, "page5.html");
+
+		const actual6 = await getSnapshotMultiple("page6.html");
+		const expected6 = {
+			mocha1: [{nodeName: "#text", nodeValue: "FIRST Six - Custom Option: AAAAA"}],
+			mocha2: [{nodeName: "#text", nodeValue: "SECOND Six - Custom Option: AAAAA"}]
+		};
+		deepStrictEqual(actual6, expected6, "page6.html");
 	});
 });
 
