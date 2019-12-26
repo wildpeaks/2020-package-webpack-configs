@@ -1,9 +1,8 @@
 /* eslint-env node */
 "use strict";
 const {exec} = require("child_process");
-const {writeFileSync} = require("fs");
 const {join, relative} = require("path");
-const {copySync, removeSync} = require("fs-extra");
+const {copySync, removeSync, outputFileSync} = require("fs-extra");
 const rreaddir = require("recursive-readdir");
 
 /**
@@ -20,7 +19,7 @@ async function getFiles(folder) {
 /**
  * @param {String} folder
  */
-async function compileFixture(folder) {
+async function compileFixture(folder, extras) {
 	const tmpFolder = join(__dirname, "../tmp");
 	removeSync(join(tmpFolder, "src"));
 	removeSync(join(tmpFolder, "lib"));
@@ -38,11 +37,17 @@ async function compileFixture(folder) {
 		join(tmpFolder, "webpack.config.js")
 	);
 	// prettier-ignore
-	writeFileSync(
+	outputFileSync(
 		join(tmpFolder, "package.json"),
 		JSON.stringify({private: true, scripts: {build: "webpack"}}),
 		"utf8"
 	);
+
+	if (extras) {
+		outputFileSync(join(tmpFolder, "dist/extra-1.txt"), "Hello World");
+		outputFileSync(join(tmpFolder, "dist/extra-2.js"), "Hello World");
+		outputFileSync(join(tmpFolder, "dist/extra-3.ts"), "Hello World");
+	}
 
 	const filesBefore = await getFiles(tmpFolder);
 	const {output, errors} = await execCommand("npm run build", tmpFolder, 20000);
@@ -80,7 +85,6 @@ function execCommand(command, cwd, timeout = 0) {
 		});
 	});
 }
-
 
 module.exports = {
 	compileFixture,

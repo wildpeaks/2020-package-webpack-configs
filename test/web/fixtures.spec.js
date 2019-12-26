@@ -54,12 +54,24 @@ after(function() {
 	});
 });
 
-async function testCompile({id, sources, compiled}) {
+async function testCompile({id, sources, compiled, extras}) {
 	const fixtureFolder = join(__dirname, id);
-	const {filesBefore, errors, filesAfter} = await compileFixture(fixtureFolder);
-	deepStrictEqual(filesBefore, sources.sort(), "Before Webpack");
+	const {filesBefore, errors, filesAfter} = await compileFixture(fixtureFolder, extras);
+
+	let expectBefore = sources;
+	if (extras) {
+		expectBefore = expectBefore.concat([
+			"dist/extra-1.txt",
+			"dist/extra-2.js",
+			"dist/extra-3.ts"
+		]);
+	}
+	expectBefore = expectBefore.sort();
+	const expectAfter = sources.concat(compiled).sort();
+
+	deepStrictEqual(filesBefore, expectBefore, "Before Webpack");
 	deepStrictEqual(errors, [], "No Webpack errors");
-	deepStrictEqual(filesAfter, sources.concat(compiled).sort(), "After Webpack");
+	deepStrictEqual(filesAfter, expectAfter, "After Webpack");
 }
 
 async function getSnapshot() {
@@ -243,6 +255,64 @@ describe("Web: Assets", function() {
 					}
 				],
 				tagName: "div"
+			}
+		];
+		deepStrictEqual(actual, expected, "DOM structure");
+	});
+});
+
+describe("Web: Skip Reset", function() {
+	it("False", /* @this */ async function() {
+		this.slow(15000);
+		this.timeout(15000);
+		await testCompile({
+			id: "skip_false",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts"
+			],
+			extras: true,
+			compiled: [
+				"dist/index.html",
+				"dist/app-skip-false.js"
+			]
+		});
+		const actual = await getSnapshot();
+		const expected = [
+			{
+				nodeName: "#text",
+				nodeValue: "Skip False"
+			}
+		];
+		deepStrictEqual(actual, expected, "DOM structure");
+	});
+	it("True", /* @this */ async function() {
+		this.slow(15000);
+		this.timeout(15000);
+		await testCompile({
+			id: "skip_true",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts"
+			],
+			extras: true,
+			compiled: [
+				"dist/index.html",
+				"dist/app-skip-true.js",
+				"dist/extra-1.txt",
+				"dist/extra-2.js",
+				"dist/extra-3.ts"
+			]
+		});
+		const actual = await getSnapshot();
+		const expected = [
+			{
+				nodeName: "#text",
+				nodeValue: "Skip True"
 			}
 		];
 		deepStrictEqual(actual, expected, "DOM structure");
