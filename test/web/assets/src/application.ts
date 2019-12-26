@@ -10,7 +10,6 @@ import srcLargeJson from "./large.json";
 
 const container = document.createElement("div");
 container.setAttribute("id", "mocha");
-container.innerText = "Basic";
 document.body.appendChild(container);
 
 const imgSmallJpg = document.createElement("img");

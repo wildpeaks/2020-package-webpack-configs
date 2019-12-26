@@ -142,21 +142,20 @@ describe("Web: Assets", function() {
 		});
 
 		const actual = await getSnapshot();
-		strictEqual(actual.length, 9, "#mocha.childNodes.length");
-		deepStrictEqual(actual[0], {nodeName: "#text", nodeValue: "Basic"});
-		deepStrictEqual(actual[1].tagName, "img");
-		deepStrictEqual(actual[3].tagName, "img");
-		deepStrictEqual(actual[1].attributes.src.startsWith("data:image/jpeg;base64"), true);
-		deepStrictEqual(actual[3].attributes.src.startsWith("data:image/png;base64"), true);
-		deepStrictEqual(actual[2], {attributes: {src: "/myimages/large.jpg"}, tagName: "img"});
-		deepStrictEqual(actual[4], {attributes: {src: "/myimages/large.png"}, tagName: "img"});
-		deepStrictEqual(actual[5], {attributes: {src: "/myimages/small.gif"}, tagName: "img"});
-		deepStrictEqual(actual[6], {attributes: {src: "/myimages/large.gif"}, tagName: "img"});
-		deepStrictEqual(actual[7], {
+		strictEqual(actual.length, 8, "#mocha.childNodes.length");
+		deepStrictEqual(actual[0].tagName, "img");
+		deepStrictEqual(actual[2].tagName, "img");
+		deepStrictEqual(actual[0].attributes.src.startsWith("data:image/jpeg;base64"), true);
+		deepStrictEqual(actual[2].attributes.src.startsWith("data:image/png;base64"), true);
+		deepStrictEqual(actual[1], {attributes: {src: "/myimages/large.jpg"}, tagName: "img"});
+		deepStrictEqual(actual[3], {attributes: {src: "/myimages/large.png"}, tagName: "img"});
+		deepStrictEqual(actual[4], {attributes: {src: "/myimages/small.gif"}, tagName: "img"});
+		deepStrictEqual(actual[5], {attributes: {src: "/myimages/large.gif"}, tagName: "img"});
+		deepStrictEqual(actual[6], {
 			childNodes: [{nodeName: "#text", nodeValue: "/myimages/small.json"}],
 			tagName: "div"
 		});
-		deepStrictEqual(actual[8], {
+		deepStrictEqual(actual[7], {
 			childNodes: [{nodeName: "#text", nodeValue: "/myimages/large.json"}],
 			tagName: "div"
 		});
@@ -202,5 +201,50 @@ describe("Web: Assets", function() {
 				"dist/copied-8/file9"
 			]
 		});
+	});
+
+	it("Raw imports", /* @this */ async function() {
+		this.slow(15000);
+		this.timeout(15000);
+		await testCompile({
+			id: "raw_imports",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/file1.txt",
+				"src/file2.liquid"
+			],
+			compiled: ["dist/index.html", "dist/app-raw-imports.js"]
+		});
+		const actual = await getSnapshot();
+		const expected = [
+			{
+				attributes: {
+					id: "hello1"
+				},
+				childNodes: [
+					{
+						nodeName: "#text",
+						nodeValue: "Hello world\n"
+					}
+				],
+				tagName: "div"
+			},
+			{
+				attributes: {
+					id: "hello2"
+				},
+				childNodes: [
+					{
+						nodeName: "#text",
+						nodeValue: "Hello {{ world }}\n"
+					}
+				],
+				tagName: "div"
+			}
+		];
+		deepStrictEqual(actual, expected, "DOM structure");
 	});
 });
