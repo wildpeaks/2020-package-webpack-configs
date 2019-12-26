@@ -2,14 +2,16 @@
 /* eslint-disable prefer-arrow-callback */
 "use strict";
 const {join} = require("path");
-const {strictEqual, deepStrictEqual} = require("assert");
+const {deepStrictEqual} = require("assert");
 const {copySync, removeSync} = require("fs-extra");
 const express = require("express");
 const puppeteer = require("puppeteer");
 const {compileFixture} = require("../shared");
+const script = require.resolve("@wildpeaks/snapshot-dom/lib/browser.js");
 
-const dist = join(__dirname, `../../tmp/dist`);
 const port = 8888;
+const localhost = `http://localhost:${port}/`;
+const dist = join(__dirname, `../../tmp/dist`);
 let app;
 let server;
 
@@ -52,53 +54,55 @@ after(function() {
 	});
 });
 
-function testFixture({id, title, sourceFiles, webpackFiles, html}) {
+function testFixture({id, title, sources, compiled, nodes}) {
 	it(title, /* @this */ async function() {
-		this.slow(30000);
-		this.timeout(30000);
+		this.slow(15000);
+		this.timeout(15000);
 
 		const fixtureFolder = join(__dirname, id);
-		const compiled = await compileFixture(fixtureFolder);
-		deepStrictEqual(compiled.filesBefore, sourceFiles.sort(), "Before Webpack");
-		deepStrictEqual(compiled.errors, [], "No Webpack errors");
-		deepStrictEqual(compiled.filesAfter, sourceFiles.concat(webpackFiles).sort(), "After Webpack");
-		// console.log(compiled.output);
+		const {filesBefore, errors, filesAfter} = await compileFixture(fixtureFolder);
+		deepStrictEqual(filesBefore, sources.sort(), "Before Webpack");
+		deepStrictEqual(errors, [], "No Webpack errors");
+		deepStrictEqual(filesAfter, sources.concat(compiled).sort(), "After Webpack");
 
-		let actualHTML = "";
+		let actualNodes;
 		const browser = await puppeteer.launch();
 		try {
 			const page = await browser.newPage();
-			await page.goto(`http://localhost:${port}/`);
+			await page.goto(localhost, {waitUntil: "load"});
 			await sleep(300);
-			actualHTML = await page.evaluate(() => {
-				const el = document.getElementById("hello");
-				if (el === null) {
-					return "Error: #hello not found";
-				}
-				return el.innerHTML;
-			});
+			await page.addScriptTag({path: script});
+			await sleep(300);
+			actualNodes = await page.evaluate(() => window.snapshotToJson(document.getElementById("mocha")));
 		} finally {
 			await browser.close();
 		}
-		strictEqual(actualHTML, html);
+		if ((actualNodes === null) || (typeof actualNodes !== "object")) {
+			throw new Error("Failed to snapshot #mocha element");
+		}
+		deepStrictEqual(actualNodes.childNodes, nodes, "Puppeteer");
 	});
 }
 
-
-describe("Web Fixtures", function() {
+describe("Core", function() {
 	testFixture({
 		id: "basic",
 		title: "Accepts: Basic",
-		sourceFiles: [
+		sources: [
 			"package.json",
 			"tsconfig.json",
 			"webpack.config.js",
 			"src/application.ts"
 		],
-		webpackFiles: [
+		compiled: [
 			"dist/index.html",
 			"dist/app-basic.js"
 		],
-		html: "[BASIC] Hello World"
+		nodes: [
+			{
+				nodeName: "#text",
+				nodeValue: "Basic"
+			}
+		]
 	});
 });
