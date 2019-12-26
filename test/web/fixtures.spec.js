@@ -235,6 +235,105 @@ describe("Web: Core", function() {
 		];
 		deepStrictEqual(actual, expected, "DOM structure");
 	});
+
+	it("Inject Patterns", /* @this */ async function() {
+		this.slow(15000);
+		this.timeout(15000);
+		await testCompile({
+			id: "inject",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-inject.js"
+			]
+		});
+
+		let tags;
+		const browser = await puppeteer.launch();
+		try {
+			const page = await browser.newPage();
+			await page.goto(localhost, {waitUntil: "load"});
+			await sleep(300);
+			await page.addScriptTag({path: script});
+			await sleep(300);
+			tags = await page.evaluate(() => {
+				const children = [
+					...document.getElementsByTagName("link"),
+					...document.getElementsByTagName("script")
+				];
+				return children.map(window.snapshotToJson);
+			});
+		} finally {
+			await browser.close();
+		}
+		tags[4] = "REMOVED";
+		deepStrictEqual(tags, [
+			{
+				tagName: "link",
+				attributes: {
+					href: "http://example.com/stylesheet",
+					rel: "stylesheet",
+					hello: "example css"
+				}
+			},
+			{
+				tagName: "link",
+				attributes: {
+					href: "/mypublic/override-styles-1.css",
+					rel: "stylesheet"
+				}
+			},
+			{
+				tagName: "link",
+				attributes: {
+					href: "override-styles-2.css",
+					rel: "stylesheet"
+				}
+			},
+			{
+				tagName: "link",
+				attributes: {
+					href: "custom/override-styles-3.css",
+					rel: "stylesheet"
+				}
+			},
+			"REMOVED",
+			{
+				tagName: "script",
+				attributes: {
+					type: "text/javascript",
+					src: "http://example.com/script",
+					hello: "example js"
+				}
+			},
+			{
+				tagName: "script",
+				attributes: {
+					type: "text/javascript",
+					src: "/mypublic/thirdparty/three.min.js"
+				}
+			},
+			{
+				tagName: "script",
+				attributes: {
+					type: "text/javascript",
+					src: "/mypublic/thirdparty/OrbitControls.js"
+				}
+			},
+			{
+				tagName: "script",
+				attributes: {
+					type: "text/javascript",
+					src: "/mypublic/app-inject.js"
+				}
+			}
+		]);
+	});
 });
 
 describe("Web: Assets", function() {
