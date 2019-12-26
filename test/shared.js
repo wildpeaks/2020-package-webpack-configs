@@ -1,6 +1,7 @@
 /* eslint-env node */
 "use strict";
 const {exec} = require("child_process");
+const {existsSync} = require("fs");
 const {join, relative} = require("path");
 const {copySync, removeSync, outputFileSync} = require("fs-extra");
 const rreaddir = require("recursive-readdir");
@@ -25,12 +26,20 @@ async function compileFixture(folder, extras) {
 	removeSync(join(tmpFolder, "lib"));
 	removeSync(join(tmpFolder, "dist"));
 	removeSync(join(tmpFolder, "webpack.config.js"));
+	removeSync(join(tmpFolder, "node_modules/module-window-polyfill"));
 
 	// prettier-ignore
 	copySync(
 		join(folder, "src"),
 		join(tmpFolder, "src")
 	);
+	// prettier-ignore
+	if (existsSync(join(folder, "node_modules/module-window-polyfill"))) {
+		copySync(
+			join(folder, "node_modules/module-window-polyfill"),
+			join(tmpFolder, "node_modules/module-window-polyfill")
+		);
+	}
 	// prettier-ignore
 	copySync(
 		join(folder, "webpack.config.js"),

@@ -60,11 +60,7 @@ async function testCompile({id, sources, compiled, extras}) {
 
 	let expectBefore = sources;
 	if (extras) {
-		expectBefore = expectBefore.concat([
-			"dist/extra-1.txt",
-			"dist/extra-2.js",
-			"dist/extra-3.ts"
-		]);
+		expectBefore = expectBefore.concat(["dist/extra-1.txt", "dist/extra-2.js", "dist/extra-3.ts"]);
 	}
 	expectBefore = expectBefore.sort();
 	const expectAfter = sources.concat(compiled).sort();
@@ -74,12 +70,12 @@ async function testCompile({id, sources, compiled, extras}) {
 	deepStrictEqual(filesAfter, expectAfter, "After Webpack");
 }
 
-async function getSnapshot() {
+async function getSnapshot(subpath = "") {
 	let tree;
 	const browser = await puppeteer.launch();
 	try {
 		const page = await browser.newPage();
-		await page.goto(localhost, {waitUntil: "load"});
+		await page.goto(localhost + subpath, {waitUntil: "load"});
 		await sleep(300);
 		await page.addScriptTag({path: script});
 		await sleep(300);
@@ -115,6 +111,126 @@ describe("Web: Core", function() {
 			{
 				nodeName: "#text",
 				nodeValue: "Basic"
+			}
+		];
+		deepStrictEqual(actual, expected, "DOM structure");
+	});
+
+	it("Custom Filename", /* @this */ async function() {
+		this.slow(15000);
+		this.timeout(15000);
+		await testCompile({
+			id: "basic_filename",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/subfolder/custom.app-basic-filename.js"
+			]
+		});
+		const actual = await getSnapshot();
+		const expected = [
+			{
+				nodeName: "#text",
+				nodeValue: "Basic Filename"
+			}
+		];
+		deepStrictEqual(actual, expected, "DOM structure");
+	});
+
+	it("Multiple independant entries", /* @this */ async function() {
+		this.slow(15000);
+		this.timeout(15000);
+		await testCompile({
+			id: "multiple_entry",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application-1.ts",
+				"src/application-2.ts",
+				"src/application-3.ts"
+			],
+			compiled: [
+				"dist/app1.html",
+				"dist/app2.html",
+				"dist/app3.html",
+				"dist/app-multiple-1.js",
+				"dist/app-multiple-2.js",
+				"dist/app-multiple-3.js"
+			]
+		});
+		const actual1 = await getSnapshot("app1.html");
+		const actual2 = await getSnapshot("app2.html");
+		const actual3 = await getSnapshot("app3.html");
+		const expected1 = [{nodeName: "#text", nodeValue: "Multiple 1"}];
+		const expected2 = [{nodeName: "#text", nodeValue: "Multiple 2"}];
+		const expected3 = [{nodeName: "#text", nodeValue: "Multiple 3"}];
+		deepStrictEqual(actual1, expected1, "DOM structure");
+		deepStrictEqual(actual2, expected2, "DOM structure");
+		deepStrictEqual(actual3, expected3, "DOM structure");
+	});
+
+	it("Polyfills", /* @this */ async function() {
+		this.slow(15000);
+		this.timeout(15000);
+		await testCompile({
+			id: "polyfills",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/thirdparty/typescript-polyfill.ts",
+				"src/thirdparty/vanilla-polyfill.js"
+			],
+			compiled: ["dist/index.html", "dist/app-polyfills.js"]
+		});
+		const actual = await getSnapshot();
+		const expected = [
+			{
+				nodeName: "#text",
+				nodeValue: "Polyfills"
+			},
+			{
+				childNodes: [
+					{
+						nodeName: "#text",
+						nodeValue: "EXAMPLE_FAKE_POLYFILL undefined"
+					}
+				],
+				tagName: "div"
+			},
+			{
+				childNodes: [
+					{
+						nodeName: "#text",
+						nodeValue: "EXAMPLE_VANILLA_POLYFILL ok once"
+					}
+				],
+				tagName: "div"
+			},
+			{
+				childNodes: [
+					{
+						nodeName: "#text",
+						nodeValue: "EXAMPLE_TYPESCRIPT_POLYFILL ok once"
+					}
+				],
+				tagName: "div"
+			},
+			{
+				childNodes: [
+					{
+						nodeName: "#text",
+						nodeValue: "EXAMPLE_MODULE_POLYFILL ok once"
+					}
+				],
+				tagName: "div"
 			}
 		];
 		deepStrictEqual(actual, expected, "DOM structure");
