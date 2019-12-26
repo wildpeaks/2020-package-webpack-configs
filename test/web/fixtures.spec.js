@@ -161,4 +161,46 @@ describe("Web: Assets", function() {
 			tagName: "div"
 		});
 	});
+
+	it("Copy Patterns", /* @this */ async function() {
+		this.slow(10000);
+		this.timeout(10000);
+		await testCompile({
+			id: "copy_patterns",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/file9",
+				"src/myfolder-1/file1.example-1",
+				"src/myfolder-1/file2.example-1",
+				"src/myfolder-2/hello/file3.example-1",
+				"src/myfolder-2/hello/file4.example-2",
+				"src/myfolder-2/hello/file5.example-1",
+				"src/myfolder-2/hello/file6.example-2",
+				"src/myfolder-3.ext/file7.example",
+				"src/myfolder-3.ext/file8.example"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-copy-patterns.js",
+				"dist/copied-1/file1.example-1",
+				"dist/copied-1/file2.example-1",
+				"dist/copied-2/file1.example-1",
+				"dist/copied-2/file2.example-1",
+				"dist/copied-3/file1.example-1",
+				"dist/copied-3/file2.example-1",
+				"dist/copied-4/subfolder/file1.example-1",
+				"dist/copied-4/subfolder/file2.example-1",
+				"dist/copied-5/src/myfolder-2/hello/file3.example-1",
+				"dist/copied-5/src/myfolder-2/hello/file5.example-1",
+				"dist/copied-6/hello/file3.example-1",
+				"dist/copied-6/hello/file5.example-1",
+				"dist/copied-7/file7.example",
+				"dist/copied-7/file8.example",
+				"dist/copied-8/file9"
+			]
+		});
+	});
 });
