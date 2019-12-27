@@ -664,3 +664,129 @@ describe("Web: Skip Reset", function() {
 		deepStrictEqual(actual, expected, "DOM structure");
 	});
 });
+
+describe("Web: Webworkers", function() {
+	it("Basic", /* @this */ async function() {
+		this.slow(15000);
+		this.timeout(15000);
+		await testCompile({
+			id: "webworker",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/myworker.webworker.ts"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-webworker.js",
+				"dist/myworker.webworker.js"
+			]
+		});
+		const actual = await getSnapshot();
+		const expected = [
+			{
+				nodeName: "#text",
+				nodeValue: "WORKER replies HELLO"
+			}
+		];
+		deepStrictEqual(actual, expected, "DOM structure");
+	});
+
+	it("Custom filename", /* @this */ async function() {
+		this.slow(15000);
+		this.timeout(15000);
+		await testCompile({
+			id: "webworker_filename",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/myworker.webworker.ts"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-webworker-filename.js",
+				"dist/subfolder/custom.myworker.webworker.js"
+			]
+		});
+		const actual = await getSnapshot();
+		const expected = [
+			{
+				nodeName: "#text",
+				nodeValue: "WORKER replies HELLO"
+			}
+		];
+		deepStrictEqual(actual, expected, "DOM structure");
+	});
+
+	it("Polyfills", /* @this */ async function() {
+		this.slow(15000);
+		this.timeout(15000);
+		await testCompile({
+			id: "webworker_polyfills",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/application.webworker.ts",
+				"src/both.polyfill.ts",
+				"src/only-main.polyfill.ts",
+				"src/only-worker.polyfill.ts"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-webworker-polyfills.js",
+				"dist/application.webworker.js"
+			]
+		});
+
+		const actual = await getSnapshotMultiple();
+		const expected = {
+			mocha1: [
+				{
+					nodeName: "#text",
+					nodeValue: "BOTH once undefined MAIN once undefined"
+				}
+			],
+			mocha2: [
+				{
+					nodeName: "#text",
+					nodeValue: "BOTH once WORKER once undefined MODULE once"
+				}
+			]
+		};
+		deepStrictEqual(actual, expected, "DOM structure");
+	});
+
+	it("No export {}", /* @this */ async function() {
+		this.slow(15000);
+		this.timeout(15000);
+		await testCompile({
+			id: "webworker",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/myworker.webworker.ts"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-webworker.js",
+				"dist/myworker.webworker.js"
+			]
+		});
+		const actual = await getSnapshot();
+		const expected = [
+			{
+				nodeName: "#text",
+				nodeValue: "WORKER replies HELLO"
+			}
+		];
+		deepStrictEqual(actual, expected, "DOM structure");
+	});
+});

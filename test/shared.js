@@ -27,6 +27,7 @@ async function compileFixture(folder, extras) {
 	removeSync(join(tmpFolder, "dist"));
 	removeSync(join(tmpFolder, "webpack.config.js"));
 	removeSync(join(tmpFolder, "node_modules/module-window-polyfill"));
+	removeSync(join(tmpFolder, "node_modules/module-self-polyfill"));
 
 	// prettier-ignore
 	copySync(
@@ -38,6 +39,13 @@ async function compileFixture(folder, extras) {
 		copySync(
 			join(folder, "node_modules/module-window-polyfill"),
 			join(tmpFolder, "node_modules/module-window-polyfill")
+		);
+	}
+	// prettier-ignore
+	if (existsSync(join(folder, "node_modules/module-self-polyfill"))) {
+		copySync(
+			join(folder, "node_modules/module-self-polyfill"),
+			join(tmpFolder, "node_modules/module-self-polyfill")
 		);
 	}
 	// prettier-ignore
