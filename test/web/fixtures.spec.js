@@ -89,6 +89,29 @@ async function getSnapshot(subpath = "") {
 	return tree.childNodes;
 }
 
+async function getSnapshotColor() {
+	let color;
+	const browser = await puppeteer.launch();
+	try {
+		const page = await browser.newPage();
+		await page.goto(localhost, {waitUntil: "load"});
+		await sleep(300);
+		await page.addScriptTag({path: script});
+		await sleep(300);
+		color = await page.evaluate(() => {
+			const el = document.getElementById("mocha");
+			if (el === null) {
+				return "#mocha not found";
+			}
+			const computed = window.getComputedStyle(el);
+			return computed.getPropertyValue("color");
+		});
+	} finally {
+		await browser.close();
+	}
+	return color;
+}
+
 async function getSnapshotMultiple(subpath = "") {
 	let tree1;
 	let tree2;
@@ -662,6 +685,74 @@ describe("Web: Skip Reset", function() {
 			}
 		];
 		deepStrictEqual(actual, expected, "DOM structure");
+	});
+});
+
+describe("Web: Stylesheets", function() {
+	it("CSS Modules", /* @this */ async function() {
+		this.slow(30000);
+		this.timeout(30000);
+		await testCompile({
+			id: "css_modules",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/application.css"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-css-modules.js",
+				"dist/app-css-modules.css"
+			]
+		});
+		const color = await getSnapshotColor();
+		strictEqual(color, "rgb(0, 128, 0)");
+	});
+
+	it("CSS Modules: Custom Filename", /* @this */ async function() {
+		this.slow(30000);
+		this.timeout(30000);
+		await testCompile({
+			id: "css_modules_filename",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/application.css"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-css-modules-filename.js",
+				"dist/subfolder/custom.app-css-modules-filename.css"
+			]
+		});
+		const color = await getSnapshotColor();
+		strictEqual(color, "rgb(0, 128, 0)");
+	});
+
+	it("CSS without CSS Modules", /* @this */ async function() {
+		this.slow(30000);
+		this.timeout(30000);
+		await testCompile({
+			id: "css_no_modules",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/application.css"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-css-no-modules.js",
+				"dist/app-css-no-modules.css"
+			]
+		});
+		const color = await getSnapshotColor();
+		strictEqual(color, "rgb(0, 128, 0)");
 	});
 });
 
