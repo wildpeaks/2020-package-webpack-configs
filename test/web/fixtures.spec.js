@@ -754,6 +754,162 @@ describe("Web: Stylesheets", function() {
 		const color = await getSnapshotColor();
 		strictEqual(color, "rgb(0, 128, 0)");
 	});
+
+	it("CSS Reset", /* @this */ async function() {
+		this.slow(30000);
+		this.timeout(30000);
+		await testCompile({
+			id: "css_reset",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/reset.css"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-css-reset.js",
+				"dist/app-css-reset.css"
+			]
+		});
+		const color = await getSnapshotColor();
+		strictEqual(color, "rgb(0, 128, 0)");
+	});
+
+	it("SCSS Reset", /* @this */ async function() {
+		this.slow(30000);
+		this.timeout(30000);
+		await testCompile({
+			id: "scss_reset",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/reset.scss"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-scss-reset.js",
+				"dist/app-scss-reset.css"
+			]
+		});
+		const color = await getSnapshotColor();
+		strictEqual(color, "rgb(0, 128, 0)");
+	});
+
+	it("SCSS Global Import", /* @this */ async function() {
+		this.slow(30000);
+		this.timeout(30000);
+		await testCompile({
+			id: "scss_global_import",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/reset.scss",
+				"src/variables.scss"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-scss-global-import.js",
+				"dist/app-scss-global-import.css"
+			]
+		});
+		const color = await getSnapshotColor();
+		strictEqual(color, "rgb(0, 128, 0)");
+	});
+
+	it("SCSS Global Define", /* @this */ async function() {
+		this.slow(30000);
+		this.timeout(30000);
+		await testCompile({
+			id: "scss_global_define",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/reset.scss"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-scss-global-define.js",
+				"dist/app-scss-global-define.css"
+			]
+		});
+		const color = await getSnapshotColor();
+		strictEqual(color, "rgb(128, 128, 0)");
+	});
+
+	it("SCSS Basic", /* @this */ async function() {
+		this.slow(30000);
+		this.timeout(30000);
+		await testCompile({
+			id: "scss_basic",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/application.scss"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-scss-basic.js",
+				"dist/app-scss-basic.css"
+			]
+		});
+		const color = await getSnapshotColor();
+		strictEqual(color, "rgb(0, 128, 255)");
+	});
+
+	it("SCSS Import File", /* @this */ async function() {
+		this.slow(30000);
+		this.timeout(30000);
+		await testCompile({
+			id: "scss_import_file",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/application.scss",
+				"src/theme-blue.scss"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-scss-import-file.js",
+				"dist/app-scss-import-file.css"
+			]
+		});
+		const color = await getSnapshotColor();
+		strictEqual(color, "rgb(0, 0, 255)");
+	});
+
+	it("SCSS Import Module", /* @this */ async function() {
+		this.slow(30000);
+		this.timeout(30000);
+		await testCompile({
+			id: "scss_import_module",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/application.scss"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-scss-import-module.js",
+				"dist/app-scss-import-module.css"
+			]
+		});
+		const color = await getSnapshotColor();
+		strictEqual(color, "rgb(0, 255, 0)");
+	});
 });
 
 describe("Web: Webworkers", function() {
