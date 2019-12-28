@@ -145,6 +145,61 @@ async function getSnapshotMultiple(subpath = "") {
 	};
 }
 
+async function getSnapshotMultipleColor() {
+	let color1;
+	let color2;
+	const browser = await puppeteer.launch();
+	try {
+		const page = await browser.newPage();
+		await page.goto(localhost, {waitUntil: "load"});
+		await sleep(300);
+		await page.addScriptTag({path: script});
+		await sleep(300);
+		color1 = await page.evaluate(() => {
+			const computed = window.getComputedStyle(document.body);
+			return computed.getPropertyValue("color");
+		});
+		color2 = await page.evaluate(() => {
+			const el = document.getElementById("mocha");
+			if (el === null) {
+				return "#mocha not found";
+			}
+			const computed = window.getComputedStyle(el);
+			return computed.getPropertyValue("color");
+		});
+	} finally {
+		await browser.close();
+	}
+	return {
+		body: color1,
+		mocha: color2
+	};
+}
+
+
+async function getSnapshotImage() {
+	let color;
+	const browser = await puppeteer.launch();
+	try {
+		const page = await browser.newPage();
+		await page.goto(localhost, {waitUntil: "load"});
+		await sleep(300);
+		await page.addScriptTag({path: script});
+		await sleep(300);
+		color = await page.evaluate(() => {
+			const el = document.getElementById("mocha");
+			if (el === null) {
+				return "#mocha not found";
+			}
+			const computed = window.getComputedStyle(el);
+			return computed.getPropertyValue("background-image");
+		});
+	} finally {
+		await browser.close();
+	}
+	return color;
+}
+
 describe("Web: Core", function() {
 	it("Basic", /* @this */ async function() {
 		this.slow(30000);
@@ -909,6 +964,248 @@ describe("Web: Stylesheets", function() {
 		});
 		const color = await getSnapshotColor();
 		strictEqual(color, "rgb(0, 255, 0)");
+	});
+
+	it("CSS Chunks", /* @this */ async function() {
+		this.slow(30000);
+		this.timeout(30000);
+		await testCompile({
+			id: "css_chunks",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/async.css",
+				"src/sync.css"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-css-chunks.js",
+				"dist/app-css-chunks.css",
+				"dist/chunk.0.js",
+				"dist/chunk.0.css"
+			]
+		});
+		const color = await getSnapshotColor();
+		strictEqual(color, "rgb(0, 0, 255)");
+	});
+
+	it("CSS Chunks Filename", /* @this */ async function() {
+		this.slow(30000);
+		this.timeout(30000);
+		await testCompile({
+			id: "css_chunks_filename",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/async.css",
+				"src/sync.css"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-css-chunks-filename.js",
+				"dist/app-css-chunks-filename.css",
+				"dist/chunk.0.js",
+				"dist/subfolder/custom.chunk.0.css"
+			]
+		});
+		const color = await getSnapshotColor();
+		strictEqual(color, "rgb(0, 0, 255)");
+	});
+
+	it("SCSS Chunks", /* @this */ async function() {
+		this.slow(30000);
+		this.timeout(30000);
+		await testCompile({
+			id: "scss_chunks",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/async.scss",
+				"src/sync.scss"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-scss-chunks.js",
+				"dist/app-scss-chunks.css",
+				"dist/chunk.0.js",
+				"dist/chunk.0.css"
+			]
+		});
+		const color = await getSnapshotColor();
+		strictEqual(color, "rgb(0, 0, 255)");
+	});
+
+	it("SCSS Chunks: Custom Filename", /* @this */ async function() {
+		this.slow(30000);
+		this.timeout(30000);
+		await testCompile({
+			id: "scss_chunks_filename",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/async.scss",
+				"src/sync.scss"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-scss-chunks-filename.js",
+				"dist/app-scss-chunks-filename.css",
+				"dist/chunk.0.js",
+				"dist/subfolder/custom.chunk.0.css"
+			]
+		});
+		const color = await getSnapshotColor();
+		strictEqual(color, "rgb(0, 0, 255)");
+	});
+
+	it("SCSS Chunks & Variables", /* @this */ async function() {
+		this.slow(30000);
+		this.timeout(30000);
+		await testCompile({
+			id: "scss_chunks_variables",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/async.scss",
+				"src/sync.scss"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-scss-chunks-variables.js",
+				"dist/app-scss-chunks-variables.css",
+				"dist/chunk.0.js",
+				"dist/chunk.0.css"
+			]
+		});
+		const color = await getSnapshotColor();
+		strictEqual(color, "rgb(0, 0, 128)");
+	});
+
+	it("SCSS Data", /* @this */ async function() {
+		this.slow(30000);
+		this.timeout(30000);
+		await testCompile({
+			id: "scss_data",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-scss-data.js"
+
+				// Data alone isn't enough to produce a .css: at least one entry must contain
+				// an import or polyfill to a stylesheet, otherwise the loader skips
+				// extracting styles, unfortunately.
+				// "dist/app-scss-data.css"
+			]
+		});
+		const color = await getSnapshotColor();
+		strictEqual(color !== "rgb(0, 255, 0)", true, "Inline style");
+	});
+
+	it("SCSS Data & Import", /* @this */ async function() {
+		this.slow(30000);
+		this.timeout(30000);
+		await testCompile({
+			id: "scss_data_import",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/application.scss"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-scss-data-import.js",
+				"dist/app-scss-data-import.css"
+			]
+		});
+		const colors = await getSnapshotMultipleColor();
+		deepStrictEqual(colors, {body: "rgb(255, 0, 0)", mocha: "rgb(0, 0, 255)"});
+	});
+
+	it("SCSS Data Function", /* @this */ async function() {
+		this.slow(30000);
+		this.timeout(30000);
+		await testCompile({
+			id: "scss_data_function",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/application.scss"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-scss-data-function.js",
+				"dist/app-scss-data-function.css"
+			]
+		});
+		const colors = await getSnapshotMultipleColor();
+		deepStrictEqual(colors, {body: "rgb(255, 0, 0)", mocha: "rgb(0, 0, 255)"});
+	});
+
+	it("SCSS & Image", /* @this */ async function() {
+		this.slow(30000);
+		this.timeout(30000);
+		await testCompile({
+			id: "scss_image",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/application.scss",
+				"src/large.jpg"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-scss-image.js",
+				"dist/app-scss-image.css",
+				"dist/assets/large.jpg"
+			]
+		});
+		const actual = await getSnapshotImage();
+		strictEqual(actual, 'url("http://localhost:8888/assets/large.jpg")');
+	});
+
+	it("CSS & Image", /* @this */ async function() {
+		this.slow(30000);
+		this.timeout(30000);
+		await testCompile({
+			id: "css_image",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/application.css",
+				"src/large.jpg"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-css-image.js",
+				"dist/app-css-image.css",
+				"dist/assets/large.jpg"
+			]
+		});
+		const actual = await getSnapshotImage();
+		strictEqual(actual, 'url("http://localhost:8888/assets/large.jpg")');
 	});
 });
 
