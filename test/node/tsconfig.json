@@ -14,8 +14,8 @@
 		"moduleResolution": "node",
 		"allowJs": false,
 		"module": "esnext",
-		"lib": ["es2017", "dom"],
-		"target": "es5",
+		"lib": ["es2017"],
+		"target": "es2017",
 		"sourceMap": true
 	}
 }
