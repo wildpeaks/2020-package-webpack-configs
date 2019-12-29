@@ -1,4 +1,4 @@
 /* eslint-env node */
-console.log("Basic");
+console.log("Multiple 1");
 
 export {};
