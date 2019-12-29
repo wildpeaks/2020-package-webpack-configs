@@ -20,7 +20,7 @@ async function getFiles(folder) {
 /**
  * @param {String} folder
  */
-async function compileFixture(folder, extras) {
+async function compileFixture(folder, extras = false) {
 	const tmpFolder = join(__dirname, "../tmp");
 	removeSync(join(tmpFolder, "src"));
 	removeSync(join(tmpFolder, "lib"));
