@@ -204,7 +204,7 @@ async function getSnapshotImage() {
 	return color;
 }
 
-describe("Web: Core", function() {
+describe("Core", function() {
 	it("Basic", /* @this */ async function() {
 		this.slow(20000);
 		this.timeout(20000);
@@ -549,7 +549,7 @@ describe("Web: Core", function() {
 	});
 });
 
-describe("Web: Assets", function() {
+describe("Assets", function() {
 	it("Images & JSON", /* @this */ async function() {
 		this.slow(20000);
 		this.timeout(20000);
@@ -689,12 +689,12 @@ describe("Web: Assets", function() {
 	});
 });
 
-describe("Web: Skip Reset", function() {
+describe("Skip Reset", function() {
 	it("False", /* @this */ async function() {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
-			id: "skip_false",
+			id: "skip_reset_false",
 			sources: [
 				"package.json",
 				"tsconfig.json",
@@ -720,7 +720,7 @@ describe("Web: Skip Reset", function() {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
-			id: "skip_true",
+			id: "skip_reset_true",
 			sources: [
 				"package.json",
 				"tsconfig.json",
@@ -747,7 +747,7 @@ describe("Web: Skip Reset", function() {
 	});
 });
 
-describe("Web: Stylesheets", function() {
+describe("Stylesheets", function() {
 	it("CSS Modules", /* @this */ async function() {
 		this.slow(20000);
 		this.timeout(20000);
@@ -1213,7 +1213,7 @@ describe("Web: Stylesheets", function() {
 	});
 });
 
-describe("Web: Optimize", function() {
+describe("Optimize", function() {
 	it("Sourcemaps", /* @this */ async function() {
 		this.slow(20000);
 		this.timeout(20000);
@@ -1344,120 +1344,119 @@ describe("Web: Optimize", function() {
 		deepStrictEqual(actual, expected, "DOM structure");
 	});
 
+	it("Chunks", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "chunks",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/modules/mymodule.ts"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-chunks.js",
+				"dist/chunk.0.js"
+			]
+		});
+		const actual = await getSnapshot();
+		const expected = [
+			{
+				nodeName: "#text",
+				nodeValue: "CHUNKS delayed 100123"
+			}
+		];
+		deepStrictEqual(actual, expected, "DOM structure");
+	});
 
-	// it("Chunks", /* @this */ async function() {
-	// 	this.slow(20000);
-	// 	this.timeout(20000);
-	// 	await testCompile({
-	// 		id: "chunks",
-	// 		sources: [
-	// 			"package.json",
-	// 			"tsconfig.json",
-	// 			"webpack.config.js",
-	// 			"src/application.ts",
-	// 			"src/modules/mymodule.ts"
-	// 		],
-	// 		compiled: [
-	// 			"dist/index.html",
-	// 			"dist/app-chunks.js",
-	// 			"dist/chunk.0.js"
-	// 		]
-	// 	});
-	// 	const actual = await getSnapshot();
-	// 	const expected = [
-	// 		{
-	// 			nodeName: "#text",
-	// 			nodeValue: "CHUNKS delayed 100123"
-	// 		}
-	// 	];
-	// 	deepStrictEqual(actual, expected, "DOM structure");
-	// });
+	it("Chunks: Custom Filename", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "chunks_filename",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/modules/mymodule.ts"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-chunks-filename.js",
+				"dist/subfolder/custom.chunk.0.js"
+			]
+		});
+		const actual = await getSnapshot();
+		const expected = [
+			{
+				nodeName: "#text",
+				nodeValue: "CHUNKS FILENAME delayed 100123"
+			}
+		];
+		deepStrictEqual(actual, expected, "DOM structure");
+	});
 
-	// it("Chunks: Custom Filename", /* @this */ async function() {
-	// 	this.slow(20000);
-	// 	this.timeout(20000);
-	// 	await testCompile({
-	// 		id: "chunks_filename",
-	// 		sources: [
-	// 			"package.json",
-	// 			"tsconfig.json",
-	// 			"webpack.config.js",
-	// 			"src/application.ts",
-	// 			"src/modules/mymodule.ts"
-	// 		],
-	// 		compiled: [
-	// 			"dist/index.html",
-	// 			"dist/app-chunks-filename.js",
-	// 			"dist/subfolder/custom.chunk.0.js"
-	// 		]
-	// 	});
-	// 	const actual = await getSnapshot();
-	// 	const expected = [
-	// 		{
-	// 			nodeName: "#text",
-	// 			nodeValue: "CHUNKS FILENAME delayed 100123"
-	// 		}
-	// 	];
-	// 	deepStrictEqual(actual, expected, "DOM structure");
-	// });
+	it("Chunks: Polyfills", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "chunks_polyfills",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/modules/mymodule.ts",
+				"src/thirdparty/typescript-polyfill.ts",
+				"src/thirdparty/vanilla-polyfill.js"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-chunks-polyfills.js",
+				"dist/chunk.0.js"
+			]
+		});
+		const actual = await getSnapshotMultiple();
+		const expected = {
+			mocha1: [
+				{
+					nodeName: "#text",
+					nodeValue: "CHUNKS POLYFILLS undefined ok once ok once ok once"
+				}
+			],
+			mocha2: [
+				{
+					nodeName: "#text",
+					nodeValue: "Delayed 123 ok once ok once ok once"
+				}
+			]
+		};
+		deepStrictEqual(actual, expected, "DOM structure");
+	});
 
-	// it("Chunks: Polyfills", /* @this */ async function() {
-	// 	this.slow(20000);
-	// 	this.timeout(20000);
-	// 	await testCompile({
-	// 		id: "chunks_polyfills",
-	// 		sources: [
-	// 			"package.json",
-	// 			"tsconfig.json",
-	// 			"webpack.config.js",
-	// 			"src/application.ts",
-	// 			"src/modules/mymodule.ts",
-	// 			"src/thirdparty/typescript-polyfill.ts",
-	// 			"src/thirdparty/vanilla-polyfill.js"
-	// 		],
-	// 		compiled: [
-	// 			"dist/index.html",
-	// 			"dist/app-chunks-polyfills.js",
-	// 			"dist/chunk.0.js"
-	// 		]
-	// 	});
-	// 	const actual = await getSnapshotMultiple();
-	// 	const expected = {
-	// 		mocha1: [
-	// 			{
-	// 				nodeName: "#text",
-	// 				nodeValue: "CHUNKS POLYFILLS undefined ok once ok once ok once"
-	// 			}
-	// 		],
-	// 		mocha2: [
-	// 			{
-	// 				nodeName: "#text",
-	// 				nodeValue: "Delayed 123 ok once ok once ok once"
-	// 			}
-	// 		]
-	// 	};
-	// 	deepStrictEqual(actual, expected, "DOM structure");
-	// });
-
-	// it("Skip Postprocessing", /* @this */ async function() {
-	// 	this.slow(20000);
-	// 	this.timeout(20000);
-	// 	await testCompile({
-	// 		id: "skip_processing",
-	// 		sources: [
-	// 			"package.json",
-	// 			"tsconfig.json",
-	// 			"webpack.config.js",
-	// 			"src/application.ts"
-	// 		],
-	// 		compiled: [
-	// 			"dist/app-skip-postprocessing.js"
-	// 		]
-	// 	});
-	// });
+	it("Skip Postprocessing", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "skip_processing",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts"
+			],
+			compiled: [
+				"dist/app-skip-postprocessing.js"
+			]
+		});
+	});
 });
 
-describe("Web: Webworkers", function() {
+describe("Webworkers", function() {
 	it("Basic", /* @this */ async function() {
 		this.slow(20000);
 		this.timeout(20000);
