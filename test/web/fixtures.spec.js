@@ -1439,7 +1439,19 @@ describe("Webworkers", function() {
 });
 
 describe("Node features", function() {
-	it("Accepts: __dirname (mock)", /* @this */ async function() {
+	it("Fails: fs", /* @this */ async function() {
+		// Note that package "native-url" would produce smaller bundles
+		// than the polyfill Webpack uses.
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "node_fs",
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			expectBuildError: true
+		});
+	});
+
+	it("Mocks: __dirname", /* @this */ async function() {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -1452,6 +1464,24 @@ describe("Node features", function() {
 			{
 				nodeName: "#text",
 				nodeValue: "NODE DIRNAME /"
+			}
+		];
+		deepStrictEqual(actual, expected, "DOM structure");
+	});
+
+	it("Mocks: process.cwd()", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "node_cwd",
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			compiled: ["dist/index.html", "dist/app-node-cwd.js"]
+		});
+		const actual = await getSnapshot();
+		const expected = [
+			{
+				nodeName: "#text",
+				nodeValue: "NODE CWD /"
 			}
 		];
 		deepStrictEqual(actual, expected, "DOM structure");
@@ -1475,18 +1505,6 @@ describe("Node features", function() {
 			}
 		];
 		deepStrictEqual(actual, expected, "DOM structure");
-	});
-
-	it("Fails: fs", /* @this */ async function() {
-		// Note that package "native-url" would produce smaller bundles
-		// than the polyfill Webpack uses.
-		this.slow(20000);
-		this.timeout(20000);
-		await testCompile({
-			id: "node_fs",
-			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
-			expectBuildError: true
-		});
 	});
 
 	it("Accepts: path", /* @this */ async function() {
