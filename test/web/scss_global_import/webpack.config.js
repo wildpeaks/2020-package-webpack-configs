@@ -1,0 +1,22 @@
+/* eslint-env node */
+"use strict";
+const getConfig = require("@wildpeaks/webpack-config-web");
+
+module.exports = function() {
+	return getConfig({
+		mode: "development",
+		webworkerPolyfills: [],
+		sourcemaps: false,
+		entry: {
+			"app-scss-global-import": "./src/application.ts"
+		},
+		pages: [
+			{
+				filename: "index.html",
+				chunks: ["app-scss-global-import"]
+			}
+		],
+		scss: '@import "variables.scss";',
+		polyfills: ["./src/reset.scss"]
+	});
+};
