@@ -140,5 +140,7 @@ module.exports = function getConfig({
 	config.module = {
 		rules: loaders
 	};
+
+	config.node = false;
 	return config;
 };
