@@ -281,4 +281,32 @@ describe("Node: Native modules", function() {
 			throw new Error("The text file is missing");
 		}
 	});
+
+	it("__dirname", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "dirname",
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			compiled: ["dist/app-dirname.js"]
+		});
+		await runScript({
+			main: "app-dirname.js",
+			expectOutput: [`Dirname ${dist}`]
+		});
+	});
+
+	it("process.cwd()", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "cwd",
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			compiled: ["dist/app-cwd.js"]
+		});
+		await runScript({
+			main: "app-cwd.js",
+			expectOutput: [`CWD ${dist}`]
+		});
+	});
 });
