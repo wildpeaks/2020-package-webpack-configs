@@ -60,15 +60,8 @@ describe("Node", function() {
 		this.timeout(20000);
 		await testCompile({
 			id: "basic",
-			sources: [
-				"package.json",
-				"tsconfig.json",
-				"webpack.config.js",
-				"src/application.ts"
-			],
-			compiled: [
-				"dist/app-basic.js"
-			]
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			compiled: ["dist/app-basic.js"]
 		});
 		await runScript({
 			main: "app-basic.js",
@@ -81,15 +74,8 @@ describe("Node", function() {
 		this.timeout(20000);
 		await testCompile({
 			id: "basic_filename",
-			sources: [
-				"package.json",
-				"tsconfig.json",
-				"webpack.config.js",
-				"src/application.ts"
-			],
-			compiled: [
-				"dist/subfolder/custom.app-basic-filename.js"
-			]
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			compiled: ["dist/subfolder/custom.app-basic-filename.js"]
 		});
 		await runScript({
 			main: "subfolder/custom.app-basic-filename.js",
@@ -110,11 +96,7 @@ describe("Node", function() {
 				"src/application-2.ts",
 				"src/application-3.ts"
 			],
-			compiled: [
-				"dist/app-multiple-1.js",
-				"dist/app-multiple-2.js",
-				"dist/app-multiple-3.js"
-			]
+			compiled: ["dist/app-multiple-1.js", "dist/app-multiple-2.js", "dist/app-multiple-3.js"]
 		});
 		await runScript({
 			main: "app-multiple-1.js",
@@ -135,16 +117,8 @@ describe("Node", function() {
 		this.timeout(20000);
 		await testCompile({
 			id: "sourcemaps",
-			sources: [
-				"package.json",
-				"tsconfig.json",
-				"webpack.config.js",
-				"src/application.ts"
-			],
-			compiled: [
-				"dist/app-sourcemaps.js",
-				"dist/app-sourcemaps.js.map"
-			]
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			compiled: ["dist/app-sourcemaps.js", "dist/app-sourcemaps.js.map"]
 		});
 		await runScript({
 			main: "app-sourcemaps.js",
@@ -156,16 +130,9 @@ describe("Node", function() {
 		this.slow(20000);
 		this.timeout(20000);
 
-		const sources = [
-			"package.json",
-			"tsconfig.json",
-			"webpack.config.js",
-			"src/application.ts"
-		];
-		const compiled = [
-			"dist/%%HASH%%.app-production.js"
-		];
-		const filesAfter = await testCompile({id: "production",	sources});
+		const sources = ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"];
+		const compiled = ["dist/%%HASH%%.app-production.js"];
+		const filesAfter = await testCompile({id: "production", sources});
 
 		let hash = "";
 		for (const fileAfter of filesAfter) {
@@ -180,7 +147,10 @@ describe("Node", function() {
 			throw new Error("No hash found");
 		}
 
-		const expectAfter = sources.concat(compiled).map(filename => filename.replace("%%HASH%%", hash)).sort();
+		const expectAfter = sources
+			.concat(compiled)
+			.map(filename => filename.replace("%%HASH%%", hash))
+			.sort();
 		deepStrictEqual(filesAfter, expectAfter, "After Webpack");
 
 		const jsRaw = readFileSync(join(dist, `${hash}.app-production.js`), "utf8");
@@ -198,16 +168,9 @@ describe("Node", function() {
 		this.slow(20000);
 		this.timeout(20000);
 
-		const sources = [
-			"package.json",
-			"tsconfig.json",
-			"webpack.config.js",
-			"src/application.ts"
-		];
-		const compiled = [
-			"dist/app-production-skip-hashes.js"
-		];
-		const filesAfter = await testCompile({id: "production_skip_hashes",	sources});
+		const sources = ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"];
+		const compiled = ["dist/app-production-skip-hashes.js"];
+		const filesAfter = await testCompile({id: "production_skip_hashes", sources});
 
 		let hash = "";
 		for (const fileAfter of filesAfter) {
@@ -248,17 +211,11 @@ describe("Node", function() {
 				"src/application.ts",
 				"src/modules/mymodule.ts"
 			],
-			compiled: [
-				"dist/app-chunks.js",
-				"dist/chunk.0.js"
-			]
+			compiled: ["dist/app-chunks.js", "dist/chunk.0.js"]
 		});
 		await runScript({
 			main: "app-chunks.js",
-			expectOutput: [
-				"CHUNKS initially",
-				"CHUNKS delayed 100123"
-			]
+			expectOutput: ["CHUNKS initially", "CHUNKS delayed 100123"]
 		});
 	});
 
@@ -274,17 +231,11 @@ describe("Node", function() {
 				"src/application.ts",
 				"src/modules/mymodule.ts"
 			],
-			compiled: [
-				"dist/app-chunks-filename.js",
-				"dist/subfolder/custom.chunk.0.js"
-			]
+			compiled: ["dist/app-chunks-filename.js", "dist/subfolder/custom.chunk.0.js"]
 		});
 		await runScript({
 			main: "app-chunks-filename.js",
-			expectOutput: [
-				"CHUNKS FILENAME initially",
-				"CHUNKS FILENAME delayed 100123"
-			]
+			expectOutput: ["CHUNKS FILENAME initially", "CHUNKS FILENAME delayed 100123"]
 		});
 	});
 });
