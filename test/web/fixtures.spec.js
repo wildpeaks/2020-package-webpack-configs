@@ -55,7 +55,7 @@ after(function() {
 	});
 });
 
-async function testCompile({id, sources, compiled, extras}) {
+async function testCompile({id, sources, compiled, expectBuildError, extras}) {
 	const fixtureFolder = join(__dirname, id);
 	const {filesBefore, errors, filesAfter} = await compileFixture(fixtureFolder, extras);
 
@@ -64,6 +64,12 @@ async function testCompile({id, sources, compiled, extras}) {
 		expectBefore = expectBefore.concat(["dist/extra-1.txt", "dist/extra-2.js", "dist/extra-3.ts"]);
 	}
 	expectBefore = expectBefore.sort();
+	if (expectBuildError) {
+		if (errors.length === 0) {
+			throw new Error("Expected a build error");
+		}
+		return [];
+	}
 	deepStrictEqual(filesBefore, expectBefore, "Before Webpack");
 	deepStrictEqual(errors, [], "No Webpack errors");
 
@@ -180,7 +186,6 @@ async function getSnapshotMultipleColor() {
 	};
 }
 
-
 async function getSnapshotImage() {
 	let color;
 	const browser = await puppeteer.launch();
@@ -210,16 +215,8 @@ describe("Core", function() {
 		this.timeout(20000);
 		await testCompile({
 			id: "basic",
-			sources: [
-				"package.json",
-				"tsconfig.json",
-				"webpack.config.js",
-				"src/application.ts"
-			],
-			compiled: [
-				"dist/index.html",
-				"dist/app-basic.js"
-			]
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			compiled: ["dist/index.html", "dist/app-basic.js"]
 		});
 		const actual = await getSnapshot();
 		const expected = [
@@ -236,16 +233,8 @@ describe("Core", function() {
 		this.timeout(20000);
 		await testCompile({
 			id: "basic_filename",
-			sources: [
-				"package.json",
-				"tsconfig.json",
-				"webpack.config.js",
-				"src/application.ts"
-			],
-			compiled: [
-				"dist/index.html",
-				"dist/subfolder/custom.app-basic-filename.js"
-			]
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			compiled: ["dist/index.html", "dist/subfolder/custom.app-basic-filename.js"]
 		});
 		const actual = await getSnapshot();
 		const expected = [
@@ -356,16 +345,8 @@ describe("Core", function() {
 		this.timeout(20000);
 		await testCompile({
 			id: "inject",
-			sources: [
-				"package.json",
-				"tsconfig.json",
-				"webpack.config.js",
-				"src/application.ts"
-			],
-			compiled: [
-				"dist/index.html",
-				"dist/app-inject.js"
-			]
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			compiled: ["dist/index.html", "dist/app-inject.js"]
 		});
 
 		let tags;
@@ -377,10 +358,7 @@ describe("Core", function() {
 			await page.addScriptTag({path: script});
 			await sleep(300);
 			tags = await page.evaluate(() => {
-				const children = [
-					...document.getElementsByTagName("link"),
-					...document.getElementsByTagName("script")
-				];
+				const children = [...document.getElementsByTagName("link"), ...document.getElementsByTagName("script")];
 				return children.map(window.snapshotToJson);
 			});
 		} finally {
@@ -695,17 +673,9 @@ describe("Skip Reset", function() {
 		this.timeout(20000);
 		await testCompile({
 			id: "skip_reset_false",
-			sources: [
-				"package.json",
-				"tsconfig.json",
-				"webpack.config.js",
-				"src/application.ts"
-			],
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
 			extras: true,
-			compiled: [
-				"dist/index.html",
-				"dist/app-skip-false.js"
-			]
+			compiled: ["dist/index.html", "dist/app-skip-false.js"]
 		});
 		const actual = await getSnapshot();
 		const expected = [
@@ -721,12 +691,7 @@ describe("Skip Reset", function() {
 		this.timeout(20000);
 		await testCompile({
 			id: "skip_reset_true",
-			sources: [
-				"package.json",
-				"tsconfig.json",
-				"webpack.config.js",
-				"src/application.ts"
-			],
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
 			extras: true,
 			compiled: [
 				"dist/index.html",
@@ -760,11 +725,7 @@ describe("Stylesheets", function() {
 				"src/application.ts",
 				"src/application.css"
 			],
-			compiled: [
-				"dist/index.html",
-				"dist/app-css-modules.js",
-				"dist/app-css-modules.css"
-			]
+			compiled: ["dist/index.html", "dist/app-css-modules.js", "dist/app-css-modules.css"]
 		});
 		const color = await getSnapshotColor();
 		strictEqual(color, "rgb(0, 128, 0)");
@@ -804,11 +765,7 @@ describe("Stylesheets", function() {
 				"src/application.ts",
 				"src/application.css"
 			],
-			compiled: [
-				"dist/index.html",
-				"dist/app-css-no-modules.js",
-				"dist/app-css-no-modules.css"
-			]
+			compiled: ["dist/index.html", "dist/app-css-no-modules.js", "dist/app-css-no-modules.css"]
 		});
 		const color = await getSnapshotColor();
 		strictEqual(color, "rgb(0, 128, 0)");
@@ -819,18 +776,8 @@ describe("Stylesheets", function() {
 		this.timeout(20000);
 		await testCompile({
 			id: "css_reset",
-			sources: [
-				"package.json",
-				"tsconfig.json",
-				"webpack.config.js",
-				"src/application.ts",
-				"src/reset.css"
-			],
-			compiled: [
-				"dist/index.html",
-				"dist/app-css-reset.js",
-				"dist/app-css-reset.css"
-			]
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts", "src/reset.css"],
+			compiled: ["dist/index.html", "dist/app-css-reset.js", "dist/app-css-reset.css"]
 		});
 		const color = await getSnapshotColor();
 		strictEqual(color, "rgb(0, 128, 0)");
@@ -841,18 +788,8 @@ describe("Stylesheets", function() {
 		this.timeout(20000);
 		await testCompile({
 			id: "scss_reset",
-			sources: [
-				"package.json",
-				"tsconfig.json",
-				"webpack.config.js",
-				"src/application.ts",
-				"src/reset.scss"
-			],
-			compiled: [
-				"dist/index.html",
-				"dist/app-scss-reset.js",
-				"dist/app-scss-reset.css"
-			]
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts", "src/reset.scss"],
+			compiled: ["dist/index.html", "dist/app-scss-reset.js", "dist/app-scss-reset.css"]
 		});
 		const color = await getSnapshotColor();
 		strictEqual(color, "rgb(0, 128, 0)");
@@ -871,11 +808,7 @@ describe("Stylesheets", function() {
 				"src/reset.scss",
 				"src/variables.scss"
 			],
-			compiled: [
-				"dist/index.html",
-				"dist/app-scss-global-import.js",
-				"dist/app-scss-global-import.css"
-			]
+			compiled: ["dist/index.html", "dist/app-scss-global-import.js", "dist/app-scss-global-import.css"]
 		});
 		const color = await getSnapshotColor();
 		strictEqual(color, "rgb(0, 128, 0)");
@@ -886,18 +819,8 @@ describe("Stylesheets", function() {
 		this.timeout(20000);
 		await testCompile({
 			id: "scss_global_define",
-			sources: [
-				"package.json",
-				"tsconfig.json",
-				"webpack.config.js",
-				"src/application.ts",
-				"src/reset.scss"
-			],
-			compiled: [
-				"dist/index.html",
-				"dist/app-scss-global-define.js",
-				"dist/app-scss-global-define.css"
-			]
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts", "src/reset.scss"],
+			compiled: ["dist/index.html", "dist/app-scss-global-define.js", "dist/app-scss-global-define.css"]
 		});
 		const color = await getSnapshotColor();
 		strictEqual(color, "rgb(128, 128, 0)");
@@ -915,11 +838,7 @@ describe("Stylesheets", function() {
 				"src/application.ts",
 				"src/application.scss"
 			],
-			compiled: [
-				"dist/index.html",
-				"dist/app-scss-basic.js",
-				"dist/app-scss-basic.css"
-			]
+			compiled: ["dist/index.html", "dist/app-scss-basic.js", "dist/app-scss-basic.css"]
 		});
 		const color = await getSnapshotColor();
 		strictEqual(color, "rgb(0, 128, 255)");
@@ -938,11 +857,7 @@ describe("Stylesheets", function() {
 				"src/application.scss",
 				"src/theme-blue.scss"
 			],
-			compiled: [
-				"dist/index.html",
-				"dist/app-scss-import-file.js",
-				"dist/app-scss-import-file.css"
-			]
+			compiled: ["dist/index.html", "dist/app-scss-import-file.js", "dist/app-scss-import-file.css"]
 		});
 		const color = await getSnapshotColor();
 		strictEqual(color, "rgb(0, 0, 255)");
@@ -960,11 +875,7 @@ describe("Stylesheets", function() {
 				"src/application.ts",
 				"src/application.scss"
 			],
-			compiled: [
-				"dist/index.html",
-				"dist/app-scss-import-module.js",
-				"dist/app-scss-import-module.css"
-			]
+			compiled: ["dist/index.html", "dist/app-scss-import-module.js", "dist/app-scss-import-module.css"]
 		});
 		const color = await getSnapshotColor();
 		strictEqual(color, "rgb(0, 255, 0)");
@@ -1100,12 +1011,7 @@ describe("Stylesheets", function() {
 		this.timeout(20000);
 		await testCompile({
 			id: "scss_data",
-			sources: [
-				"package.json",
-				"tsconfig.json",
-				"webpack.config.js",
-				"src/application.ts"
-			],
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
 			compiled: [
 				"dist/index.html",
 				"dist/app-scss-data.js"
@@ -1132,11 +1038,7 @@ describe("Stylesheets", function() {
 				"src/application.ts",
 				"src/application.scss"
 			],
-			compiled: [
-				"dist/index.html",
-				"dist/app-scss-data-import.js",
-				"dist/app-scss-data-import.css"
-			]
+			compiled: ["dist/index.html", "dist/app-scss-data-import.js", "dist/app-scss-data-import.css"]
 		});
 		const colors = await getSnapshotMultipleColor();
 		deepStrictEqual(colors, {body: "rgb(255, 0, 0)", mocha: "rgb(0, 0, 255)"});
@@ -1154,11 +1056,7 @@ describe("Stylesheets", function() {
 				"src/application.ts",
 				"src/application.scss"
 			],
-			compiled: [
-				"dist/index.html",
-				"dist/app-scss-data-function.js",
-				"dist/app-scss-data-function.css"
-			]
+			compiled: ["dist/index.html", "dist/app-scss-data-function.js", "dist/app-scss-data-function.css"]
 		});
 		const colors = await getSnapshotMultipleColor();
 		deepStrictEqual(colors, {body: "rgb(255, 0, 0)", mocha: "rgb(0, 0, 255)"});
@@ -1177,12 +1075,7 @@ describe("Stylesheets", function() {
 				"src/application.scss",
 				"src/large.jpg"
 			],
-			compiled: [
-				"dist/index.html",
-				"dist/app-scss-image.js",
-				"dist/app-scss-image.css",
-				"dist/assets/large.jpg"
-			]
+			compiled: ["dist/index.html", "dist/app-scss-image.js", "dist/app-scss-image.css", "dist/assets/large.jpg"]
 		});
 		const actual = await getSnapshotImage();
 		strictEqual(actual, 'url("http://localhost:8888/assets/large.jpg")');
@@ -1201,12 +1094,7 @@ describe("Stylesheets", function() {
 				"src/application.css",
 				"src/large.jpg"
 			],
-			compiled: [
-				"dist/index.html",
-				"dist/app-css-image.js",
-				"dist/app-css-image.css",
-				"dist/assets/large.jpg"
-			]
+			compiled: ["dist/index.html", "dist/app-css-image.js", "dist/app-css-image.css", "dist/assets/large.jpg"]
 		});
 		const actual = await getSnapshotImage();
 		strictEqual(actual, 'url("http://localhost:8888/assets/large.jpg")');
@@ -1247,12 +1135,8 @@ describe("Optimize", function() {
 			"src/application.ts",
 			"src/application.css"
 		];
-		const compiled = [
-			"dist/index.html",
-			"dist/%%HASH%%.app-production.js",
-			"dist/%%HASH%%.app-production.css"
-		];
-		const filesAfter = await testCompile({id: "production",	sources});
+		const compiled = ["dist/index.html", "dist/%%HASH%%.app-production.js", "dist/%%HASH%%.app-production.css"];
+		const filesAfter = await testCompile({id: "production", sources});
 
 		let hash = "";
 		for (const fileAfter of filesAfter) {
@@ -1267,7 +1151,10 @@ describe("Optimize", function() {
 			throw new Error("No hash found");
 		}
 
-		const expectAfter = sources.concat(compiled).map(filename => filename.replace("%%HASH%%", hash)).sort();
+		const expectAfter = sources
+			.concat(compiled)
+			.map(filename => filename.replace("%%HASH%%", hash))
+			.sort();
 		deepStrictEqual(filesAfter, expectAfter, "After Webpack");
 
 		const cssRaw = readFileSync(join(dist, `${hash}.app-production.css`), "utf8");
@@ -1306,7 +1193,7 @@ describe("Optimize", function() {
 			"dist/app-production-skip-hashes.js",
 			"dist/app-production-skip-hashes.css"
 		];
-		const filesAfter = await testCompile({id: "production_skip_hashes",	sources});
+		const filesAfter = await testCompile({id: "production_skip_hashes", sources});
 
 		let hash = "";
 		for (const fileAfter of filesAfter) {
@@ -1356,11 +1243,7 @@ describe("Optimize", function() {
 				"src/application.ts",
 				"src/modules/mymodule.ts"
 			],
-			compiled: [
-				"dist/index.html",
-				"dist/app-chunks.js",
-				"dist/chunk.0.js"
-			]
+			compiled: ["dist/index.html", "dist/app-chunks.js", "dist/chunk.0.js"]
 		});
 		const actual = await getSnapshot();
 		const expected = [
@@ -1384,11 +1267,7 @@ describe("Optimize", function() {
 				"src/application.ts",
 				"src/modules/mymodule.ts"
 			],
-			compiled: [
-				"dist/index.html",
-				"dist/app-chunks-filename.js",
-				"dist/subfolder/custom.chunk.0.js"
-			]
+			compiled: ["dist/index.html", "dist/app-chunks-filename.js", "dist/subfolder/custom.chunk.0.js"]
 		});
 		const actual = await getSnapshot();
 		const expected = [
@@ -1414,11 +1293,7 @@ describe("Optimize", function() {
 				"src/thirdparty/typescript-polyfill.ts",
 				"src/thirdparty/vanilla-polyfill.js"
 			],
-			compiled: [
-				"dist/index.html",
-				"dist/app-chunks-polyfills.js",
-				"dist/chunk.0.js"
-			]
+			compiled: ["dist/index.html", "dist/app-chunks-polyfills.js", "dist/chunk.0.js"]
 		});
 		const actual = await getSnapshotMultiple();
 		const expected = {
@@ -1443,15 +1318,8 @@ describe("Optimize", function() {
 		this.timeout(20000);
 		await testCompile({
 			id: "skip_processing",
-			sources: [
-				"package.json",
-				"tsconfig.json",
-				"webpack.config.js",
-				"src/application.ts"
-			],
-			compiled: [
-				"dist/app-skip-postprocessing.js"
-			]
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			compiled: ["dist/app-skip-postprocessing.js"]
 		});
 	});
 });
@@ -1469,11 +1337,7 @@ describe("Webworkers", function() {
 				"src/application.ts",
 				"src/myworker.webworker.ts"
 			],
-			compiled: [
-				"dist/index.html",
-				"dist/app-webworker.js",
-				"dist/myworker.webworker.js"
-			]
+			compiled: ["dist/index.html", "dist/app-webworker.js", "dist/myworker.webworker.js"]
 		});
 		const actual = await getSnapshot();
 		const expected = [
@@ -1528,11 +1392,7 @@ describe("Webworkers", function() {
 				"src/only-main.polyfill.ts",
 				"src/only-worker.polyfill.ts"
 			],
-			compiled: [
-				"dist/index.html",
-				"dist/app-webworker-polyfills.js",
-				"dist/application.webworker.js"
-			]
+			compiled: ["dist/index.html", "dist/app-webworker-polyfills.js", "dist/application.webworker.js"]
 		});
 
 		const actual = await getSnapshotMultiple();
@@ -1565,17 +1425,101 @@ describe("Webworkers", function() {
 				"src/application.ts",
 				"src/myworker.webworker.ts"
 			],
-			compiled: [
-				"dist/index.html",
-				"dist/app-webworker.js",
-				"dist/myworker.webworker.js"
-			]
+			compiled: ["dist/index.html", "dist/app-webworker.js", "dist/myworker.webworker.js"]
 		});
 		const actual = await getSnapshot();
 		const expected = [
 			{
 				nodeName: "#text",
 				nodeValue: "WORKER replies HELLO"
+			}
+		];
+		deepStrictEqual(actual, expected, "DOM structure");
+	});
+});
+
+describe("Node features", function() {
+	it("Accepts: __dirname (mock)", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "node_dirname",
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			compiled: ["dist/index.html", "dist/app-node-dirname.js"]
+		});
+		const actual = await getSnapshot();
+		const expected = [
+			{
+				nodeName: "#text",
+				nodeValue: "NODE DIRNAME /"
+			}
+		];
+		deepStrictEqual(actual, expected, "DOM structure");
+	});
+
+	it("Accepts: url", /* @this */ async function() {
+		// Note that package "native-url" would produce smaller bundles
+		// than the polyfill Webpack uses.
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "node_url",
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			compiled: ["dist/index.html", "dist/app-node-url.js"]
+		});
+		const actual = await getSnapshot();
+		const expected = [
+			{
+				nodeName: "#text",
+				nodeValue: "NODE URL https://example.com"
+			}
+		];
+		deepStrictEqual(actual, expected, "DOM structure");
+	});
+
+	it("Fails: fs", /* @this */ async function() {
+		// Note that package "native-url" would produce smaller bundles
+		// than the polyfill Webpack uses.
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "node_fs",
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			expectBuildError: true
+		});
+	});
+
+	it("Accepts: path", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "node_path",
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			compiled: ["dist/index.html", "dist/app-node-path.js"]
+		});
+		const actual = await getSnapshot();
+		const expected = [
+			{
+				nodeName: "#text",
+				nodeValue: "NODE PATH /hello/world.txt"
+			}
+		];
+		deepStrictEqual(actual, expected, "DOM structure");
+	});
+
+	it("Accepts: assert", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "node_assert",
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			compiled: ["dist/index.html", "dist/app-node-assert.js"]
+		});
+		const actual = await getSnapshot();
+		const expected = [
+			{
+				nodeName: "#text",
+				nodeValue: "NODE ASSERT false true"
 			}
 		];
 		deepStrictEqual(actual, expected, "DOM structure");
