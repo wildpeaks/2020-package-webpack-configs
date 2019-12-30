@@ -7,7 +7,7 @@ module.exports = function() {
 		mode: "development",
 		sourcemaps: false,
 		entry: {
-			"app-require-fs": "./src/application.ts"
+			"app-assert-require": "./src/application.ts"
 		}
 	});
 };

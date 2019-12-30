@@ -3,11 +3,11 @@ import {writeFileSync} from "fs";
 
 let result = "INIT";
 try {
-	writeFileSync("example-import-fs.txt", "Import FS", "utf8");
+	writeFileSync("example-fs-import.txt", "FS IMPORT", "utf8");
 	result = "OK";
 } catch(e) {
 	result = "ERROR";
 }
-console.log(`IMPORT FS ${result}`);
+console.log(`FS IMPORT ${result}`);
 
 export {};

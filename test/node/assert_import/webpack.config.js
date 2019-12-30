@@ -7,7 +7,7 @@ module.exports = function() {
 		mode: "development",
 		sourcemaps: false,
 		entry: {
-			"app-import-fs": "./src/application.ts"
+			"app-assert-import": "./src/application.ts"
 		}
 	});
 };

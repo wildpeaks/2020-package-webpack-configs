@@ -238,24 +238,59 @@ describe("Node", function() {
 });
 
 describe("Node: Native modules", function() {
+	it("assert: require", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "assert_require",
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			compiled: ["dist/app-assert-require.js"]
+		});
+		const raw = readFileSync(join(dist, "app-assert-require.js"), "utf8");
+		if (!raw.includes('module.exports = require("assert")')) {
+			throw new Error("Cannot find require(assert) in output");
+		}
+		await runScript({
+			main: "app-assert-require.js",
+			expectOutput: ["ASSERT REQUIRE true"]
+		});
+	});
+
+	it("assert: import", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "assert_import",
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			compiled: ["dist/app-assert-import.js"]
+		});
+		const raw = readFileSync(join(dist, "app-assert-import.js"), "utf8");
+		if (!raw.includes('module.exports = require("assert")')) {
+			throw new Error("Cannot find require(assert) in output");
+		}
+		await runScript({
+			main: "app-assert-import.js",
+			expectOutput: ["ASSERT IMPORT true"]
+		});
+	});
+
 	it("fs: require", /* @this */ async function() {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
-			id: "require_fs",
+			id: "fs_require",
 			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
-			compiled: ["dist/app-require-fs.js"]
+			compiled: ["dist/app-fs-require.js"]
 		});
-
-		const raw = readFileSync(join(dist, "app-require-fs.js"), "utf8");
+		const raw = readFileSync(join(dist, "app-fs-require.js"), "utf8");
 		if (!raw.includes('module.exports = require("fs")')) {
 			throw new Error("Cannot find require(fs) in output");
 		}
 		await runScript({
-			main: "app-require-fs.js",
-			expectOutput: ["REQUIRE FS OK"]
+			main: "app-fs-require.js",
+			expectOutput: ["FS REQUIRE OK"]
 		});
-		if (!existsSync(join(dist, "example-require-fs.txt"))) {
+		if (!existsSync(join(dist, "example-fs-require.txt"))) {
 			throw new Error("The text file is missing");
 		}
 	});
@@ -264,20 +299,19 @@ describe("Node: Native modules", function() {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
-			id: "import_fs",
+			id: "fs_import",
 			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
-			compiled: ["dist/app-import-fs.js"]
+			compiled: ["dist/app-fs-import.js"]
 		});
-
-		const raw = readFileSync(join(dist, "app-import-fs.js"), "utf8");
+		const raw = readFileSync(join(dist, "app-fs-import.js"), "utf8");
 		if (!raw.includes('module.exports = require("fs")')) {
 			throw new Error("Cannot find require(fs) in output");
 		}
 		await runScript({
-			main: "app-import-fs.js",
-			expectOutput: ["IMPORT FS OK"]
+			main: "app-fs-import.js",
+			expectOutput: ["FS IMPORT OK"]
 		});
-		if (!existsSync(join(dist, "example-import-fs.txt"))) {
+		if (!existsSync(join(dist, "example-fs-import.txt"))) {
 			throw new Error("The text file is missing");
 		}
 	});

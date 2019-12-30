@@ -3,11 +3,11 @@ const {writeFileSync} = require("fs");
 
 let result = "INIT";
 try {
-	writeFileSync("example-require-fs.txt", "Require FS", "utf8");
+	writeFileSync("example-fs-require.txt", "FS REQUIRE", "utf8");
 	result = "OK";
 } catch(e) {
 	result = "ERROR";
 }
-console.log(`REQUIRE FS ${result}`);
+console.log(`FS REQUIRE ${result}`);
 
 export {};
