@@ -3,15 +3,13 @@
 "use strict";
 const {join} = require("path");
 const {deepStrictEqual} = require("assert");
-const {readFileSync} = require("fs");
+const {existsSync, readFileSync} = require("fs");
 const {copySync, removeSync} = require("fs-extra");
 const {compileFixture, execCommand} = require("../shared");
 const dist = join(__dirname, `../../tmp/dist`);
 
 before(function() {
-	removeSync(
-		join(__dirname, `../../tmp/node_modules/@wildpeaks/webpack-config-node`)
-	);
+	removeSync(join(__dirname, `../../tmp/node_modules/@wildpeaks/webpack-config-node`));
 	copySync(
 		join(__dirname, `../../packages/webpack-config-node`),
 		join(__dirname, `../../tmp/node_modules/@wildpeaks/webpack-config-node`)
@@ -236,5 +234,51 @@ describe("Node", function() {
 			main: "app-production-skip-hashes.js",
 			expectOutput: ["Production Skip Hashes"]
 		});
+	});
+});
+
+describe("Node: Native modules", function() {
+	it("fs: require", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "require_fs",
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			compiled: ["dist/app-require-fs.js"]
+		});
+
+		const raw = readFileSync(join(dist, "app-require-fs.js"), "utf8");
+		if (!raw.includes('module.exports = require("fs")')) {
+			throw new Error("Cannot find require(fs) in output");
+		}
+		await runScript({
+			main: "app-require-fs.js",
+			expectOutput: ["REQUIRE FS OK"]
+		});
+		if (!existsSync(join(dist, "example-require-fs.txt"))) {
+			throw new Error("The text file is missing");
+		}
+	});
+
+	it("fs: import", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "import_fs",
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			compiled: ["dist/app-import-fs.js"]
+		});
+
+		const raw = readFileSync(join(dist, "app-import-fs.js"), "utf8");
+		if (!raw.includes('module.exports = require("fs")')) {
+			throw new Error("Cannot find require(fs) in output");
+		}
+		await runScript({
+			main: "app-import-fs.js",
+			expectOutput: ["IMPORT FS OK"]
+		});
+		if (!existsSync(join(dist, "example-import-fs.txt"))) {
+			throw new Error("The text file is missing");
+		}
 	});
 });
