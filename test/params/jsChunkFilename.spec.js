@@ -3,6 +3,7 @@
 const {strictEqual} = require("assert");
 const {join} = require("path");
 const getConfigWeb = require("../../packages/webpack-config-web");
+const getConfigNode = require("../../packages/webpack-config-node");
 
 /**
  * @param {String} title
@@ -12,6 +13,7 @@ const getConfigWeb = require("../../packages/webpack-config-web");
 function testFixture(title, jsChunkFilename, expectThrows) {
 	it(title, () => {
 		let actualThrowsWeb = false;
+		let actualThrowsNode = false;
 		try {
 			getConfigWeb({
 				entry: {
@@ -24,7 +26,20 @@ function testFixture(title, jsChunkFilename, expectThrows) {
 		} catch (e) {
 			actualThrowsWeb = true;
 		}
+		try {
+			getConfigNode({
+				entry: {
+					dummy: "./src/dummy.ts"
+				},
+				rootFolder: __dirname,
+				outputFolder: join(__dirname, "dummy"),
+				jsChunkFilename
+			});
+		} catch (e) {
+			actualThrowsNode = true;
+		}
 		strictEqual(actualThrowsWeb, expectThrows, "Web config");
+		strictEqual(actualThrowsNode, expectThrows, "Node config");
 	});
 }
 

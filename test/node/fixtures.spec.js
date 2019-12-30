@@ -235,6 +235,58 @@ describe("Node", function() {
 			expectOutput: ["Production Skip Hashes"]
 		});
 	});
+
+	it("Chunks", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "chunks",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/modules/mymodule.ts"
+			],
+			compiled: [
+				"dist/app-chunks.js",
+				"dist/chunk.0.js"
+			]
+		});
+		await runScript({
+			main: "app-chunks.js",
+			expectOutput: [
+				"CHUNKS initially",
+				"CHUNKS delayed 100123"
+			]
+		});
+	});
+
+	it("Chunks: Custom Filename", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "chunks_filename",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/modules/mymodule.ts"
+			],
+			compiled: [
+				"dist/app-chunks-filename.js",
+				"dist/subfolder/custom.chunk.0.js"
+			]
+		});
+		await runScript({
+			main: "app-chunks-filename.js",
+			expectOutput: [
+				"CHUNKS FILENAME initially",
+				"CHUNKS FILENAME delayed 100123"
+			]
+		});
+	});
 });
 
 describe("Node: Native modules", function() {

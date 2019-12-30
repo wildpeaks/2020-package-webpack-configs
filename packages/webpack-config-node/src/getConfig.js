@@ -10,6 +10,7 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 module.exports = function getConfig({
 	entry = {application: "./src/index.ts"},
 	jsFilename,
+	jsChunkFilename,
 	rootFolder = "",
 	outputFolder = "",
 	publicPath = "/",
@@ -50,6 +51,9 @@ module.exports = function getConfig({
 	if (typeof jsFilename !== "string" && typeof jsFilename !== "undefined") {
 		throw new Error(`"jsFilename" should be a String or undefined`);
 	}
+	if (typeof jsChunkFilename !== "string" && typeof jsChunkFilename !== "undefined") {
+		throw new Error(`"jsChunkFilename" should be a String or undefined`);
+	}
 
 	strictEqual(Array.isArray(copyPatterns), true, '"copyPatterns" should be an Array');
 
@@ -73,6 +77,11 @@ module.exports = function getConfig({
 		actualJsFilename = minify && !skipHashes ? "[hash].[name].js" : "[name].js";
 	}
 
+	let actualJsChunkFilename = jsChunkFilename;
+	if (typeof actualJsChunkFilename !== "string") {
+		actualJsChunkFilename = minify && !skipHashes ? "[hash].chunk.[id].js" : "chunk.[id].js";
+	}
+
 	const config = {
 		target: "node",
 		devtool: sourcemaps ? "source-map" : false,
@@ -86,7 +95,8 @@ module.exports = function getConfig({
 			path: actualOutputFolder,
 			pathinfo: false,
 			publicPath,
-			filename: actualJsFilename
+			filename: actualJsFilename,
+			chunkFilename: actualJsChunkFilename
 		},
 		performance: {
 			hints: false
