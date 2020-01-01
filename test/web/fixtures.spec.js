@@ -1543,3 +1543,89 @@ describe("Node features", function() {
 		deepStrictEqual(actual, expected, "DOM structure");
 	});
 });
+
+describe("Externals", function() {
+	it("None", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "externals_none",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/types.d.ts",
+				"thirdparty/polyfills.js",
+				"node_modules/fake1/index.js",
+				"node_modules/fake2/index.js"
+			],
+			compiled: ["dist/index.html", "dist/app-externals-none.js"]
+		});
+		const actual = await getSnapshot();
+		const expected = [
+			{
+				nodeName: "#text",
+				nodeValue: "EXTERNALS NONE MODULE1 MODULE2"
+			}
+		];
+		deepStrictEqual(actual, expected, "DOM structure");
+	});
+
+	it("Globals", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "externals_globals",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/types.d.ts",
+				"thirdparty/polyfills.js",
+				"node_modules/fake1/index.js",
+				"node_modules/fake2/index.js"
+			],
+			compiled: ["dist/index.html", "dist/app-externals-globals.js"]
+		});
+		const actual = await getSnapshot();
+		const expected = [
+			{
+				nodeName: "#text",
+				nodeValue: "EXTERNALS GLOBALS GLOBAL1 GLOBAL2"
+			}
+		];
+		deepStrictEqual(actual, expected, "DOM structure");
+	});
+
+	it(
+		"Replace" /* async function() {
+		// Disabled until https://github.com/webpack/webpack/issues/10201 is fixed
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "externals_replace",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/types.d.ts",
+				"thirdparty/polyfills.js",
+				"node_modules/fake1/index.js",
+				"node_modules/fake2/index.js"
+			],
+			compiled: ["dist/index.html", "dist/app-externals-replace.js"]
+		});
+		const actual = await getSnapshot();
+		const expected = [
+			{
+				nodeName: "#text",
+				nodeValue: "EXTERNALS REPLACE DUMMY1 MODULE2"
+			}
+		];
+		deepStrictEqual(actual, expected, "DOM structure");
+	}*/
+	);
+});
