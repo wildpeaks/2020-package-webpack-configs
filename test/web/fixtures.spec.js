@@ -1556,7 +1556,6 @@ describe("Externals", function() {
 				"webpack.config.js",
 				"src/application.ts",
 				"src/types.d.ts",
-				"thirdparty/polyfills.js",
 				"node_modules/fake1/index.js",
 				"node_modules/fake2/index.js"
 			],
@@ -1583,7 +1582,6 @@ describe("Externals", function() {
 				"webpack.config.js",
 				"src/application.ts",
 				"src/types.d.ts",
-				"thirdparty/polyfills.js",
 				"node_modules/fake1/index.js",
 				"node_modules/fake2/index.js"
 			],
