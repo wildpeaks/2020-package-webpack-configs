@@ -347,3 +347,75 @@ describe("Node: Native modules", function() {
 		});
 	});
 });
+
+describe("Externals", function() {
+	it("None", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "externals_none",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/types.d.ts",
+				"node_modules/fake1/index.js",
+				"node_modules/fake2/index.js"
+			],
+			compiled: ["dist/app-externals-none.js"]
+		});
+		await runScript({
+			main: "app-externals-none.js",
+			expectOutput: ["EXTERNALS NONE MODULE1 MODULE2"]
+		});
+	});
+
+	it("Globals", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "externals_globals",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/types.d.ts",
+				"node_modules/fake1/index.js",
+				"node_modules/fake2/index.js"
+			],
+			compiled: ["dist/app-externals-globals.js"]
+		});
+		await runScript({
+			main: "app-externals-globals.js",
+			expectOutput: ["EXTERNALS GLOBALS GLOBAL1 GLOBAL2"]
+		});
+	});
+
+	it(
+		"Replace" /* async function() {
+			// Disabled until https://github.com/webpack/webpack/issues/10201 is fixed
+			this.slow(20000);
+			this.timeout(20000);
+			await testCompile({
+				id: "externals_replace",
+				sources: [
+					"package.json",
+					"tsconfig.json",
+					"webpack.config.js",
+					"src/application.ts",
+					"src/types.d.ts",
+					"thirdparty/polyfills.js",
+					"node_modules/fake1/index.js",
+					"node_modules/fake2/index.js"
+				],
+				compiled: ["dist/app-externals-replace.js"]
+			});
+			await runScript({
+				main: "app-externals-replace.js",
+				expectOutput: ["EXTERNALS REPLACE DUMMY1 MODULE2"]
+			});
+		} */
+	);
+});
