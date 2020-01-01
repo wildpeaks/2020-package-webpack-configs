@@ -1,5 +1,4 @@
 {
-  "private": true,
   "name": "@wildpeaks/webpack-config-node",
   "version": "4.14.0-alpha1",
   "description": "Webpack 4 base config generator for bundling Node apps",
