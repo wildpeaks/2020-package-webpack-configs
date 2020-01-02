@@ -18,7 +18,7 @@ try {
 
 const container = document.createElement("div");
 container.setAttribute("id", "mocha");
-container.innerText = `EXTERNALS REPLACE ${value1} ${value2}`;
+container.innerText = `EXTERNALS COMMONJS STRING ${value1} ${value2}`;
 document.body.appendChild(container);
 
 export {};

@@ -16,6 +16,6 @@ try {
 	value2 = "ERROR2";
 }
 
-console.log(`EXTERNALS REPLACE ${value1} ${value2}`);
+console.log(`EXTERNALS COMMONJS ARRAY ${value1} ${value2}`);
 
 export {};

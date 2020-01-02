@@ -348,12 +348,14 @@ describe("Node: Native modules", function() {
 	});
 });
 
+// Don't bother with externals (other than globals) unless you're building a library:
+// https://github.com/webpack/webpack/issues/10201
 describe("Externals", function() {
-	it("None", /* @this */ async function() {
+	it("Accepts: Undefined", /* @this */ async function() {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
-			id: "externals_none",
+			id: "externals_undefined",
 			sources: [
 				"package.json",
 				"tsconfig.json",
@@ -363,15 +365,15 @@ describe("Externals", function() {
 				"node_modules/fake1/index.js",
 				"node_modules/fake2/index.js"
 			],
-			compiled: ["dist/app-externals-none.js"]
+			compiled: ["dist/app-externals-undefined.js"]
 		});
 		await runScript({
-			main: "app-externals-none.js",
-			expectOutput: ["EXTERNALS NONE MODULE1 MODULE2"]
+			main: "app-externals-undefined.js",
+			expectOutput: ["EXTERNALS UNDEFINED MODULE1 MODULE2"]
 		});
 	});
 
-	it("Globals", /* @this */ async function() {
+	it("Accepts: Globals", /* @this */ async function() {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -393,29 +395,49 @@ describe("Externals", function() {
 		});
 	});
 
-	it(
-		"Replace" /* async function() {
-			// Disabled until https://github.com/webpack/webpack/issues/10201 is fixed
-			this.slow(20000);
-			this.timeout(20000);
-			await testCompile({
-				id: "externals_replace",
-				sources: [
-					"package.json",
-					"tsconfig.json",
-					"webpack.config.js",
-					"src/application.ts",
-					"src/types.d.ts",
-					"thirdparty/polyfills.js",
-					"node_modules/fake1/index.js",
-					"node_modules/fake2/index.js"
-				],
-				compiled: ["dist/app-externals-replace.js"]
-			});
-			await runScript({
-				main: "app-externals-replace.js",
-				expectOutput: ["EXTERNALS REPLACE DUMMY1 MODULE2"]
-			});
-		} */
-	);
+	it("Fails: CommonJS (string)", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "externals_commonjs_string",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/types.d.ts",
+				"thirdparty/polyfills.js",
+				"node_modules/fake1/index.js",
+				"node_modules/fake2/index.js"
+			],
+			compiled: ["dist/app-externals-commonjs-string.js"]
+		});
+		await runScript({
+			main: "app-externals-commonjs-string.js",
+			expectRuntimeError: true
+		});
+	});
+
+	it("Fails: CommonJS (array)", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "externals_commonjs_array",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/types.d.ts",
+				"thirdparty/polyfills.js",
+				"node_modules/fake1/index.js",
+				"node_modules/fake2/index.js"
+			],
+			compiled: ["dist/app-externals-commonjs-array.js"]
+		});
+		await runScript({
+			main: "app-externals-commonjs-array.js",
+			expectRuntimeError: true
+		});
+	});
 });

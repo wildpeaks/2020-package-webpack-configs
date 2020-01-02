@@ -16,6 +16,6 @@ try {
 	value2 = "ERROR2";
 }
 
-console.log(`EXTERNALS NONE ${value1} ${value2}`);
+console.log(`EXTERNALS UNDEFINED ${value1} ${value2}`);
 
 export {};

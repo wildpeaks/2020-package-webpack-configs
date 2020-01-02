@@ -18,7 +18,7 @@ try {
 
 const container = document.createElement("div");
 container.setAttribute("id", "mocha");
-container.innerText = `EXTERNALS NONE ${value1} ${value2}`;
+container.innerText = `EXTERNALS UNDEFINED ${value1} ${value2}`;
 document.body.appendChild(container);
 
 export {};

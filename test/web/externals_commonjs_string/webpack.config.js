@@ -9,15 +9,18 @@ module.exports = function() {
 		webworkerPolyfills: [],
 		sourcemaps: false,
 		entry: {
-			"app-externals-none": "./src/application.ts"
+			"app-externals-commonjs-string": "./src/application.ts"
 		},
 		pages: [
 			{
 				filename: "index.html",
-				chunks: ["app-externals-none"]
+				chunks: ["app-externals-commonjs-string"]
 			}
 		]
 	});
-	config.externals = {};
+	config.externals = {
+		fake1: "./thirdparty/polyfills.js",
+		fake2: "./thirdparty/polyfills.js"
+	};
 	return config;
 };
