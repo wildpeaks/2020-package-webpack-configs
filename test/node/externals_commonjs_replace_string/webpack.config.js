@@ -7,11 +7,11 @@ module.exports = function() {
 		mode: "development",
 		sourcemaps: false,
 		entry: {
-			"app-externals-commonjs-array": "./src/application.ts"
+			"app-externals-commonjs-replace-string": "./src/application.ts"
 		}
 	});
 	config.externals = {
-		fake1: ["./thirdparty/polyfills.js", "dummy1"]
+		fake1: "commonjs fake2"
 	};
 	return config;
 };

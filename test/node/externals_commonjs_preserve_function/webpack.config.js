@@ -7,12 +7,17 @@ module.exports = function() {
 		mode: "development",
 		sourcemaps: false,
 		entry: {
-			"app-externals-commonjs-string": "./src/application.ts"
+			"app-externals-commonjs-preserve-function": "./src/application.ts"
 		}
 	});
-	config.externals = {
-		fake1: "./thirdparty/polyfills.js",
-		fake2: "./thirdparty/polyfills.js"
-	};
+	config.externals = [
+		function(_context, request, done) {
+			if (request === "fake1") {
+				done(null, "commonjs fake1");
+				return;
+			}
+			done();
+		}
+	];
 	return config;
 };

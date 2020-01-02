@@ -31,7 +31,6 @@ async function compileFixture(folder, extras = false) {
 	removeSync(join(tmpFolder, "node_modules/example-theme-module"));
 	removeSync(join(tmpFolder, "node_modules/fake1"));
 	removeSync(join(tmpFolder, "node_modules/fake2"));
-	removeSync(join(tmpFolder, "thirdparty"));
 
 	// prettier-ignore
 	copySync(
@@ -71,13 +70,6 @@ async function compileFixture(folder, extras = false) {
 		copySync(
 			join(folder, "node_modules/fake2"),
 			join(tmpFolder, "node_modules/fake2")
-		);
-	}
-	// prettier-ignore
-	if (existsSync(join(folder, "thirdparty"))) {
-		copySync(
-			join(folder, "thirdparty"),
-			join(tmpFolder, "thirdparty")
 		);
 	}
 	// prettier-ignore
