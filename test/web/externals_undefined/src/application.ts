@@ -1,7 +1,4 @@
 /* eslint-env browser */
-window.FAKE_1 = "GLOBAL1";
-window.FAKE_2 = "GLOBAL2";
-
 let value1 = "INIT1";
 try {
 	value1 = require("fake1");

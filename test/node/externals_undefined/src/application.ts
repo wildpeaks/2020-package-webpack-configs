@@ -1,7 +1,4 @@
 /* eslint-env node */
-global.FAKE_1 = "GLOBAL1";
-global.FAKE_2 = "GLOBAL2";
-
 let value1 = "INIT1";
 try {
 	value1 = require("fake1");

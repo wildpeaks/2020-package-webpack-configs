@@ -1544,8 +1544,6 @@ describe("Node features", function() {
 	});
 });
 
-// Don't bother with externals (other than globals) unless you're building a library:
-// https://github.com/webpack/webpack/issues/10201
 describe("Externals", function() {
 	it("Accepts: Undefined", /* @this */ async function() {
 		this.slow(20000);
@@ -1557,7 +1555,6 @@ describe("Externals", function() {
 				"tsconfig.json",
 				"webpack.config.js",
 				"src/application.ts",
-				"src/types.d.ts",
 				"node_modules/fake1/index.js",
 				"node_modules/fake2/index.js"
 			],
@@ -1597,47 +1594,5 @@ describe("Externals", function() {
 			}
 		];
 		deepStrictEqual(actual, expected, "DOM structure");
-	});
-
-	it("Fails: CommonJS (string)", /* @this */ async function() {
-		this.slow(20000);
-		this.timeout(20000);
-		await testCompile({
-			id: "externals_commonjs_string",
-			sources: [
-				"package.json",
-				"tsconfig.json",
-				"webpack.config.js",
-				"src/application.ts",
-				"src/types.d.ts",
-				"thirdparty/polyfills.js",
-				"node_modules/fake1/index.js",
-				"node_modules/fake2/index.js"
-			],
-			compiled: ["dist/index.html", "dist/app-externals-commonjs-string.js"]
-		});
-		const actual = await getSnapshot();
-		strictEqual(actual, undefined, "DOM structure");
-	});
-
-	it("Fails: CommonJS (array)", /* @this */ async function() {
-		this.slow(20000);
-		this.timeout(20000);
-		await testCompile({
-			id: "externals_commonjs_array",
-			sources: [
-				"package.json",
-				"tsconfig.json",
-				"webpack.config.js",
-				"src/application.ts",
-				"src/types.d.ts",
-				"thirdparty/polyfills.js",
-				"node_modules/fake1/index.js",
-				"node_modules/fake2/index.js"
-			],
-			compiled: ["dist/index.html", "dist/app-externals-commonjs-array.js"]
-		});
-		const actual = await getSnapshot();
-		strictEqual(actual, undefined, "DOM structure");
 	});
 });

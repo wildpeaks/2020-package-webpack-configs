@@ -2,7 +2,7 @@
 /* eslint-disable prefer-arrow-callback */
 "use strict";
 const {join} = require("path");
-const {deepStrictEqual} = require("assert");
+const {strictEqual, deepStrictEqual} = require("assert");
 const {existsSync, readFileSync} = require("fs");
 const {copySync, removeSync, outputFileSync} = require("fs-extra");
 const {compileFixture, execCommand} = require("../shared");
@@ -54,7 +54,7 @@ async function runScript({main, expectRuntimeError, expectOutput}) {
 	});
 }
 
-describe("Node", function() {
+describe("Core", function() {
 	it("Basic", /* @this */ async function() {
 		this.slow(20000);
 		this.timeout(20000);
@@ -240,7 +240,7 @@ describe("Node", function() {
 	});
 });
 
-describe("Node: Native modules", function() {
+describe("Native modules", function() {
 	it("assert: require", /* @this */ async function() {
 		this.slow(20000);
 		this.timeout(20000);
@@ -371,7 +371,6 @@ describe("Externals", function() {
 				"tsconfig.json",
 				"webpack.config.js",
 				"src/application.ts",
-				"src/types.d.ts",
 				"node_modules/fake1/index.js",
 				"node_modules/fake2/index.js"
 			],
@@ -420,14 +419,13 @@ describe("Externals", function() {
 			],
 			compiled: ["dist/app-externals-commonjs-preserve-string.js"]
 		});
-		//
-		// TODO check require("fake1") is in the output js
-		// TODO check require("fake2") is NOT in the output js
-		//
 		await runScript({
 			main: "app-externals-commonjs-preserve-string.js",
 			expectOutput: ["EXTERNALS COMMONJS PRESERVE STRING MODULE1 MODULE2"]
 		});
+		const raw = readFileSync(join(dist, "app-externals-commonjs-preserve-string.js"), "utf8");
+		strictEqual(raw.includes('require("fake1")'), true, "fake1 is external");
+		strictEqual(raw.includes('require("fake2")'), false, "fake2 isn't external");
 	});
 
 	it("Accepts: CommonJS, Preserve, Function", /* @this */ async function() {
@@ -445,14 +443,13 @@ describe("Externals", function() {
 			],
 			compiled: ["dist/app-externals-commonjs-preserve-function.js"]
 		});
-		//
-		// TODO check require("fake1") is in the output js
-		// TODO check require("fake2") is NOT in the output js
-		//
 		await runScript({
 			main: "app-externals-commonjs-preserve-function.js",
 			expectOutput: ["EXTERNALS COMMONJS PRESERVE FUNCTION MODULE1 MODULE2"]
 		});
+		const raw = readFileSync(join(dist, "app-externals-commonjs-preserve-function.js"), "utf8");
+		strictEqual(raw.includes('require("fake1")'), true, "fake1 is external");
+		strictEqual(raw.includes('require("fake2")'), false, "fake2 isn't external");
 	});
 
 	it("Accepts: CommonJS, Replace, String", /* @this */ async function() {
@@ -470,14 +467,13 @@ describe("Externals", function() {
 			],
 			compiled: ["dist/app-externals-commonjs-replace-string.js"]
 		});
-		//
-		// TODO check require("fake1") is NOT in the output js
-		// TODO check require("fake2") is in the output js
-		//
 		await runScript({
 			main: "app-externals-commonjs-replace-string.js",
 			expectOutput: ["EXTERNALS COMMONJS REPLACE STRING MODULE2"]
 		});
+		const raw = readFileSync(join(dist, "app-externals-commonjs-replace-string.js"), "utf8");
+		strictEqual(raw.includes('require("fake1")'), false, "fake1 isn't external");
+		strictEqual(raw.includes('require("fake2")'), true, "fake2 is external");
 	});
 
 	it("Accepts: CommonJS, Replace, Function", /* @this */ async function() {
@@ -495,14 +491,13 @@ describe("Externals", function() {
 			],
 			compiled: ["dist/app-externals-commonjs-replace-function.js"]
 		});
-		//
-		// TODO check require("fake1") is NOT in the output js
-		// TODO check require("fake2") is in the output js
-		//
 		await runScript({
 			main: "app-externals-commonjs-replace-function.js",
 			expectOutput: ["EXTERNALS COMMONJS REPLACE FUNCTION MODULE2"]
 		});
+		const raw = readFileSync(join(dist, "app-externals-commonjs-replace-function.js"), "utf8");
+		strictEqual(raw.includes('require("fake1")'), false, "fake1 isn't external");
+		strictEqual(raw.includes('require("fake2")'), true, "fake2 is external");
 	});
 
 	it("Accepts: CommonJS, Relative Path, String", /* @this */ async function() {
@@ -529,6 +524,8 @@ describe("Externals", function() {
 			main: "app-externals-commonjs-relative-string.js",
 			expectOutput: ["EXTERNALS COMMONJS REPLACE STRING POLYFILLS MODULE2"]
 		});
+		const raw = readFileSync(join(dist, "app-externals-commonjs-relative-string.js"), "utf8");
+		strictEqual(raw.includes('require("./thirdparty/polyfills")'), false, "fake1 was replaced");
 	});
 
 	it("Fails: Relative Path, String", /* @this */ async function() {
