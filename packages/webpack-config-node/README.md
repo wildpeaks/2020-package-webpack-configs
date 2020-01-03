@@ -244,12 +244,8 @@ as possible to optimize for runtime.
 ## Babel
 
 Note that it **intentionally doesn't use Babel** because Typescript itself can already take care of transpiling
-to ES5 + ES Modules, and Webpack converts the ES Modules. This greatly **reduces the number of dependencies**
+to ES2017 + ES Modules, and Webpack converts the ES Modules. This greatly **reduces the number of dependencies**
 and avoids [limitations of the Typescript plugin for Babel](https://github.com/babel/babel/blob/master/packages/babel-plugin-transform-typescript/README.md#babelplugin-transform-typescript).
-
-However it also means it doesn't automatically include `core-js` dependencies.
-Therefore **you can pass a list of polyfills** to use (*including polyfills that Babel wouldn't include*
-and that you would have to add manually anyway) in options.
 
 
 -------------------------------------------------------------------------------
