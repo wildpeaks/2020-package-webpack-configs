@@ -29,6 +29,8 @@ async function compileFixture(folder, extras = false) {
 	removeSync(join(tmpFolder, "node_modules/module-window-polyfill"));
 	removeSync(join(tmpFolder, "node_modules/module-self-polyfill"));
 	removeSync(join(tmpFolder, "node_modules/example-theme-module"));
+	removeSync(join(tmpFolder, "node_modules/fake1"));
+	removeSync(join(tmpFolder, "node_modules/fake2"));
 
 	// prettier-ignore
 	copySync(
@@ -54,6 +56,20 @@ async function compileFixture(folder, extras = false) {
 		copySync(
 			join(folder, "node_modules/example-theme-module"),
 			join(tmpFolder, "node_modules/example-theme-module")
+		);
+	}
+	// prettier-ignore
+	if (existsSync(join(folder, "node_modules/fake1"))) {
+		copySync(
+			join(folder, "node_modules/fake1"),
+			join(tmpFolder, "node_modules/fake1")
+		);
+	}
+	// prettier-ignore
+	if (existsSync(join(folder, "node_modules/fake2"))) {
+		copySync(
+			join(folder, "node_modules/fake2"),
+			join(tmpFolder, "node_modules/fake2")
 		);
 	}
 	// prettier-ignore

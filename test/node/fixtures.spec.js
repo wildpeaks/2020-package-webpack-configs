@@ -2,9 +2,9 @@
 /* eslint-disable prefer-arrow-callback */
 "use strict";
 const {join} = require("path");
-const {deepStrictEqual} = require("assert");
+const {strictEqual, deepStrictEqual} = require("assert");
 const {existsSync, readFileSync} = require("fs");
-const {copySync, removeSync} = require("fs-extra");
+const {copySync, removeSync, outputFileSync} = require("fs-extra");
 const {compileFixture, execCommand} = require("../shared");
 const dist = join(__dirname, `../../tmp/dist`);
 
@@ -54,7 +54,7 @@ async function runScript({main, expectRuntimeError, expectOutput}) {
 	});
 }
 
-describe("Node", function() {
+describe("Core", function() {
 	it("Basic", /* @this */ async function() {
 		this.slow(20000);
 		this.timeout(20000);
@@ -240,7 +240,7 @@ describe("Node", function() {
 	});
 });
 
-describe("Node: Native modules", function() {
+describe("Native modules", function() {
 	it("assert: require", /* @this */ async function() {
 		this.slow(20000);
 		this.timeout(20000);
@@ -344,6 +344,239 @@ describe("Node: Native modules", function() {
 		await runScript({
 			main: "app-cwd.js",
 			expectOutput: [`CWD ${dist}`]
+		});
+	});
+});
+
+/**
+ * Use `commonjs THENAME` to exclude modules from the bundle
+ * or replace by another runtime module.
+ *
+ * Don't use externals array (as it doesn't work unless you're building a library):
+ * https://github.com/webpack/webpack/issues/10201
+ *
+ * Also this documentation example is wrong
+ * because test results show that functions receive three parameters:
+ * https://webpack.js.org/configuration/externals/#function
+ *
+ */
+describe("Externals", function() {
+	it("Accepts: Undefined", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "externals_undefined",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"node_modules/fake1/index.js",
+				"node_modules/fake2/index.js"
+			],
+			compiled: ["dist/app-externals-undefined.js"]
+		});
+		await runScript({
+			main: "app-externals-undefined.js",
+			expectOutput: ["EXTERNALS UNDEFINED MODULE1 MODULE2"]
+		});
+	});
+
+	it("Accepts: Globals", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "externals_globals",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/types.d.ts",
+				"node_modules/fake1/index.js",
+				"node_modules/fake2/index.js"
+			],
+			compiled: ["dist/app-externals-globals.js"]
+		});
+		await runScript({
+			main: "app-externals-globals.js",
+			expectOutput: ["EXTERNALS GLOBALS GLOBAL1 GLOBAL2"]
+		});
+	});
+
+	it("Accepts: CommonJS, Preserve, String", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "externals_commonjs_preserve_string",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"node_modules/fake1/index.js",
+				"node_modules/fake2/index.js"
+			],
+			compiled: ["dist/app-externals-commonjs-preserve-string.js"]
+		});
+		await runScript({
+			main: "app-externals-commonjs-preserve-string.js",
+			expectOutput: ["EXTERNALS COMMONJS PRESERVE STRING MODULE1 MODULE2"]
+		});
+		const raw = readFileSync(join(dist, "app-externals-commonjs-preserve-string.js"), "utf8");
+		strictEqual(raw.includes('require("fake1")'), true, "fake1 is external");
+		strictEqual(raw.includes('require("fake2")'), false, "fake2 isn't external");
+	});
+
+	it("Accepts: CommonJS, Preserve, Function", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "externals_commonjs_preserve_function",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"node_modules/fake1/index.js",
+				"node_modules/fake2/index.js"
+			],
+			compiled: ["dist/app-externals-commonjs-preserve-function.js"]
+		});
+		await runScript({
+			main: "app-externals-commonjs-preserve-function.js",
+			expectOutput: ["EXTERNALS COMMONJS PRESERVE FUNCTION MODULE1 MODULE2"]
+		});
+		const raw = readFileSync(join(dist, "app-externals-commonjs-preserve-function.js"), "utf8");
+		strictEqual(raw.includes('require("fake1")'), true, "fake1 is external");
+		strictEqual(raw.includes('require("fake2")'), false, "fake2 isn't external");
+	});
+
+	it("Accepts: CommonJS, Replace, String", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "externals_commonjs_replace_string",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"node_modules/fake1/index.js",
+				"node_modules/fake2/index.js"
+			],
+			compiled: ["dist/app-externals-commonjs-replace-string.js"]
+		});
+		await runScript({
+			main: "app-externals-commonjs-replace-string.js",
+			expectOutput: ["EXTERNALS COMMONJS REPLACE STRING MODULE2"]
+		});
+		const raw = readFileSync(join(dist, "app-externals-commonjs-replace-string.js"), "utf8");
+		strictEqual(raw.includes('require("fake1")'), false, "fake1 isn't external");
+		strictEqual(raw.includes('require("fake2")'), true, "fake2 is external");
+	});
+
+	it("Accepts: CommonJS, Replace, Function", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "externals_commonjs_replace_function",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"node_modules/fake1/index.js",
+				"node_modules/fake2/index.js"
+			],
+			compiled: ["dist/app-externals-commonjs-replace-function.js"]
+		});
+		await runScript({
+			main: "app-externals-commonjs-replace-function.js",
+			expectOutput: ["EXTERNALS COMMONJS REPLACE FUNCTION MODULE2"]
+		});
+		const raw = readFileSync(join(dist, "app-externals-commonjs-replace-function.js"), "utf8");
+		strictEqual(raw.includes('require("fake1")'), false, "fake1 isn't external");
+		strictEqual(raw.includes('require("fake2")'), true, "fake2 is external");
+	});
+
+	it("Accepts: CommonJS, Relative Path, String", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "externals_commonjs_relative_string",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"node_modules/fake1/index.js",
+				"node_modules/fake2/index.js"
+			],
+			compiled: ["dist/app-externals-commonjs-relative-string.js"]
+		});
+		outputFileSync(
+			join(dist, "thirdparty/polyfills.js"),
+			'"use strict";\nmodule.exports = "POLYFILLS";',
+			"utf8"
+		);
+		await runScript({
+			main: "app-externals-commonjs-relative-string.js",
+			expectOutput: ["EXTERNALS COMMONJS REPLACE STRING POLYFILLS MODULE2"]
+		});
+		const raw = readFileSync(join(dist, "app-externals-commonjs-relative-string.js"), "utf8");
+		strictEqual(raw.includes('require("./thirdparty/polyfills")'), false, "fake1 was replaced");
+	});
+
+	it("Fails: Relative Path, String", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "externals_relative_string",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"node_modules/fake1/index.js",
+				"node_modules/fake2/index.js"
+			],
+			compiled: ["dist/app-externals-relative-string.js"]
+		});
+		outputFileSync(
+			join(dist, "thirdparty/polyfills.js"),
+			'"use strict";\nmodule.exports = "POLYFILLS";',
+			"utf8"
+		);
+		await runScript({
+			main: "app-externals-relative-string.js",
+			expectRuntimeError: true
+		});
+	});
+
+	it("Fails: Relative Path, Array", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "externals_relative_array",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"node_modules/fake1/index.js",
+				"node_modules/fake2/index.js"
+			],
+			compiled: ["dist/app-externals-relative-array.js"]
+		});
+		outputFileSync(
+			join(dist, "thirdparty/polyfills.js"),
+			'"use strict";\nmodule.exports = {dummy1: "DUMMY1"};',
+			"utf8"
+		);
+		await runScript({
+			main: "app-externals-relative-array.js",
+			expectRuntimeError: true
 		});
 	});
 });

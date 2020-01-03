@@ -1543,3 +1543,56 @@ describe("Node features", function() {
 		deepStrictEqual(actual, expected, "DOM structure");
 	});
 });
+
+describe("Externals", function() {
+	it("Accepts: Undefined", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "externals_undefined",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"node_modules/fake1/index.js",
+				"node_modules/fake2/index.js"
+			],
+			compiled: ["dist/index.html", "dist/app-externals-undefined.js"]
+		});
+		const actual = await getSnapshot();
+		const expected = [
+			{
+				nodeName: "#text",
+				nodeValue: "EXTERNALS UNDEFINED MODULE1 MODULE2"
+			}
+		];
+		deepStrictEqual(actual, expected, "DOM structure");
+	});
+
+	it("Accepts: Globals", /* @this */ async function() {
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "externals_globals",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/types.d.ts",
+				"node_modules/fake1/index.js",
+				"node_modules/fake2/index.js"
+			],
+			compiled: ["dist/index.html", "dist/app-externals-globals.js"]
+		});
+		const actual = await getSnapshot();
+		const expected = [
+			{
+				nodeName: "#text",
+				nodeValue: "EXTERNALS GLOBALS GLOBAL1 GLOBAL2"
+			}
+		];
+		deepStrictEqual(actual, expected, "DOM structure");
+	});
+});
