@@ -27,6 +27,6 @@
   },
   "peerDependencies": {
     "typescript": "*",
-    "webpack": "*"
+    "webpack": ">=4.41.6"
   }
 }
