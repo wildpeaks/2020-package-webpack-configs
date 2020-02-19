@@ -51,7 +51,7 @@
   "devDependencies": {
     "@types/node": "13.7.2",
     "@wildpeaks/eslint-config-commonjs": "8.1.0",
-    "@wildpeaks/snapshot-dom": "1.6.0",
+    "@wildpeaks/snapshot-dom": "2.0.0",
     "eslint": "6.8.0",
     "express": "4.17.1",
     "fs-extra": "8.1.0",
