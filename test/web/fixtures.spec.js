@@ -89,7 +89,7 @@ async function getSnapshot(subpath = "") {
 		await sleep(300);
 		await page.addScriptTag({path: script});
 		await sleep(300);
-		tree = await page.evaluate(() => window.snapshotToJson(document.getElementById("mocha")));
+		tree = await page.evaluate(() => window.snapshotToJSON(document.getElementById("mocha")));
 	} finally {
 		await browser.close();
 	}
@@ -135,14 +135,14 @@ async function getSnapshotMultiple(subpath = "") {
 		tree1 = await page.evaluate(() => {
 			const el1 = document.getElementById("mocha1");
 			if (el1) {
-				return window.snapshotToJson(el1).childNodes;
+				return window.snapshotToJSON(el1).childNodes;
 			}
 			return "NOT FOUND";
 		});
 		tree2 = await page.evaluate(() => {
 			const el2 = document.getElementById("mocha2");
 			if (el2) {
-				return window.snapshotToJson(el2).childNodes;
+				return window.snapshotToJSON(el2).childNodes;
 			}
 			return "NOT FOUND";
 		});
@@ -359,7 +359,7 @@ describe("Core", function() {
 			await sleep(300);
 			tags = await page.evaluate(() => {
 				const children = [...document.getElementsByTagName("link"), ...document.getElementsByTagName("script")];
-				return children.map(window.snapshotToJson);
+				return children.map(window.snapshotToJSON);
 			});
 		} finally {
 			await browser.close();
@@ -491,7 +491,7 @@ describe("Core", function() {
 			await sleep(300);
 			actual5 = await page5.evaluate(() => {
 				const children = [...document.getElementsByTagName("meta")];
-				return children.map(window.snapshotToJson);
+				return children.map(window.snapshotToJSON);
 			});
 		} finally {
 			await browser5.close();
