@@ -49,7 +49,7 @@
     "worker-loader": "2.0.0"
   },
   "devDependencies": {
-    "@types/node": "13.7.7",
+    "@types/node": "13.9.0",
     "@wildpeaks/eslint-config-commonjs": "8.3.0",
     "@wildpeaks/snapshot-dom": "2.0.0",
     "eslint": "6.8.0",
