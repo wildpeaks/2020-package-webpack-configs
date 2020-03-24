@@ -44,6 +44,6 @@
   },
   "peerDependencies": {
     "typescript": "*",
-    "webpack": ">=4.42.0"
+    "webpack": ">=4.42.1"
   }
 }
