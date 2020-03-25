@@ -6,7 +6,6 @@ const {join, isAbsolute} = require("path");
 const {CleanWebpackPlugin} = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
-
 module.exports = function getConfig({
 	entry = {application: "./src/index.ts"},
 	jsFilename,

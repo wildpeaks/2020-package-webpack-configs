@@ -103,13 +103,9 @@ module.exports = function getConfig({
 	strictEqual(isNaN(port), false, '"port" must not be NaN');
 	strictEqual(port > 0, true, '"port" should be a positive number');
 
-	const okCssModules = (
-		(cssModules !== null) && (
-			(typeof cssModules === "boolean") ||
-			(typeof cssModules === "object") ||
-			(typeof cssModules === "string")
-		)
-	);
+	const okCssModules =
+		cssModules !== null &&
+		(typeof cssModules === "boolean" || typeof cssModules === "object" || typeof cssModules === "string");
 	strictEqual(okCssModules, true, '"cssModules" should be a Boolean');
 	strictEqual(
 		typeof scss === "string" || typeof scss === "function" || typeof scss === "undefined",
@@ -391,7 +387,7 @@ module.exports = function getConfig({
 				}
 			});
 		}
-		const embedExtensionsWithoutJson = embedExtensions.filter(ext => ext !== "json");
+		const embedExtensionsWithoutJson = embedExtensions.filter((ext) => ext !== "json");
 		if (embedExtensionsWithoutJson.length > 0) {
 			loaders.push({
 				test: getRegex(embedExtensionsWithoutJson),
@@ -432,7 +428,7 @@ module.exports = function getConfig({
 				}
 			});
 		}
-		const copyExtensionsWithoutJson = copyExtensions.filter(ext => ext !== "json");
+		const copyExtensionsWithoutJson = copyExtensions.filter((ext) => ext !== "json");
 		if (copyExtensionsWithoutJson.length > 0) {
 			loaders.push({
 				test: getRegex(copyExtensionsWithoutJson),

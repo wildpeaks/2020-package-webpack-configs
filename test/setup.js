@@ -33,7 +33,7 @@ main().then(
 	() => {
 		console.log("[OK] Done.");
 	},
-	e => {
+	(e) => {
 		console.log("[ERROR]", e);
 	}
 );

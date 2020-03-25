@@ -8,7 +8,7 @@ const {copySync, removeSync, outputFileSync} = require("fs-extra");
 const {compileFixture, execCommand} = require("../shared");
 const dist = join(__dirname, `../../tmp/dist`);
 
-before(function() {
+before(function () {
 	removeSync(join(__dirname, `../../tmp/node_modules/@wildpeaks/webpack-config-node`));
 	copySync(
 		join(__dirname, `../../packages/webpack-config-node`),
@@ -54,8 +54,8 @@ async function runScript({main, expectRuntimeError, expectOutput}) {
 	});
 }
 
-describe("Core", function() {
-	it("Basic", /* @this */ async function() {
+describe("Core", function () {
+	it("Basic", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -69,7 +69,7 @@ describe("Core", function() {
 		});
 	});
 
-	it("Custom Filename", /* @this */ async function() {
+	it("Custom Filename", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -83,7 +83,7 @@ describe("Core", function() {
 		});
 	});
 
-	it("Multiple independant entries", /* @this */ async function() {
+	it("Multiple independant entries", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -112,7 +112,7 @@ describe("Core", function() {
 		});
 	});
 
-	it("Sourcemaps", /* @this */ async function() {
+	it("Sourcemaps", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -126,7 +126,7 @@ describe("Core", function() {
 		});
 	});
 
-	it("Production mode", /* @this */ async function() {
+	it("Production mode", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 
@@ -149,7 +149,7 @@ describe("Core", function() {
 
 		const expectAfter = sources
 			.concat(compiled)
-			.map(filename => filename.replace("%%HASH%%", hash))
+			.map((filename) => filename.replace("%%HASH%%", hash))
 			.sort();
 		deepStrictEqual(filesAfter, expectAfter, "After Webpack");
 
@@ -164,7 +164,7 @@ describe("Core", function() {
 		});
 	});
 
-	it("Production mode & Skip hashes", /* @this */ async function() {
+	it("Production mode & Skip hashes", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 
@@ -199,7 +199,7 @@ describe("Core", function() {
 		});
 	});
 
-	it("Chunks", /* @this */ async function() {
+	it("Chunks", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -219,7 +219,7 @@ describe("Core", function() {
 		});
 	});
 
-	it("Chunks: Custom Filename", /* @this */ async function() {
+	it("Chunks: Custom Filename", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -240,8 +240,8 @@ describe("Core", function() {
 	});
 });
 
-describe("Native modules", function() {
-	it("assert: require", /* @this */ async function() {
+describe("Native modules", function () {
+	it("assert: require", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -259,7 +259,7 @@ describe("Native modules", function() {
 		});
 	});
 
-	it("assert: import", /* @this */ async function() {
+	it("assert: import", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -277,7 +277,7 @@ describe("Native modules", function() {
 		});
 	});
 
-	it("fs: require", /* @this */ async function() {
+	it("fs: require", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -298,7 +298,7 @@ describe("Native modules", function() {
 		}
 	});
 
-	it("fs: import", /* @this */ async function() {
+	it("fs: import", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -319,7 +319,7 @@ describe("Native modules", function() {
 		}
 	});
 
-	it("__dirname", /* @this */ async function() {
+	it("__dirname", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -333,7 +333,7 @@ describe("Native modules", function() {
 		});
 	});
 
-	it("process.cwd()", /* @this */ async function() {
+	it("process.cwd()", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -360,8 +360,8 @@ describe("Native modules", function() {
  * https://webpack.js.org/configuration/externals/#function
  *
  */
-describe("Externals", function() {
-	it("Accepts: Undefined", /* @this */ async function() {
+describe("Externals", function () {
+	it("Accepts: Undefined", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -382,7 +382,7 @@ describe("Externals", function() {
 		});
 	});
 
-	it("Accepts: Globals", /* @this */ async function() {
+	it("Accepts: Globals", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -404,7 +404,7 @@ describe("Externals", function() {
 		});
 	});
 
-	it("Accepts: CommonJS, Preserve, String", /* @this */ async function() {
+	it("Accepts: CommonJS, Preserve, String", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -428,7 +428,7 @@ describe("Externals", function() {
 		strictEqual(raw.includes('require("fake2")'), false, "fake2 isn't external");
 	});
 
-	it("Accepts: CommonJS, Preserve, Function", /* @this */ async function() {
+	it("Accepts: CommonJS, Preserve, Function", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -452,7 +452,7 @@ describe("Externals", function() {
 		strictEqual(raw.includes('require("fake2")'), false, "fake2 isn't external");
 	});
 
-	it("Accepts: CommonJS, Replace, String", /* @this */ async function() {
+	it("Accepts: CommonJS, Replace, String", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -476,7 +476,7 @@ describe("Externals", function() {
 		strictEqual(raw.includes('require("fake2")'), true, "fake2 is external");
 	});
 
-	it("Accepts: CommonJS, Replace, Function", /* @this */ async function() {
+	it("Accepts: CommonJS, Replace, Function", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -500,7 +500,7 @@ describe("Externals", function() {
 		strictEqual(raw.includes('require("fake2")'), true, "fake2 is external");
 	});
 
-	it("Accepts: CommonJS, Relative Path, String", /* @this */ async function() {
+	it("Accepts: CommonJS, Relative Path, String", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -515,11 +515,7 @@ describe("Externals", function() {
 			],
 			compiled: ["dist/app-externals-commonjs-relative-string.js"]
 		});
-		outputFileSync(
-			join(dist, "thirdparty/polyfills.js"),
-			'"use strict";\nmodule.exports = "POLYFILLS";',
-			"utf8"
-		);
+		outputFileSync(join(dist, "thirdparty/polyfills.js"), '"use strict";\nmodule.exports = "POLYFILLS";', "utf8");
 		await runScript({
 			main: "app-externals-commonjs-relative-string.js",
 			expectOutput: ["EXTERNALS COMMONJS REPLACE STRING POLYFILLS MODULE2"]
@@ -528,7 +524,7 @@ describe("Externals", function() {
 		strictEqual(raw.includes('require("./thirdparty/polyfills")'), false, "fake1 was replaced");
 	});
 
-	it("Fails: Relative Path, String", /* @this */ async function() {
+	it("Fails: Relative Path, String", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -543,18 +539,14 @@ describe("Externals", function() {
 			],
 			compiled: ["dist/app-externals-relative-string.js"]
 		});
-		outputFileSync(
-			join(dist, "thirdparty/polyfills.js"),
-			'"use strict";\nmodule.exports = "POLYFILLS";',
-			"utf8"
-		);
+		outputFileSync(join(dist, "thirdparty/polyfills.js"), '"use strict";\nmodule.exports = "POLYFILLS";', "utf8");
 		await runScript({
 			main: "app-externals-relative-string.js",
 			expectRuntimeError: true
 		});
 	});
 
-	it("Fails: Relative Path, Array", /* @this */ async function() {
+	it("Fails: Relative Path, Array", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
