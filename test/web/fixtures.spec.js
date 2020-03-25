@@ -17,15 +17,15 @@ let app;
 let server;
 
 function sleep(duration) {
-	return new Promise(resolve => {
+	return new Promise((resolve) => {
 		setTimeout(() => {
 			resolve();
 		}, duration);
 	});
 }
 
-before(function() {
-	return new Promise(resolve => {
+before(function () {
+	return new Promise((resolve) => {
 		// prettier-ignore
 		removeSync(
 			join(__dirname, `../../tmp/node_modules/@wildpeaks/webpack-config-web`)
@@ -47,8 +47,8 @@ before(function() {
 		});
 	});
 });
-after(function() {
-	return new Promise(resolve => {
+after(function () {
+	return new Promise((resolve) => {
 		server.close(() => {
 			resolve();
 		});
@@ -209,8 +209,8 @@ async function getSnapshotImage() {
 	return color;
 }
 
-describe("Core", function() {
-	it("Basic", /* @this */ async function() {
+describe("Core", function () {
+	it("Basic", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -228,7 +228,7 @@ describe("Core", function() {
 		deepStrictEqual(actual, expected, "DOM structure");
 	});
 
-	it("Custom Filename", /* @this */ async function() {
+	it("Custom Filename", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -246,7 +246,7 @@ describe("Core", function() {
 		deepStrictEqual(actual, expected, "DOM structure");
 	});
 
-	it("Multiple independant entries", /* @this */ async function() {
+	it("Multiple independant entries", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -279,7 +279,7 @@ describe("Core", function() {
 		deepStrictEqual(actual3, expected3, "DOM structure");
 	});
 
-	it("Polyfills", /* @this */ async function() {
+	it("Polyfills", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -340,7 +340,7 @@ describe("Core", function() {
 		deepStrictEqual(actual, expected, "DOM structure");
 	});
 
-	it("Inject Patterns", /* @this */ async function() {
+	it("Inject Patterns", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -428,7 +428,7 @@ describe("Core", function() {
 		]);
 	});
 
-	it("Multiple pages", /* @this */ async function() {
+	it("Multiple pages", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -527,8 +527,8 @@ describe("Core", function() {
 	});
 });
 
-describe("Assets", function() {
-	it("Images & JSON", /* @this */ async function() {
+describe("Assets", function () {
+	it("Images & JSON", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -579,7 +579,7 @@ describe("Assets", function() {
 		});
 	});
 
-	it("Copy Patterns", /* @this */ async function() {
+	it("Copy Patterns", /* @this */ async function () {
 		this.slow(10000);
 		this.timeout(10000);
 		await testCompile({
@@ -621,7 +621,7 @@ describe("Assets", function() {
 		});
 	});
 
-	it("Raw imports", /* @this */ async function() {
+	it("Raw imports", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -667,8 +667,8 @@ describe("Assets", function() {
 	});
 });
 
-describe("Skip Reset", function() {
-	it("False", /* @this */ async function() {
+describe("Skip Reset", function () {
+	it("False", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -686,7 +686,7 @@ describe("Skip Reset", function() {
 		];
 		deepStrictEqual(actual, expected, "DOM structure");
 	});
-	it("True", /* @this */ async function() {
+	it("True", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -712,8 +712,8 @@ describe("Skip Reset", function() {
 	});
 });
 
-describe("Stylesheets", function() {
-	it("CSS Modules", /* @this */ async function() {
+describe("Stylesheets", function () {
+	it("CSS Modules", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -731,7 +731,7 @@ describe("Stylesheets", function() {
 		strictEqual(color, "rgb(0, 128, 0)");
 	});
 
-	it("CSS Modules: Custom Filename", /* @this */ async function() {
+	it("CSS Modules: Custom Filename", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -753,7 +753,7 @@ describe("Stylesheets", function() {
 		strictEqual(color, "rgb(0, 128, 0)");
 	});
 
-	it("CSS without CSS Modules", /* @this */ async function() {
+	it("CSS without CSS Modules", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -771,7 +771,7 @@ describe("Stylesheets", function() {
 		strictEqual(color, "rgb(0, 128, 0)");
 	});
 
-	it("CSS Reset", /* @this */ async function() {
+	it("CSS Reset", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -783,7 +783,7 @@ describe("Stylesheets", function() {
 		strictEqual(color, "rgb(0, 128, 0)");
 	});
 
-	it("SCSS Reset", /* @this */ async function() {
+	it("SCSS Reset", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -795,7 +795,7 @@ describe("Stylesheets", function() {
 		strictEqual(color, "rgb(0, 128, 0)");
 	});
 
-	it("SCSS Global Import", /* @this */ async function() {
+	it("SCSS Global Import", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -814,7 +814,7 @@ describe("Stylesheets", function() {
 		strictEqual(color, "rgb(0, 128, 0)");
 	});
 
-	it("SCSS Global Define", /* @this */ async function() {
+	it("SCSS Global Define", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -826,7 +826,7 @@ describe("Stylesheets", function() {
 		strictEqual(color, "rgb(128, 128, 0)");
 	});
 
-	it("SCSS Basic", /* @this */ async function() {
+	it("SCSS Basic", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -844,7 +844,7 @@ describe("Stylesheets", function() {
 		strictEqual(color, "rgb(0, 128, 255)");
 	});
 
-	it("SCSS Import File", /* @this */ async function() {
+	it("SCSS Import File", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -863,7 +863,7 @@ describe("Stylesheets", function() {
 		strictEqual(color, "rgb(0, 0, 255)");
 	});
 
-	it("SCSS Import Module", /* @this */ async function() {
+	it("SCSS Import Module", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -881,7 +881,7 @@ describe("Stylesheets", function() {
 		strictEqual(color, "rgb(0, 255, 0)");
 	});
 
-	it("CSS Chunks", /* @this */ async function() {
+	it("CSS Chunks", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -906,7 +906,7 @@ describe("Stylesheets", function() {
 		strictEqual(color, "rgb(0, 0, 255)");
 	});
 
-	it("CSS Chunks Filename", /* @this */ async function() {
+	it("CSS Chunks Filename", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -931,7 +931,7 @@ describe("Stylesheets", function() {
 		strictEqual(color, "rgb(0, 0, 255)");
 	});
 
-	it("SCSS Chunks", /* @this */ async function() {
+	it("SCSS Chunks", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -956,7 +956,7 @@ describe("Stylesheets", function() {
 		strictEqual(color, "rgb(0, 0, 255)");
 	});
 
-	it("SCSS Chunks: Custom Filename", /* @this */ async function() {
+	it("SCSS Chunks: Custom Filename", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -981,7 +981,7 @@ describe("Stylesheets", function() {
 		strictEqual(color, "rgb(0, 0, 255)");
 	});
 
-	it("SCSS Chunks & Variables", /* @this */ async function() {
+	it("SCSS Chunks & Variables", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -1006,7 +1006,7 @@ describe("Stylesheets", function() {
 		strictEqual(color, "rgb(0, 0, 128)");
 	});
 
-	it("SCSS Data", /* @this */ async function() {
+	it("SCSS Data", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -1026,7 +1026,7 @@ describe("Stylesheets", function() {
 		strictEqual(color !== "rgb(0, 255, 0)", true, "Inline style");
 	});
 
-	it("SCSS Data & Import", /* @this */ async function() {
+	it("SCSS Data & Import", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -1044,7 +1044,7 @@ describe("Stylesheets", function() {
 		deepStrictEqual(colors, {body: "rgb(255, 0, 0)", mocha: "rgb(0, 0, 255)"});
 	});
 
-	it("SCSS Data Function", /* @this */ async function() {
+	it("SCSS Data Function", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -1062,7 +1062,7 @@ describe("Stylesheets", function() {
 		deepStrictEqual(colors, {body: "rgb(255, 0, 0)", mocha: "rgb(0, 0, 255)"});
 	});
 
-	it("SCSS & Image", /* @this */ async function() {
+	it("SCSS & Image", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -1081,7 +1081,7 @@ describe("Stylesheets", function() {
 		strictEqual(actual, 'url("http://localhost:8888/assets/large.jpg")');
 	});
 
-	it("CSS & Image", /* @this */ async function() {
+	it("CSS & Image", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -1101,8 +1101,8 @@ describe("Stylesheets", function() {
 	});
 });
 
-describe("Optimize", function() {
-	it("Sourcemaps", /* @this */ async function() {
+describe("Optimize", function () {
+	it("Sourcemaps", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -1124,7 +1124,7 @@ describe("Optimize", function() {
 		});
 	});
 
-	it("Production mode", /* @this */ async function() {
+	it("Production mode", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 
@@ -1153,7 +1153,7 @@ describe("Optimize", function() {
 
 		const expectAfter = sources
 			.concat(compiled)
-			.map(filename => filename.replace("%%HASH%%", hash))
+			.map((filename) => filename.replace("%%HASH%%", hash))
 			.sort();
 		deepStrictEqual(filesAfter, expectAfter, "After Webpack");
 
@@ -1177,7 +1177,7 @@ describe("Optimize", function() {
 		deepStrictEqual(actual, expected, "DOM structure");
 	});
 
-	it("Production mode & Skip hashes", /* @this */ async function() {
+	it("Production mode & Skip hashes", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 
@@ -1231,7 +1231,7 @@ describe("Optimize", function() {
 		deepStrictEqual(actual, expected, "DOM structure");
 	});
 
-	it("Chunks", /* @this */ async function() {
+	it("Chunks", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -1255,7 +1255,7 @@ describe("Optimize", function() {
 		deepStrictEqual(actual, expected, "DOM structure");
 	});
 
-	it("Chunks: Custom Filename", /* @this */ async function() {
+	it("Chunks: Custom Filename", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -1279,7 +1279,7 @@ describe("Optimize", function() {
 		deepStrictEqual(actual, expected, "DOM structure");
 	});
 
-	it("Chunks: Polyfills", /* @this */ async function() {
+	it("Chunks: Polyfills", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -1313,7 +1313,7 @@ describe("Optimize", function() {
 		deepStrictEqual(actual, expected, "DOM structure");
 	});
 
-	it("Skip Postprocessing", /* @this */ async function() {
+	it("Skip Postprocessing", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -1324,8 +1324,8 @@ describe("Optimize", function() {
 	});
 });
 
-describe("Webworkers", function() {
-	it("Basic", /* @this */ async function() {
+describe("Webworkers", function () {
+	it("Basic", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -1349,7 +1349,7 @@ describe("Webworkers", function() {
 		deepStrictEqual(actual, expected, "DOM structure");
 	});
 
-	it("Custom filename", /* @this */ async function() {
+	it("Custom filename", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -1377,7 +1377,7 @@ describe("Webworkers", function() {
 		deepStrictEqual(actual, expected, "DOM structure");
 	});
 
-	it("Polyfills", /* @this */ async function() {
+	it("Polyfills", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -1413,7 +1413,7 @@ describe("Webworkers", function() {
 		deepStrictEqual(actual, expected, "DOM structure");
 	});
 
-	it("No export {}", /* @this */ async function() {
+	it("No export {}", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -1438,8 +1438,8 @@ describe("Webworkers", function() {
 	});
 });
 
-describe("Node features", function() {
-	it("Fails: fs", /* @this */ async function() {
+describe("Node features", function () {
+	it("Fails: fs", /* @this */ async function () {
 		// Note that package "native-url" would produce smaller bundles
 		// than the polyfill Webpack uses.
 		this.slow(20000);
@@ -1451,7 +1451,7 @@ describe("Node features", function() {
 		});
 	});
 
-	it("Mocks: __dirname", /* @this */ async function() {
+	it("Mocks: __dirname", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -1469,7 +1469,7 @@ describe("Node features", function() {
 		deepStrictEqual(actual, expected, "DOM structure");
 	});
 
-	it("Mocks: process.cwd()", /* @this */ async function() {
+	it("Mocks: process.cwd()", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -1487,7 +1487,7 @@ describe("Node features", function() {
 		deepStrictEqual(actual, expected, "DOM structure");
 	});
 
-	it("Accepts: url", /* @this */ async function() {
+	it("Accepts: url", /* @this */ async function () {
 		// Note that package "native-url" would produce smaller bundles
 		// than the polyfill Webpack uses.
 		this.slow(20000);
@@ -1507,7 +1507,7 @@ describe("Node features", function() {
 		deepStrictEqual(actual, expected, "DOM structure");
 	});
 
-	it("Accepts: path", /* @this */ async function() {
+	it("Accepts: path", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -1525,7 +1525,7 @@ describe("Node features", function() {
 		deepStrictEqual(actual, expected, "DOM structure");
 	});
 
-	it("Accepts: assert", /* @this */ async function() {
+	it("Accepts: assert", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -1544,8 +1544,8 @@ describe("Node features", function() {
 	});
 });
 
-describe("Externals", function() {
-	it("Accepts: Undefined", /* @this */ async function() {
+describe("Externals", function () {
+	it("Accepts: Undefined", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
@@ -1570,7 +1570,7 @@ describe("Externals", function() {
 		deepStrictEqual(actual, expected, "DOM structure");
 	});
 
-	it("Accepts: Globals", /* @this */ async function() {
+	it("Accepts: Globals", /* @this */ async function () {
 		this.slow(20000);
 		this.timeout(20000);
 		await testCompile({
