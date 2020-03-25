@@ -399,7 +399,6 @@ describe("Core", function () {
 			{
 				tagName: "script",
 				attributes: {
-					type: "text/javascript",
 					src: "http://example.com/script",
 					hello: "example js"
 				}
@@ -407,21 +406,18 @@ describe("Core", function () {
 			{
 				tagName: "script",
 				attributes: {
-					type: "text/javascript",
 					src: "/mypublic/thirdparty/three.min.js"
 				}
 			},
 			{
 				tagName: "script",
 				attributes: {
-					type: "text/javascript",
 					src: "/mypublic/thirdparty/OrbitControls.js"
 				}
 			},
 			{
 				tagName: "script",
 				attributes: {
-					type: "text/javascript",
 					src: "/mypublic/app-inject.js"
 				}
 			}
@@ -429,8 +425,8 @@ describe("Core", function () {
 	});
 
 	it("Multiple pages", /* @this */ async function () {
-		this.slow(20000);
-		this.timeout(20000);
+		this.slow(30000);
+		this.timeout(30000);
 		await testCompile({
 			id: "multiple_pages",
 			sources: [
@@ -499,7 +495,7 @@ describe("Core", function () {
 		const expected5 = [
 			{
 				attributes: {
-					charset: "UTF-8"
+					charset: "utf-8"
 				},
 				tagName: "meta"
 			},
@@ -512,6 +508,13 @@ describe("Core", function () {
 			{
 				attributes: {
 					param2: "Value 2"
+				},
+				tagName: "meta"
+			},
+			{
+				attributes: {
+					content: "width=device-width, initial-scale=1",
+					name: "viewport"
 				},
 				tagName: "meta"
 			}
