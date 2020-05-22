@@ -446,10 +446,7 @@ module.exports = function getConfig({
 	//region Raw assets indirectly referenced in code
 	if (copyPatterns.length > 0) {
 		plugins.push(
-			new CopyWebpackPlugin(copyPatterns, {
-				debug: "warning",
-				context: rootFolder
-			})
+			new CopyWebpackPlugin({patterns: copyPatterns})
 		);
 	}
 	//endregion

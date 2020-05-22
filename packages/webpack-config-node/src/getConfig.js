@@ -138,10 +138,7 @@ module.exports = function getConfig({
 
 	if (copyPatterns.length > 0) {
 		plugins.push(
-			new CopyWebpackPlugin(copyPatterns, {
-				debug: "warning",
-				context: rootFolder
-			})
+			new CopyWebpackPlugin({patterns: copyPatterns})
 		);
 	}
 
