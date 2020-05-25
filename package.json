@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "@types/node": "14.0.5",
-    "@wildpeaks/eslint-config-commonjs": "10.0.0",
+    "@wildpeaks/eslint-config-commonjs": "10.2.0",
     "@wildpeaks/snapshot-dom": "2.0.0",
     "eslint": "7.1.0",
     "express": "4.17.1",
