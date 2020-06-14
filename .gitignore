@@ -15,9 +15,7 @@
 !/test
 !/packages
 !/package.json
-!/azure-pipelines.yml
-!/greenkeeper.json
 
 # But make sure to ignore those regardless:
 /test/tmp
-WAS *
+OLD *
