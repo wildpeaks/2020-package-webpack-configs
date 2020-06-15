@@ -1,38 +1,24 @@
 name: Tests
 on:
-    push:
-        branches:
-            - "**"
-    pull_request:
-        branches:
-            - master
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - master
 jobs:
-    tests:
-        timeout-minutes: 10
-        runs-on: ubuntu-latest
-        steps:
-            - name: Download sources
-              uses: actions/checkout@v1
-
-            - name: Use Node LTS
-              uses: actions/setup-node@v1
-              with:
-                  node-version: 12.x
-
-            - name: Install dependencies
-              run: npm install
-
-            - name: Test Lint
-              run: npm run test:lint
-
-            - name: Test Params
-              run: npm run test:params
-
-            - name: Test Setup
-              run: npm run test:setup
-
-            - name: Test Web
-              run: npm run test:web
-
-            - name: Test Node
-              run: npm run test:node
+  tests:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - run: npm install
+      - run: npm run test:lint
+      - run: npm run test:params
+      - run: npm run test:setup
+      - run: npm run test:node
+      - uses: microsoft/playwright-github-action@v1
+      - run: npm run test:web
