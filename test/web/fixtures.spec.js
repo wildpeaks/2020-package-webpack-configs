@@ -541,7 +541,6 @@ describe("Inject Patterns", function () {
 // Multiple pages
 //---------------------------------------------------------------------------//
 async function testMultiplePages(host) {
-
 	const actual1 = await getSnapshotMultiple(host, "page1.html");
 	const expected1 = {
 		mocha1: [{nodeName: "#text", nodeValue: "FIRST One"}],
@@ -666,1072 +665,2001 @@ describe("Multiple pages", function () {
 });
 
 
-// describe("Assets", function () {
-// 	it("Images & JSON", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "assets",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/large.gif",
-// 				"src/large.jpg",
-// 				"src/large.json",
-// 				"src/large.png",
-// 				"src/small.gif",
-// 				"src/small.jpg",
-// 				"src/small.json",
-// 				"src/small.png"
-// 			],
-// 			compiled: [
-// 				"dist/index.html",
-// 				"dist/app-assets.js",
-// 				"dist/myimages/large.jpg",
-// 				"dist/myimages/large.png",
-// 				"dist/myimages/small.gif",
-// 				"dist/myimages/large.gif",
-// 				"dist/myimages/small.json",
-// 				"dist/myimages/large.json"
-// 			]
-// 		});
+//---------------------------------------------------------------------------//
+// Assets
+//---------------------------------------------------------------------------//
+async function testAssets(host) {
+	const actual = await getSnapshot(host);
+	strictEqual(actual.length, 8, "#mocha.childNodes.length");
+	deepStrictEqual(actual[0].tagName, "img");
+	deepStrictEqual(actual[2].tagName, "img");
+	deepStrictEqual(actual[0].attributes.src.startsWith("data:image/jpeg;base64"), true);
+	deepStrictEqual(actual[2].attributes.src.startsWith("data:image/png;base64"), true);
+	deepStrictEqual(actual[1], {attributes: {src: "/myimages/large.jpg"}, tagName: "img"});
+	deepStrictEqual(actual[3], {attributes: {src: "/myimages/large.png"}, tagName: "img"});
+	deepStrictEqual(actual[4], {attributes: {src: "/myimages/small.gif"}, tagName: "img"});
+	deepStrictEqual(actual[5], {attributes: {src: "/myimages/large.gif"}, tagName: "img"});
+	deepStrictEqual(actual[6], {
+		childNodes: [{nodeName: "#text", nodeValue: "/myimages/small.json"}],
+		tagName: "div"
+	});
+	deepStrictEqual(actual[7], {
+		childNodes: [{nodeName: "#text", nodeValue: "/myimages/large.json"}],
+		tagName: "div"
+	});
+}
+describe("Assets", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "assets",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/large.gif",
+				"src/large.jpg",
+				"src/large.json",
+				"src/large.png",
+				"src/small.gif",
+				"src/small.jpg",
+				"src/small.json",
+				"src/small.png"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-assets.js",
+				"dist/myimages/large.jpg",
+				"dist/myimages/large.png",
+				"dist/myimages/small.gif",
+				"dist/myimages/large.gif",
+				"dist/myimages/small.json",
+				"dist/myimages/large.json"
+			]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testAssets(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testAssets(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testAssets(webkit);
+	});
+});
 
-// 		const actual = await getSnapshot();
-// 		strictEqual(actual.length, 8, "#mocha.childNodes.length");
-// 		deepStrictEqual(actual[0].tagName, "img");
-// 		deepStrictEqual(actual[2].tagName, "img");
-// 		deepStrictEqual(actual[0].attributes.src.startsWith("data:image/jpeg;base64"), true);
-// 		deepStrictEqual(actual[2].attributes.src.startsWith("data:image/png;base64"), true);
-// 		deepStrictEqual(actual[1], {attributes: {src: "/myimages/large.jpg"}, tagName: "img"});
-// 		deepStrictEqual(actual[3], {attributes: {src: "/myimages/large.png"}, tagName: "img"});
-// 		deepStrictEqual(actual[4], {attributes: {src: "/myimages/small.gif"}, tagName: "img"});
-// 		deepStrictEqual(actual[5], {attributes: {src: "/myimages/large.gif"}, tagName: "img"});
-// 		deepStrictEqual(actual[6], {
-// 			childNodes: [{nodeName: "#text", nodeValue: "/myimages/small.json"}],
-// 			tagName: "div"
-// 		});
-// 		deepStrictEqual(actual[7], {
-// 			childNodes: [{nodeName: "#text", nodeValue: "/myimages/large.json"}],
-// 			tagName: "div"
-// 		});
-// 	});
 
-// 	it("Copy Patterns", /* @this */ async function () {
-// 		this.slow(10000);
-// 		this.timeout(10000);
-// 		await testCompile({
-// 			id: "copy_patterns",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/file9",
-// 				"src/myfolder-1/file1.example-1",
-// 				"src/myfolder-1/file2.example-1",
-// 				"src/myfolder-2/hello/file3.example-1",
-// 				"src/myfolder-2/hello/file4.example-2",
-// 				"src/myfolder-2/hello/file5.example-1",
-// 				"src/myfolder-2/hello/file6.example-2",
-// 				"src/myfolder-3.ext/file7.example",
-// 				"src/myfolder-3.ext/file8.example"
-// 			],
-// 			compiled: [
-// 				"dist/index.html",
-// 				"dist/app-copy-patterns.js",
-// 				"dist/copied-1/file1.example-1",
-// 				"dist/copied-1/file2.example-1",
-// 				"dist/copied-2/file1.example-1",
-// 				"dist/copied-2/file2.example-1",
-// 				"dist/copied-3/file1.example-1",
-// 				"dist/copied-3/file2.example-1",
-// 				"dist/copied-4/subfolder/file1.example-1",
-// 				"dist/copied-4/subfolder/file2.example-1",
-// 				"dist/copied-5/src/myfolder-2/hello/file3.example-1",
-// 				"dist/copied-5/src/myfolder-2/hello/file5.example-1",
-// 				"dist/copied-6/hello/file3.example-1",
-// 				"dist/copied-6/hello/file5.example-1",
-// 				"dist/copied-7/file7.example",
-// 				"dist/copied-7/file8.example",
-// 				"dist/copied-8/file9"
-// 			]
-// 		});
-// 	});
+//---------------------------------------------------------------------------//
+// Copy Patterns
+//---------------------------------------------------------------------------//
+describe("Copy Patterns", function () {
+	it("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "copy_patterns",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/file9",
+				"src/myfolder-1/file1.example-1",
+				"src/myfolder-1/file2.example-1",
+				"src/myfolder-2/hello/file3.example-1",
+				"src/myfolder-2/hello/file4.example-2",
+				"src/myfolder-2/hello/file5.example-1",
+				"src/myfolder-2/hello/file6.example-2",
+				"src/myfolder-3.ext/file7.example",
+				"src/myfolder-3.ext/file8.example"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-copy-patterns.js",
+				"dist/copied-1/file1.example-1",
+				"dist/copied-1/file2.example-1",
+				"dist/copied-2/file1.example-1",
+				"dist/copied-2/file2.example-1",
+				"dist/copied-3/file1.example-1",
+				"dist/copied-3/file2.example-1",
+				"dist/copied-4/subfolder/file1.example-1",
+				"dist/copied-4/subfolder/file2.example-1",
+				"dist/copied-5/src/myfolder-2/hello/file3.example-1",
+				"dist/copied-5/src/myfolder-2/hello/file5.example-1",
+				"dist/copied-6/hello/file3.example-1",
+				"dist/copied-6/hello/file5.example-1",
+				"dist/copied-7/file7.example",
+				"dist/copied-7/file8.example",
+				"dist/copied-8/file9"
+			]
+		});
+	});
+});
 
-// 	it("Raw imports", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "raw_imports",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/file1.txt",
-// 				"src/file2.liquid"
-// 			],
-// 			compiled: ["dist/index.html", "dist/app-raw-imports.js"]
-// 		});
-// 		const actual = await getSnapshot();
-// 		const expected = [
-// 			{
-// 				attributes: {
-// 					id: "hello1"
-// 				},
-// 				childNodes: [
-// 					{
-// 						nodeName: "#text",
-// 						nodeValue: "Hello world\n"
-// 					}
-// 				],
-// 				tagName: "div"
-// 			},
-// 			{
-// 				attributes: {
-// 					id: "hello2"
-// 				},
-// 				childNodes: [
-// 					{
-// 						nodeName: "#text",
-// 						nodeValue: "Hello {{ world }}\n"
-// 					}
-// 				],
-// 				tagName: "div"
-// 			}
-// 		];
-// 		deepStrictEqual(actual, expected, "DOM structure");
-// 	});
-// });
 
-// describe("Skip Reset", function () {
-// 	it("False", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "skip_reset_false",
-// 			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
-// 			extras: true,
-// 			compiled: ["dist/index.html", "dist/app-skip-false.js"]
-// 		});
-// 		const actual = await getSnapshot();
-// 		const expected = [
-// 			{
-// 				nodeName: "#text",
-// 				nodeValue: "Skip False"
-// 			}
-// 		];
-// 		deepStrictEqual(actual, expected, "DOM structure");
-// 	});
-// 	it("True", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "skip_reset_true",
-// 			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
-// 			extras: true,
-// 			compiled: [
-// 				"dist/index.html",
-// 				"dist/app-skip-true.js",
-// 				"dist/extra-1.txt",
-// 				"dist/extra-2.js",
-// 				"dist/extra-3.ts"
-// 			]
-// 		});
-// 		const actual = await getSnapshot();
-// 		const expected = [
-// 			{
-// 				nodeName: "#text",
-// 				nodeValue: "Skip True"
-// 			}
-// 		];
-// 		deepStrictEqual(actual, expected, "DOM structure");
-// 	});
-// });
+//---------------------------------------------------------------------------//
+// Assets: Raw imports
+//---------------------------------------------------------------------------//
+async function testRawImport(host) {
+	const actual = await getSnapshot(host);
+	const expected = [
+		{
+			attributes: {
+				id: "hello1"
+			},
+			childNodes: [
+				{
+					nodeName: "#text",
+					nodeValue: "Hello world\n"
+				}
+			],
+			tagName: "div"
+		},
+		{
+			attributes: {
+				id: "hello2"
+			},
+			childNodes: [
+				{
+					nodeName: "#text",
+					nodeValue: "Hello {{ world }}\n"
+				}
+			],
+			tagName: "div"
+		}
+	];
+	deepStrictEqual(actual, expected, "DOM structure");
+}
+describe("Raw imports", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "raw_imports",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/file1.txt",
+				"src/file2.liquid"
+			],
+			compiled: ["dist/index.html", "dist/app-raw-imports.js"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testRawImport(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testRawImport(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testRawImport(webkit);
+	});
+});
 
-// describe("Stylesheets", function () {
-// 	it("CSS Modules", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "css_modules",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/application.css"
-// 			],
-// 			compiled: ["dist/index.html", "dist/app-css-modules.js", "dist/app-css-modules.css"]
-// 		});
-// 		const color = await getSnapshotColor();
-// 		strictEqual(color, "rgb(0, 128, 0)");
-// 	});
 
-// 	it("CSS Modules: Custom Filename", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "css_modules_filename",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/application.css"
-// 			],
-// 			compiled: [
-// 				"dist/index.html",
-// 				"dist/app-css-modules-filename.js",
-// 				"dist/subfolder/custom.app-css-modules-filename.css"
-// 			]
-// 		});
-// 		const color = await getSnapshotColor();
-// 		strictEqual(color, "rgb(0, 128, 0)");
-// 	});
+//---------------------------------------------------------------------------//
+// Skip Reset: False
+//---------------------------------------------------------------------------//
+async function testSkipResetFalse(host) {
+	const actual = await getSnapshot(host);
+	const expected = [
+		{
+			nodeName: "#text",
+			nodeValue: "Skip False"
+		}
+	];
+	deepStrictEqual(actual, expected, "DOM structure");
+}
+describe("Skip Reset: False", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "skip_reset_false",
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			extras: true,
+			compiled: ["dist/index.html", "dist/app-skip-false.js"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testSkipResetFalse(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testSkipResetFalse(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testSkipResetFalse(webkit);
+	});
+});
 
-// 	it("CSS without CSS Modules", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "css_no_modules",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/application.css"
-// 			],
-// 			compiled: ["dist/index.html", "dist/app-css-no-modules.js", "dist/app-css-no-modules.css"]
-// 		});
-// 		const color = await getSnapshotColor();
-// 		strictEqual(color, "rgb(0, 128, 0)");
-// 	});
 
-// 	it("CSS Reset", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "css_reset",
-// 			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts", "src/reset.css"],
-// 			compiled: ["dist/index.html", "dist/app-css-reset.js", "dist/app-css-reset.css"]
-// 		});
-// 		const color = await getSnapshotColor();
-// 		strictEqual(color, "rgb(0, 128, 0)");
-// 	});
+//---------------------------------------------------------------------------//
+// Skip Reset: True
+//---------------------------------------------------------------------------//
+async function testSkipResetTrue(host) {
+	const actual = await getSnapshot(host);
+	const expected = [
+		{
+			nodeName: "#text",
+			nodeValue: "Skip True"
+		}
+	];
+	deepStrictEqual(actual, expected, "DOM structure");
+}
+describe("Skip Reset: True", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "skip_reset_true",
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			extras: true,
+			compiled: [
+				"dist/index.html",
+				"dist/app-skip-true.js",
+				"dist/extra-1.txt",
+				"dist/extra-2.js",
+				"dist/extra-3.ts"
+			]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testSkipResetTrue(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testSkipResetTrue(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testSkipResetTrue(webkit);
+	});
+});
 
-// 	it("SCSS Reset", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "scss_reset",
-// 			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts", "src/reset.scss"],
-// 			compiled: ["dist/index.html", "dist/app-scss-reset.js", "dist/app-scss-reset.css"]
-// 		});
-// 		const color = await getSnapshotColor();
-// 		strictEqual(color, "rgb(0, 128, 0)");
-// 	});
 
-// 	it("SCSS Global Import", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "scss_global_import",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/reset.scss",
-// 				"src/variables.scss"
-// 			],
-// 			compiled: ["dist/index.html", "dist/app-scss-global-import.js", "dist/app-scss-global-import.css"]
-// 		});
-// 		const color = await getSnapshotColor();
-// 		strictEqual(color, "rgb(0, 128, 0)");
-// 	});
+//---------------------------------------------------------------------------//
+// CSS Modules
+//---------------------------------------------------------------------------//
+async function testCssModules(host) {
+	const color = await getSnapshotColor(host);
+	strictEqual(color, "rgb(0, 128, 0)");
+}
+describe("CSS Modules", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "css_modules",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/application.css"
+			],
+			compiled: ["dist/index.html", "dist/app-css-modules.js", "dist/app-css-modules.css"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCssModules(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCssModules(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCssModules(webkit);
+	});
+});
 
-// 	it("SCSS Global Define", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "scss_global_define",
-// 			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts", "src/reset.scss"],
-// 			compiled: ["dist/index.html", "dist/app-scss-global-define.js", "dist/app-scss-global-define.css"]
-// 		});
-// 		const color = await getSnapshotColor();
-// 		strictEqual(color, "rgb(128, 128, 0)");
-// 	});
 
-// 	it("SCSS Basic", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "scss_basic",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/application.scss"
-// 			],
-// 			compiled: ["dist/index.html", "dist/app-scss-basic.js", "dist/app-scss-basic.css"]
-// 		});
-// 		const color = await getSnapshotColor();
-// 		strictEqual(color, "rgb(0, 128, 255)");
-// 	});
+//---------------------------------------------------------------------------//
+// CSS Modules: Custom Filename
+//---------------------------------------------------------------------------//
+async function testCssModulesFilename(host) {
+	const color = await getSnapshotColor(host);
+	strictEqual(color, "rgb(0, 128, 0)");
+}
+describe("CSS Modules: Custom Filename", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "css_modules_filename",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/application.css"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-css-modules-filename.js",
+				"dist/subfolder/custom.app-css-modules-filename.css"
+			]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCssModulesFilename(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCssModulesFilename(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCssModulesFilename(webkit);
+	});
+});
 
-// 	it("SCSS Import File", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "scss_import_file",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/application.scss",
-// 				"src/theme-blue.scss"
-// 			],
-// 			compiled: ["dist/index.html", "dist/app-scss-import-file.js", "dist/app-scss-import-file.css"]
-// 		});
-// 		const color = await getSnapshotColor();
-// 		strictEqual(color, "rgb(0, 0, 255)");
-// 	});
 
-// 	it("SCSS Import Module", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "scss_import_module",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/application.scss"
-// 			],
-// 			compiled: ["dist/index.html", "dist/app-scss-import-module.js", "dist/app-scss-import-module.css"]
-// 		});
-// 		const color = await getSnapshotColor();
-// 		strictEqual(color, "rgb(0, 255, 0)");
-// 	});
+//---------------------------------------------------------------------------//
+// CSS without CSS Modules
+//---------------------------------------------------------------------------//
+async function testCssWithoutModules(host) {
+	const color = await getSnapshotColor(host);
+	strictEqual(color, "rgb(0, 128, 0)");
+}
+describe("CSS without CSS Modules", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "css_no_modules",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/application.css"
+			],
+			compiled: ["dist/index.html", "dist/app-css-no-modules.js", "dist/app-css-no-modules.css"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCssWithoutModules(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCssWithoutModules(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCssWithoutModules(webkit);
+	});
+});
 
-// 	it("CSS Chunks", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "css_chunks",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/async.css",
-// 				"src/sync.css"
-// 			],
-// 			compiled: [
-// 				"dist/index.html",
-// 				"dist/app-css-chunks.js",
-// 				"dist/app-css-chunks.css",
-// 				"dist/chunk.0.js",
-// 				"dist/chunk.0.css"
-// 			]
-// 		});
-// 		const color = await getSnapshotColor();
-// 		strictEqual(color, "rgb(0, 0, 255)");
-// 	});
 
-// 	it("CSS Chunks Filename", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "css_chunks_filename",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/async.css",
-// 				"src/sync.css"
-// 			],
-// 			compiled: [
-// 				"dist/index.html",
-// 				"dist/app-css-chunks-filename.js",
-// 				"dist/app-css-chunks-filename.css",
-// 				"dist/chunk.0.js",
-// 				"dist/subfolder/custom.chunk.0.css"
-// 			]
-// 		});
-// 		const color = await getSnapshotColor();
-// 		strictEqual(color, "rgb(0, 0, 255)");
-// 	});
+//---------------------------------------------------------------------------//
+// CSS Reset
+//---------------------------------------------------------------------------//
+async function testCssReset(host) {
+	const color = await getSnapshotColor(host);
+	strictEqual(color, "rgb(0, 128, 0)");
+}
+describe("CSS Reset", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "css_reset",
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts", "src/reset.css"],
+			compiled: ["dist/index.html", "dist/app-css-reset.js", "dist/app-css-reset.css"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCssReset(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCssReset(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCssReset(webkit);
+	});
+});
 
-// 	it("SCSS Chunks", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "scss_chunks",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/async.scss",
-// 				"src/sync.scss"
-// 			],
-// 			compiled: [
-// 				"dist/index.html",
-// 				"dist/app-scss-chunks.js",
-// 				"dist/app-scss-chunks.css",
-// 				"dist/chunk.0.js",
-// 				"dist/chunk.0.css"
-// 			]
-// 		});
-// 		const color = await getSnapshotColor();
-// 		strictEqual(color, "rgb(0, 0, 255)");
-// 	});
 
-// 	it("SCSS Chunks: Custom Filename", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "scss_chunks_filename",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/async.scss",
-// 				"src/sync.scss"
-// 			],
-// 			compiled: [
-// 				"dist/index.html",
-// 				"dist/app-scss-chunks-filename.js",
-// 				"dist/app-scss-chunks-filename.css",
-// 				"dist/chunk.0.js",
-// 				"dist/subfolder/custom.chunk.0.css"
-// 			]
-// 		});
-// 		const color = await getSnapshotColor();
-// 		strictEqual(color, "rgb(0, 0, 255)");
-// 	});
+//---------------------------------------------------------------------------//
+// SCSS Reset
+//---------------------------------------------------------------------------//
+async function testScssReset(host) {
+	const color = await getSnapshotColor(host);
+	strictEqual(color, "rgb(0, 128, 0)");
+}
+describe("SCSS Reset", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "scss_reset",
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts", "src/reset.scss"],
+			compiled: ["dist/index.html", "dist/app-scss-reset.js", "dist/app-scss-reset.css"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssReset(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssReset(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssReset(webkit);
+	});
+});
 
-// 	it("SCSS Chunks & Variables", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "scss_chunks_variables",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/async.scss",
-// 				"src/sync.scss"
-// 			],
-// 			compiled: [
-// 				"dist/index.html",
-// 				"dist/app-scss-chunks-variables.js",
-// 				"dist/app-scss-chunks-variables.css",
-// 				"dist/chunk.0.js",
-// 				"dist/chunk.0.css"
-// 			]
-// 		});
-// 		const color = await getSnapshotColor();
-// 		strictEqual(color, "rgb(0, 0, 128)");
-// 	});
 
-// 	it("SCSS Data", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "scss_data",
-// 			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
-// 			compiled: [
-// 				"dist/index.html",
-// 				"dist/app-scss-data.js"
+//---------------------------------------------------------------------------//
+// SCSS Global Import
+//---------------------------------------------------------------------------//
+async function testScssGlobalImport(host) {
+	const color = await getSnapshotColor(host);
+	strictEqual(color, "rgb(0, 128, 0)");
+}
+describe("SCSS Global Import", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "scss_global_import",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/reset.scss",
+				"src/variables.scss"
+			],
+			compiled: ["dist/index.html", "dist/app-scss-global-import.js", "dist/app-scss-global-import.css"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssGlobalImport(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssGlobalImport(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssGlobalImport(webkit);
+	});
+});
 
-// 				// Data alone isn't enough to produce a .css: at least one entry must contain
-// 				// an import or polyfill to a stylesheet, otherwise the loader skips
-// 				// extracting styles, unfortunately.
-// 				// "dist/app-scss-data.css"
-// 			]
-// 		});
-// 		const color = await getSnapshotColor();
-// 		strictEqual(color !== "rgb(0, 255, 0)", true, "Inline style");
-// 	});
 
-// 	it("SCSS Data & Import", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "scss_data_import",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/application.scss"
-// 			],
-// 			compiled: ["dist/index.html", "dist/app-scss-data-import.js", "dist/app-scss-data-import.css"]
-// 		});
-// 		const colors = await getSnapshotMultipleColor();
-// 		deepStrictEqual(colors, {body: "rgb(255, 0, 0)", mocha: "rgb(0, 0, 255)"});
-// 	});
+//---------------------------------------------------------------------------//
+// SCSS Global Define
+//---------------------------------------------------------------------------//
+async function testScssGlobalDefine(host) {
+	const color = await getSnapshotColor(host);
+	strictEqual(color, "rgb(128, 128, 0)");
+}
+describe("SCSS Global Define", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "scss_global_define",
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts", "src/reset.scss"],
+			compiled: ["dist/index.html", "dist/app-scss-global-define.js", "dist/app-scss-global-define.css"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssGlobalDefine(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssGlobalDefine(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssGlobalDefine(webkit);
+	});
+});
 
-// 	it("SCSS Data Function", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "scss_data_function",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/application.scss"
-// 			],
-// 			compiled: ["dist/index.html", "dist/app-scss-data-function.js", "dist/app-scss-data-function.css"]
-// 		});
-// 		const colors = await getSnapshotMultipleColor();
-// 		deepStrictEqual(colors, {body: "rgb(255, 0, 0)", mocha: "rgb(0, 0, 255)"});
-// 	});
 
-// 	it("SCSS & Image", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "scss_image",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/application.scss",
-// 				"src/large.jpg"
-// 			],
-// 			compiled: ["dist/index.html", "dist/app-scss-image.js", "dist/app-scss-image.css", "dist/assets/large.jpg"]
-// 		});
-// 		const actual = await getSnapshotImage();
-// 		strictEqual(actual, 'url("http://localhost:8888/assets/large.jpg")');
-// 	});
+//---------------------------------------------------------------------------//
+// SCSS Basic
+//---------------------------------------------------------------------------//
+async function testScssBasic(host) {
+	const color = await getSnapshotColor(host);
+	strictEqual(color, "rgb(0, 128, 255)");
+}
+describe("SCSS Basic", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "scss_basic",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/application.scss"
+			],
+			compiled: ["dist/index.html", "dist/app-scss-basic.js", "dist/app-scss-basic.css"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssBasic(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssBasic(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssBasic(webkit);
+	});
+});
 
-// 	it("CSS & Image", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "css_image",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/application.css",
-// 				"src/large.jpg"
-// 			],
-// 			compiled: ["dist/index.html", "dist/app-css-image.js", "dist/app-css-image.css", "dist/assets/large.jpg"]
-// 		});
-// 		const actual = await getSnapshotImage();
-// 		strictEqual(actual, 'url("http://localhost:8888/assets/large.jpg")');
-// 	});
-// });
 
-// describe("Optimize", function () {
-// 	it("Sourcemaps", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "sourcemaps",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/application.css"
-// 			],
-// 			compiled: [
-// 				"dist/index.html",
-// 				"dist/app-sourcemaps.js",
-// 				"dist/app-sourcemaps.js.map",
-// 				"dist/app-sourcemaps.css",
-// 				"dist/app-sourcemaps.css.map"
-// 			]
-// 		});
-// 	});
+//---------------------------------------------------------------------------//
+// SCSS Import File
+//---------------------------------------------------------------------------//
+async function testScssImportFile(host) {
+	const color = await getSnapshotColor(host);
+	strictEqual(color, "rgb(0, 0, 255)");
+}
+describe("SCSS Import File", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "scss_import_file",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/application.scss",
+				"src/theme-blue.scss"
+			],
+			compiled: ["dist/index.html", "dist/app-scss-import-file.js", "dist/app-scss-import-file.css"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssImportFile(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssImportFile(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssImportFile(webkit);
+	});
+});
 
-// 	it("Production mode", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
 
-// 		const sources = [
-// 			"package.json",
-// 			"tsconfig.json",
-// 			"webpack.config.js",
-// 			"src/application.ts",
-// 			"src/application.css"
-// 		];
-// 		const compiled = ["dist/index.html", "dist/%%HASH%%.app-production.js", "dist/%%HASH%%.app-production.css"];
-// 		const filesAfter = await testCompile({id: "production", sources});
+//---------------------------------------------------------------------------//
+// SCSS Import Module
+//---------------------------------------------------------------------------//
+async function testScssImportModule(host) {
+	const color = await getSnapshotColor(host);
+	strictEqual(color, "rgb(0, 255, 0)");
+}
+describe("SCSS Import Module", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "scss_import_module",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/application.scss"
+			],
+			compiled: ["dist/index.html", "dist/app-scss-import-module.js", "dist/app-scss-import-module.css"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssImportModule(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssImportModule(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssImportModule(webkit);
+	});
+});
 
-// 		let hash = "";
-// 		for (const fileAfter of filesAfter) {
-// 			const regex = /^dist\/([^.]+)\.app-production\.js$/;
-// 			const matches = regex.exec(fileAfter);
-// 			if (matches) {
-// 				hash = matches[1];
-// 				break;
-// 			}
-// 		}
-// 		if (hash === "") {
-// 			throw new Error("No hash found");
-// 		}
 
-// 		const expectAfter = sources
-// 			.concat(compiled)
-// 			.map((filename) => filename.replace("%%HASH%%", hash))
-// 			.sort();
-// 		deepStrictEqual(filesAfter, expectAfter, "After Webpack");
+//---------------------------------------------------------------------------//
+// CSS Chunks
+//---------------------------------------------------------------------------//
+async function testCssChunks(host) {
+	const color = await getSnapshotColor(host);
+	strictEqual(color, "rgb(0, 0, 255)");
+}
+describe("CSS Chunks", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "css_chunks",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/async.css",
+				"src/sync.css"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-css-chunks.js",
+				"dist/app-css-chunks.css",
+				"dist/chunk.0.js",
+				"dist/chunk.0.css"
+			]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCssChunks(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCssChunks(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCssChunks(webkit);
+	});
+});
 
-// 		const cssRaw = readFileSync(join(dist, `${hash}.app-production.css`), "utf8");
-// 		if (/^.([^{}]+){color:green}/.exec(cssRaw) === null) {
-// 			throw new Error("CSS is not minified");
-// 		}
 
-// 		const jsRaw = readFileSync(join(dist, `${hash}.app-production.js`), "utf8");
-// 		if (!jsRaw.startsWith("!function(")) {
-// 			throw new Error("JS is not minified");
-// 		}
+//---------------------------------------------------------------------------//
+// CSS Chunks Filename
+//---------------------------------------------------------------------------//
+async function testCssChunksFilename(host) {
+	const color = await getSnapshotColor(host);
+	strictEqual(color, "rgb(0, 0, 255)");
+}
+describe("CSS Chunks Filename", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "css_chunks_filename",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/async.css",
+				"src/sync.css"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-css-chunks-filename.js",
+				"dist/app-css-chunks-filename.css",
+				"dist/chunk.0.js",
+				"dist/subfolder/custom.chunk.0.css"
+			]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCssChunksFilename(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCssChunksFilename(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCssChunksFilename(webkit);
+	});
+});
 
-// 		const actual = await getSnapshot();
-// 		const expected = [
-// 			{
-// 				nodeName: "#text",
-// 				nodeValue: "Production"
-// 			}
-// 		];
-// 		deepStrictEqual(actual, expected, "DOM structure");
-// 	});
 
-// 	it("Production mode & Skip hashes", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
+//---------------------------------------------------------------------------//
+// SCSS Chunks
+//---------------------------------------------------------------------------//
+async function testScssChunks(host) {
+	const color = await getSnapshotColor(host);
+	strictEqual(color, "rgb(0, 0, 255)");
+}
+describe("SCSS Chunks", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "scss_chunks",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/async.scss",
+				"src/sync.scss"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-scss-chunks.js",
+				"dist/app-scss-chunks.css",
+				"dist/chunk.0.js",
+				"dist/chunk.0.css"
+			]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssChunks(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssChunks(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssChunks(webkit);
+	});
+});
 
-// 		const sources = [
-// 			"package.json",
-// 			"tsconfig.json",
-// 			"webpack.config.js",
-// 			"src/application.ts",
-// 			"src/application.css"
-// 		];
-// 		const compiled = [
-// 			"dist/index.html",
-// 			"dist/app-production-skip-hashes.js",
-// 			"dist/app-production-skip-hashes.css"
-// 		];
-// 		const filesAfter = await testCompile({id: "production_skip_hashes", sources});
 
-// 		let hash = "";
-// 		for (const fileAfter of filesAfter) {
-// 			const regex = /^dist\/([^.]+)\.app-production-skip-hashes\.js$/;
-// 			const matches = regex.exec(fileAfter);
-// 			if (matches) {
-// 				hash = matches[1];
-// 				break;
-// 			}
-// 		}
-// 		if (hash !== "") {
-// 			throw new Error("Hashes were not skipped");
-// 		}
+//---------------------------------------------------------------------------//
+// SCSS Chunks: Custom Filename
+//---------------------------------------------------------------------------//
+async function testScssChunksFilename(host) {
+	const color = await getSnapshotColor(host);
+	strictEqual(color, "rgb(0, 0, 255)");
+}
+describe("SCSS Chunks: Custom Filename", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "scss_chunks_filename",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/async.scss",
+				"src/sync.scss"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-scss-chunks-filename.js",
+				"dist/app-scss-chunks-filename.css",
+				"dist/chunk.0.js",
+				"dist/subfolder/custom.chunk.0.css"
+			]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssChunksFilename(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssChunksFilename(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssChunksFilename(webkit);
+	});
+});
 
-// 		const expectAfter = sources.concat(compiled).sort();
-// 		deepStrictEqual(filesAfter, expectAfter, "After Webpack");
 
-// 		const cssRaw = readFileSync(join(dist, "app-production-skip-hashes.css"), "utf8");
-// 		if (/^.([^{}]+){color:green}/.exec(cssRaw) === null) {
-// 			throw new Error("CSS is not minified");
-// 		}
+//---------------------------------------------------------------------------//
+// SCSS Chunks & Variables
+//---------------------------------------------------------------------------//
+async function testScssChunksVariables(host) {
+	const color = await getSnapshotColor(host);
+	strictEqual(color, "rgb(0, 0, 128)");
+}
+describe("SCSS Chunks & Variables", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "scss_chunks_variables",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/async.scss",
+				"src/sync.scss"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-scss-chunks-variables.js",
+				"dist/app-scss-chunks-variables.css",
+				"dist/chunk.0.js",
+				"dist/chunk.0.css"
+			]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssChunksVariables(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssChunksVariables(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssChunksVariables(webkit);
+	});
+});
 
-// 		const jsRaw = readFileSync(join(dist, "app-production-skip-hashes.js"), "utf8");
-// 		if (!jsRaw.startsWith("!function(")) {
-// 			throw new Error("JS is not minified");
-// 		}
 
-// 		const actual = await getSnapshot();
-// 		const expected = [
-// 			{
-// 				nodeName: "#text",
-// 				nodeValue: "Production"
-// 			}
-// 		];
-// 		deepStrictEqual(actual, expected, "DOM structure");
-// 	});
+//---------------------------------------------------------------------------//
+// SCSS Data
+//---------------------------------------------------------------------------//
+async function testScssData(host) {
+	const color = await getSnapshotColor(host);
+	strictEqual(color !== "rgb(0, 255, 0)", true, "Inline style");
+}
+describe("SCSS Data", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "scss_data",
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			compiled: [
+				"dist/index.html",
+				"dist/app-scss-data.js"
 
-// 	it("Chunks", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "chunks",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/modules/mymodule.ts"
-// 			],
-// 			compiled: ["dist/index.html", "dist/app-chunks.js", "dist/chunk.0.js"]
-// 		});
-// 		const actual = await getSnapshot();
-// 		const expected = [
-// 			{
-// 				nodeName: "#text",
-// 				nodeValue: "CHUNKS delayed 100123"
-// 			}
-// 		];
-// 		deepStrictEqual(actual, expected, "DOM structure");
-// 	});
+				// Data alone isn't enough to produce a .css: at least one entry must contain
+				// an import or polyfill to a stylesheet, otherwise the loader skips
+				// extracting styles, unfortunately.
+				// "dist/app-scss-data.css"
+			]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssData(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssData(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssData(webkit);
+	});
+});
 
-// 	it("Chunks: Custom Filename", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "chunks_filename",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/modules/mymodule.ts"
-// 			],
-// 			compiled: ["dist/index.html", "dist/app-chunks-filename.js", "dist/subfolder/custom.chunk.0.js"]
-// 		});
-// 		const actual = await getSnapshot();
-// 		const expected = [
-// 			{
-// 				nodeName: "#text",
-// 				nodeValue: "CHUNKS FILENAME delayed 100123"
-// 			}
-// 		];
-// 		deepStrictEqual(actual, expected, "DOM structure");
-// 	});
 
-// 	it("Chunks: Polyfills", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "chunks_polyfills",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/modules/mymodule.ts",
-// 				"src/thirdparty/typescript-polyfill.ts",
-// 				"src/thirdparty/vanilla-polyfill.js"
-// 			],
-// 			compiled: ["dist/index.html", "dist/app-chunks-polyfills.js", "dist/chunk.0.js"]
-// 		});
-// 		const actual = await getSnapshotMultiple();
-// 		const expected = {
-// 			mocha1: [
-// 				{
-// 					nodeName: "#text",
-// 					nodeValue: "CHUNKS POLYFILLS undefined ok once ok once ok once"
-// 				}
-// 			],
-// 			mocha2: [
-// 				{
-// 					nodeName: "#text",
-// 					nodeValue: "Delayed 123 ok once ok once ok once"
-// 				}
-// 			]
-// 		};
-// 		deepStrictEqual(actual, expected, "DOM structure");
-// 	});
+//---------------------------------------------------------------------------//
+// SCSS Data & Import
+//---------------------------------------------------------------------------//
+async function testScssDataImport(host) {
+	const colors = await getSnapshotMultipleColor(host);
+	deepStrictEqual(colors, {body: "rgb(255, 0, 0)", mocha: "rgb(0, 0, 255)"});
+}
+describe("SCSS Data & Import", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "scss_data_import",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/application.scss"
+			],
+			compiled: ["dist/index.html", "dist/app-scss-data-import.js", "dist/app-scss-data-import.css"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssDataImport(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssDataImport(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssDataImport(webkit);
+	});
+});
 
-// 	it("Skip Postprocessing", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "skip_processing",
-// 			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
-// 			compiled: ["dist/app-skip-postprocessing.js"]
-// 		});
-// 	});
-// });
 
-// describe("Webworkers", function () {
-// 	it("Basic", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "webworker",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/myworker.webworker.ts"
-// 			],
-// 			compiled: ["dist/index.html", "dist/app-webworker.js", "dist/myworker.webworker.js"]
-// 		});
-// 		const actual = await getSnapshot();
-// 		const expected = [
-// 			{
-// 				nodeName: "#text",
-// 				nodeValue: "WORKER replies HELLO"
-// 			}
-// 		];
-// 		deepStrictEqual(actual, expected, "DOM structure");
-// 	});
+//---------------------------------------------------------------------------//
+// SCSS Data Function
+//---------------------------------------------------------------------------//
+async function testScssDataFunction(host) {
+	const colors = await getSnapshotMultipleColor(host);
+	deepStrictEqual(colors, {body: "rgb(255, 0, 0)", mocha: "rgb(0, 0, 255)"});
+}
+describe("SCSS Data Function", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "scss_data_function",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/application.scss"
+			],
+			compiled: ["dist/index.html", "dist/app-scss-data-function.js", "dist/app-scss-data-function.css"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssDataFunction(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssDataFunction(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssDataFunction(webkit);
+	});
+});
 
-// 	it("Custom filename", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "webworker_filename",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/myworker.webworker.ts"
-// 			],
-// 			compiled: [
-// 				"dist/index.html",
-// 				"dist/app-webworker-filename.js",
-// 				"dist/subfolder/custom.myworker.webworker.js"
-// 			]
-// 		});
-// 		const actual = await getSnapshot();
-// 		const expected = [
-// 			{
-// 				nodeName: "#text",
-// 				nodeValue: "WORKER replies HELLO"
-// 			}
-// 		];
-// 		deepStrictEqual(actual, expected, "DOM structure");
-// 	});
 
-// 	it("Polyfills", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "webworker_polyfills",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/application.webworker.ts",
-// 				"src/both.polyfill.ts",
-// 				"src/only-main.polyfill.ts",
-// 				"src/only-worker.polyfill.ts"
-// 			],
-// 			compiled: ["dist/index.html", "dist/app-webworker-polyfills.js", "dist/application.webworker.js"]
-// 		});
+//---------------------------------------------------------------------------//
+// SCSS & Image
+//---------------------------------------------------------------------------//
+async function testScssImage(host) {
+	const actual = await getSnapshotImage(host);
+	strictEqual(actual, `url("http://localhost:${port}/assets/large.jpg")`);
+}
+describe("SCSS & Image", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "scss_image",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/application.scss",
+				"src/large.jpg"
+			],
+			compiled: ["dist/index.html", "dist/app-scss-image.js", "dist/app-scss-image.css", "dist/assets/large.jpg"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssImage(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssImage(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testScssImage(webkit);
+	});
+});
 
-// 		const actual = await getSnapshotMultiple();
-// 		const expected = {
-// 			mocha1: [
-// 				{
-// 					nodeName: "#text",
-// 					nodeValue: "BOTH once undefined MAIN once undefined"
-// 				}
-// 			],
-// 			mocha2: [
-// 				{
-// 					nodeName: "#text",
-// 					nodeValue: "BOTH once WORKER once undefined MODULE once"
-// 				}
-// 			]
-// 		};
-// 		deepStrictEqual(actual, expected, "DOM structure");
-// 	});
 
-// 	it("No export {}", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "webworker",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/myworker.webworker.ts"
-// 			],
-// 			compiled: ["dist/index.html", "dist/app-webworker.js", "dist/myworker.webworker.js"]
-// 		});
-// 		const actual = await getSnapshot();
-// 		const expected = [
-// 			{
-// 				nodeName: "#text",
-// 				nodeValue: "WORKER replies HELLO"
-// 			}
-// 		];
-// 		deepStrictEqual(actual, expected, "DOM structure");
-// 	});
-// });
+//---------------------------------------------------------------------------//
+// CSS & Image
+//---------------------------------------------------------------------------//
+async function testCssImage(host) {
+	const actual = await getSnapshotImage(host);
+	strictEqual(actual, `url("http://localhost:${port}/assets/large.jpg")`);
+}
+describe("CSS & Image", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "css_image",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/application.css",
+				"src/large.jpg"
+			],
+			compiled: ["dist/index.html", "dist/app-css-image.js", "dist/app-css-image.css", "dist/assets/large.jpg"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCssImage(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCssImage(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCssImage(webkit);
+	});
+});
 
-// describe("Node features", function () {
-// 	it("Fails: fs", /* @this */ async function () {
-// 		// Note that package "native-url" would produce smaller bundles
-// 		// than the polyfill Webpack uses.
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "node_fs",
-// 			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
-// 			expectBuildError: true
-// 		});
-// 	});
 
-// 	it("Mocks: __dirname", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "node_dirname",
-// 			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
-// 			compiled: ["dist/index.html", "dist/app-node-dirname.js"]
-// 		});
-// 		const actual = await getSnapshot();
-// 		const expected = [
-// 			{
-// 				nodeName: "#text",
-// 				nodeValue: "NODE DIRNAME /"
-// 			}
-// 		];
-// 		deepStrictEqual(actual, expected, "DOM structure");
-// 	});
+//---------------------------------------------------------------------------//
+// Sourcemaps
+//---------------------------------------------------------------------------//
+describe("Sourcemaps", function () {
+	it("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "sourcemaps",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/application.css"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-sourcemaps.js",
+				"dist/app-sourcemaps.js.map",
+				"dist/app-sourcemaps.css",
+				"dist/app-sourcemaps.css.map"
+			]
+		});
+	});
+});
 
-// 	it("Mocks: process.cwd()", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "node_cwd",
-// 			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
-// 			compiled: ["dist/index.html", "dist/app-node-cwd.js"]
-// 		});
-// 		const actual = await getSnapshot();
-// 		const expected = [
-// 			{
-// 				nodeName: "#text",
-// 				nodeValue: "NODE CWD /"
-// 			}
-// 		];
-// 		deepStrictEqual(actual, expected, "DOM structure");
-// 	});
 
-// 	it("Accepts: url", /* @this */ async function () {
-// 		// Note that package "native-url" would produce smaller bundles
-// 		// than the polyfill Webpack uses.
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "node_url",
-// 			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
-// 			compiled: ["dist/index.html", "dist/app-node-url.js"]
-// 		});
-// 		const actual = await getSnapshot();
-// 		const expected = [
-// 			{
-// 				nodeName: "#text",
-// 				nodeValue: "NODE URL https://example.com"
-// 			}
-// 		];
-// 		deepStrictEqual(actual, expected, "DOM structure");
-// 	});
+//---------------------------------------------------------------------------//
+// Production Mode
+//---------------------------------------------------------------------------//
+async function testProduction(host) {
+	const actual = await getSnapshot(host);
+	const expected = [
+		{
+			nodeName: "#text",
+			nodeValue: "Production"
+		}
+	];
+	deepStrictEqual(actual, expected, "DOM structure");
+}
+describe("Production Mode", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
 
-// 	it("Accepts: path", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "node_path",
-// 			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
-// 			compiled: ["dist/index.html", "dist/app-node-path.js"]
-// 		});
-// 		const actual = await getSnapshot();
-// 		const expected = [
-// 			{
-// 				nodeName: "#text",
-// 				nodeValue: "NODE PATH /hello/world.txt"
-// 			}
-// 		];
-// 		deepStrictEqual(actual, expected, "DOM structure");
-// 	});
+		const sources = [
+			"package.json",
+			"tsconfig.json",
+			"webpack.config.js",
+			"src/application.ts",
+			"src/application.css"
+		];
+		const compiled = ["dist/index.html", "dist/%%HASH%%.app-production.js", "dist/%%HASH%%.app-production.css"];
+		const filesAfter = await testCompile({
+			id: "production",
+			sources
+		});
 
-// 	it("Accepts: assert", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "node_assert",
-// 			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
-// 			compiled: ["dist/index.html", "dist/app-node-assert.js"]
-// 		});
-// 		const actual = await getSnapshot();
-// 		const expected = [
-// 			{
-// 				nodeName: "#text",
-// 				nodeValue: "NODE ASSERT false true"
-// 			}
-// 		];
-// 		deepStrictEqual(actual, expected, "DOM structure");
-// 	});
-// });
+		let hash = "";
+		for (const fileAfter of filesAfter) {
+			const regex = /^dist\/([^.]+)\.app-production\.js$/;
+			const matches = regex.exec(fileAfter);
+			if (matches) {
+				hash = matches[1];
+				break;
+			}
+		}
+		if (hash === "") {
+			throw new Error("No hash found");
+		}
 
-// describe("Externals", function () {
-// 	it("Accepts: Undefined", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "externals_undefined",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"node_modules/fake1/index.js",
-// 				"node_modules/fake2/index.js"
-// 			],
-// 			compiled: ["dist/index.html", "dist/app-externals-undefined.js"]
-// 		});
-// 		const actual = await getSnapshot();
-// 		const expected = [
-// 			{
-// 				nodeName: "#text",
-// 				nodeValue: "EXTERNALS UNDEFINED MODULE1 MODULE2"
-// 			}
-// 		];
-// 		deepStrictEqual(actual, expected, "DOM structure");
-// 	});
+		const expectAfter = sources
+			.concat(compiled)
+			.map((filename) => filename.replace("%%HASH%%", hash))
+			.sort();
+		deepStrictEqual(filesAfter, expectAfter, "After Webpack");
 
-// 	it("Accepts: Globals", /* @this */ async function () {
-// 		this.slow(20000);
-// 		this.timeout(20000);
-// 		await testCompile({
-// 			id: "externals_globals",
-// 			sources: [
-// 				"package.json",
-// 				"tsconfig.json",
-// 				"webpack.config.js",
-// 				"src/application.ts",
-// 				"src/types.d.ts",
-// 				"node_modules/fake1/index.js",
-// 				"node_modules/fake2/index.js"
-// 			],
-// 			compiled: ["dist/index.html", "dist/app-externals-globals.js"]
-// 		});
-// 		const actual = await getSnapshot();
-// 		const expected = [
-// 			{
-// 				nodeName: "#text",
-// 				nodeValue: "EXTERNALS GLOBALS GLOBAL1 GLOBAL2"
-// 			}
-// 		];
-// 		deepStrictEqual(actual, expected, "DOM structure");
-// 	});
-// });
+		const cssRaw = readFileSync(join(dist, `${hash}.app-production.css`), "utf8");
+		if (/^.([^{}]+){color:green}/.exec(cssRaw) === null) {
+			throw new Error("CSS is not minified");
+		}
+
+		const jsRaw = readFileSync(join(dist, `${hash}.app-production.js`), "utf8");
+		if (!jsRaw.startsWith("!function(")) {
+			throw new Error("JS is not minified");
+		}
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testProduction(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testProduction(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testProduction(webkit);
+	});
+});
+
+
+//---------------------------------------------------------------------------//
+// Production mode & Skip hashes
+//---------------------------------------------------------------------------//
+async function testProductionSkipHashes(host) {
+	const actual = await getSnapshot(host);
+	const expected = [
+		{
+			nodeName: "#text",
+			nodeValue: "Production"
+		}
+	];
+	deepStrictEqual(actual, expected, "DOM structure");
+}
+describe("Production mode & Skip hashes", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+
+		const sources = [
+			"package.json",
+			"tsconfig.json",
+			"webpack.config.js",
+			"src/application.ts",
+			"src/application.css"
+		];
+		const compiled = [
+			"dist/index.html",
+			"dist/app-production-skip-hashes.js",
+			"dist/app-production-skip-hashes.css"
+		];
+		const filesAfter = await testCompile({id: "production_skip_hashes", sources});
+
+		let hash = "";
+		for (const fileAfter of filesAfter) {
+			const regex = /^dist\/([^.]+)\.app-production-skip-hashes\.js$/;
+			const matches = regex.exec(fileAfter);
+			if (matches) {
+				hash = matches[1];
+				break;
+			}
+		}
+		if (hash !== "") {
+			throw new Error("Hashes were not skipped");
+		}
+
+		const expectAfter = sources.concat(compiled).sort();
+		deepStrictEqual(filesAfter, expectAfter, "After Webpack");
+
+		const cssRaw = readFileSync(join(dist, "app-production-skip-hashes.css"), "utf8");
+		if (/^.([^{}]+){color:green}/.exec(cssRaw) === null) {
+			throw new Error("CSS is not minified");
+		}
+
+		const jsRaw = readFileSync(join(dist, "app-production-skip-hashes.js"), "utf8");
+		if (!jsRaw.startsWith("!function(")) {
+			throw new Error("JS is not minified");
+		}
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testProductionSkipHashes(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testProductionSkipHashes(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testProductionSkipHashes(webkit);
+	});
+});
+
+
+//---------------------------------------------------------------------------//
+// Chunks
+//---------------------------------------------------------------------------//
+async function testChunks(host) {
+	const actual = await getSnapshot(host);
+	const expected = [
+		{
+			nodeName: "#text",
+			nodeValue: "CHUNKS delayed 100123"
+		}
+	];
+	deepStrictEqual(actual, expected, "DOM structure");
+}
+describe("Chunks", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "chunks",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/modules/mymodule.ts"
+			],
+			compiled: ["dist/index.html", "dist/app-chunks.js", "dist/chunk.0.js"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testChunks(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testChunks(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testChunks(webkit);
+	});
+});
+
+
+//---------------------------------------------------------------------------//
+// Chunks: Custom Filename
+//---------------------------------------------------------------------------//
+async function testChunksFilename(host) {
+	const actual = await getSnapshot(host);
+	const expected = [
+		{
+			nodeName: "#text",
+			nodeValue: "CHUNKS FILENAME delayed 100123"
+		}
+	];
+	deepStrictEqual(actual, expected, "DOM structure");
+}
+describe("Chunks: Custom Filename", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "chunks_filename",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/modules/mymodule.ts"
+			],
+			compiled: ["dist/index.html", "dist/app-chunks-filename.js", "dist/subfolder/custom.chunk.0.js"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testChunksFilename(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testChunksFilename(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testChunksFilename(webkit);
+	});
+});
+
+
+//---------------------------------------------------------------------------//
+// Chunks: Polyfills
+//---------------------------------------------------------------------------//
+async function testChunksPolyfills(host) {
+	const actual = await getSnapshotMultiple(host);
+	const expected = {
+		mocha1: [
+			{
+				nodeName: "#text",
+				nodeValue: "CHUNKS POLYFILLS undefined ok once ok once ok once"
+			}
+		],
+		mocha2: [
+			{
+				nodeName: "#text",
+				nodeValue: "Delayed 123 ok once ok once ok once"
+			}
+		]
+	};
+	deepStrictEqual(actual, expected, "DOM structure");
+}
+describe("Chunks: Polyfills", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "chunks_polyfills",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/modules/mymodule.ts",
+				"src/thirdparty/typescript-polyfill.ts",
+				"src/thirdparty/vanilla-polyfill.js"
+			],
+			compiled: ["dist/index.html", "dist/app-chunks-polyfills.js", "dist/chunk.0.js"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testChunksPolyfills(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testChunksPolyfills(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testChunksPolyfills(webkit);
+	});
+});
+
+
+//---------------------------------------------------------------------------//
+// Skip Postprocessing
+//---------------------------------------------------------------------------//
+describe("Skip Postprocessing", function () {
+	it("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "skip_processing",
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			compiled: ["dist/app-skip-postprocessing.js"]
+		});
+	});
+});
+
+
+//---------------------------------------------------------------------------//
+// Webworkers: Basic
+//---------------------------------------------------------------------------//
+async function testWebworkerBasic(host) {
+	const actual = await getSnapshot(host);
+	const expected = [
+		{
+			nodeName: "#text",
+			nodeValue: "WORKER replies HELLO"
+		}
+	];
+	deepStrictEqual(actual, expected, "DOM structure");
+}
+describe("Webworkers: Basic", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "webworker",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/myworker.webworker.ts"
+			],
+			compiled: ["dist/index.html", "dist/app-webworker.js", "dist/myworker.webworker.js"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testWebworkerBasic(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testWebworkerBasic(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testWebworkerBasic(webkit);
+	});
+});
+
+
+//---------------------------------------------------------------------------//
+// Webworkers: Custom filename
+//---------------------------------------------------------------------------//
+async function testWebworkerFilename(host) {
+	const actual = await getSnapshot(host);
+	const expected = [
+		{
+			nodeName: "#text",
+			nodeValue: "WORKER replies HELLO"
+		}
+	];
+	deepStrictEqual(actual, expected, "DOM structure");
+}
+describe("Webworkers: Custom filename", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "webworker_filename",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/myworker.webworker.ts"
+			],
+			compiled: [
+				"dist/index.html",
+				"dist/app-webworker-filename.js",
+				"dist/subfolder/custom.myworker.webworker.js"
+			]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testWebworkerFilename(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testWebworkerFilename(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testWebworkerFilename(webkit);
+	});
+});
+
+
+//---------------------------------------------------------------------------//
+// Webworkers: Polyfills
+//---------------------------------------------------------------------------//
+async function testWebworkerPolyfills(host) {
+	const actual = await getSnapshotMultiple(host);
+	const expected = {
+		mocha1: [
+			{
+				nodeName: "#text",
+				nodeValue: "BOTH once undefined MAIN once undefined"
+			}
+		],
+		mocha2: [
+			{
+				nodeName: "#text",
+				nodeValue: "BOTH once WORKER once undefined MODULE once"
+			}
+		]
+	};
+	deepStrictEqual(actual, expected, "DOM structure");
+}
+describe("Webworkers: Polyfills", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "webworker_polyfills",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/application.webworker.ts",
+				"src/both.polyfill.ts",
+				"src/only-main.polyfill.ts",
+				"src/only-worker.polyfill.ts"
+			],
+			compiled: ["dist/index.html", "dist/app-webworker-polyfills.js", "dist/application.webworker.js"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testWebworkerPolyfills(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testWebworkerPolyfills(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testWebworkerPolyfills(webkit);
+	});
+});
+
+
+//---------------------------------------------------------------------------//
+// Webworkers: No export {}
+//---------------------------------------------------------------------------//
+async function testWebworkerNoExportObject(host) {
+	const actual = await getSnapshot(host);
+	const expected = [
+		{
+			nodeName: "#text",
+			nodeValue: "WORKER replies HELLO"
+		}
+	];
+	deepStrictEqual(actual, expected, "DOM structure");
+}
+describe("Webworkers: No export {}", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "webworker",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/myworker.webworker.ts"
+			],
+			compiled: ["dist/index.html", "dist/app-webworker.js", "dist/myworker.webworker.js"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testWebworkerNoExportObject(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testWebworkerNoExportObject(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testWebworkerNoExportObject(webkit);
+	});
+});
+
+
+//---------------------------------------------------------------------------//
+// Node features
+//---------------------------------------------------------------------------//
+describe("Fails: fs", function () {
+	it("Expect build error", /* @this */ async function () {
+		// Note that package "native-url" would produce smaller bundles
+		// than the polyfill Webpack uses.
+		this.slow(20000);
+		this.timeout(20000);
+		await testCompile({
+			id: "node_fs",
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			expectBuildError: true
+		});
+	});
+});
+
+
+//---------------------------------------------------------------------------//
+// Mocks: __dirname
+//---------------------------------------------------------------------------//
+async function testMockDirname(host) {
+	const actual = await getSnapshot(host);
+	const expected = [
+		{
+			nodeName: "#text",
+			nodeValue: "NODE DIRNAME /"
+		}
+	];
+	deepStrictEqual(actual, expected, "DOM structure");
+}
+describe("Mocks: __dirname", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "node_dirname",
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			compiled: ["dist/index.html", "dist/app-node-dirname.js"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testMockDirname(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testMockDirname(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testMockDirname(webkit);
+	});
+});
+
+
+//---------------------------------------------------------------------------//
+// Mocks: process.cwd()
+//---------------------------------------------------------------------------//
+async function testProcessCwd(host) {
+	const actual = await getSnapshot(host);
+	const expected = [
+		{
+			nodeName: "#text",
+			nodeValue: "NODE CWD /"
+		}
+	];
+	deepStrictEqual(actual, expected, "DOM structure");
+}
+describe("Mocks: process.cwd()", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "node_cwd",
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			compiled: ["dist/index.html", "dist/app-node-cwd.js"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testProcessCwd(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testProcessCwd(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testProcessCwd(webkit);
+	});
+});
+
+
+//---------------------------------------------------------------------------//
+// Accepts: url
+//---------------------------------------------------------------------------//
+async function testAcceptUrl(host) {
+	const actual = await getSnapshot(host);
+	const expected = [
+		{
+			nodeName: "#text",
+			nodeValue: "NODE URL https://example.com"
+		}
+	];
+	deepStrictEqual(actual, expected, "DOM structure");
+}
+describe("Accepts: url", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		// Note that package "native-url" would produce smaller bundles
+		// than the polyfill Webpack uses.
+		await testCompile({
+			id: "node_url",
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			compiled: ["dist/index.html", "dist/app-node-url.js"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testAcceptUrl(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testAcceptUrl(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testAcceptUrl(webkit);
+	});
+});
+
+
+//---------------------------------------------------------------------------//
+// Accepts: path
+//---------------------------------------------------------------------------//
+async function testAcceptPath(host) {
+	const actual = await getSnapshot(host);
+	const expected = [
+		{
+			nodeName: "#text",
+			nodeValue: "NODE PATH /hello/world.txt"
+		}
+	];
+	deepStrictEqual(actual, expected, "DOM structure");
+}
+describe("Accepts: path", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "node_path",
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			compiled: ["dist/index.html", "dist/app-node-path.js"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testAcceptPath(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testAcceptPath(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testAcceptPath(webkit);
+	});
+});
+
+
+//---------------------------------------------------------------------------//
+// Accepts: assert
+//---------------------------------------------------------------------------//
+async function testAcceptAssert(host) {
+	const actual = await getSnapshot(host);
+	const expected = [
+		{
+			nodeName: "#text",
+			nodeValue: "NODE ASSERT false true"
+		}
+	];
+	deepStrictEqual(actual, expected, "DOM structure");
+}
+describe("Accepts: assert", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "node_assert",
+			sources: ["package.json", "tsconfig.json", "webpack.config.js", "src/application.ts"],
+			compiled: ["dist/index.html", "dist/app-node-assert.js"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testAcceptAssert(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testAcceptAssert(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testAcceptAssert(webkit);
+	});
+});
+
+
+//---------------------------------------------------------------------------//
+// Externals: undefined
+//---------------------------------------------------------------------------//
+async function testExternalsUndefined(host) {
+	const actual = await getSnapshot(host);
+	const expected = [
+		{
+			nodeName: "#text",
+			nodeValue: "EXTERNALS UNDEFINED MODULE1 MODULE2"
+		}
+	];
+	deepStrictEqual(actual, expected, "DOM structure");
+}
+describe("Externals: undefined", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "externals_undefined",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"node_modules/fake1/index.js",
+				"node_modules/fake2/index.js"
+			],
+			compiled: ["dist/index.html", "dist/app-externals-undefined.js"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testExternalsUndefined(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testExternalsUndefined(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testExternalsUndefined(webkit);
+	});
+});
+
+
+//---------------------------------------------------------------------------//
+// Externals: Globals
+//---------------------------------------------------------------------------//
+async function testExternalsGlobals(host) {
+	const actual = await getSnapshot(host);
+	const expected = [
+		{
+			nodeName: "#text",
+			nodeValue: "EXTERNALS GLOBALS GLOBAL1 GLOBAL2"
+		}
+	];
+	deepStrictEqual(actual, expected, "DOM structure");
+}
+describe("Externals: Globals", function () {
+	before("Compile", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testCompile({
+			id: "externals_globals",
+			sources: [
+				"package.json",
+				"tsconfig.json",
+				"webpack.config.js",
+				"src/application.ts",
+				"src/types.d.ts",
+				"node_modules/fake1/index.js",
+				"node_modules/fake2/index.js"
+			],
+			compiled: ["dist/index.html", "dist/app-externals-globals.js"]
+		});
+	});
+	it("Chromium", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testExternalsGlobals(chromium);
+	});
+	it("Firefox", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testExternalsGlobals(firefox);
+	});
+	it("Webkit", /* @this */ async function () {
+		this.slow(5000);
+		this.timeout(15000);
+		await testExternalsGlobals(webkit);
+	});
+});

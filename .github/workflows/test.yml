@@ -8,7 +8,7 @@ on:
       - master
 jobs:
   tests:
-    timeout-minutes: 10
+    timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -19,5 +19,6 @@ jobs:
       - run: npm run test:lint
       - run: npm run test:params
       - run: npm run test:setup
-      - run: npm run test:web
       - run: npm run test:node
+      - uses: microsoft/playwright-github-action@v1
+      - run: npm run test:web
