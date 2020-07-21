@@ -350,16 +350,20 @@ module.exports = function getConfig({
 		}
 	];
 
-	if (typeof scss !== "undefined") {
-		cssLoaders.push({
-			loader: "sass-loader",
-			options: {
-				additionalData: scss
+	const scssOptions = {
+		loader: "sass-loader",
+		options: {
+			implementation: require("sass"),
+			sassOptions: {
+				fiber: require("fibers")
 			}
-		});
-	} else {
-		cssLoaders.push("sass-loader");
+		}
+	};
+	if (typeof scss !== "undefined") {
+		scssOptions.options.additionalData = scss;
 	}
+	cssLoaders.push(scssOptions);
+
 	loaders.push({
 		test: /\.(scss|css)$/,
 		use: cssLoaders
