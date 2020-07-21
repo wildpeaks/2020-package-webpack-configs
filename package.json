@@ -35,10 +35,10 @@
     "postcss-loader": "3.0.0",
     "postcss-preset-env": "6.7.0",
     "raw-loader": "4.0.1",
-    "sass-loader": "8.0.2",
+    "sass-loader": "9.0.2",
     "source-map-loader": "1.0.1",
     "style-loader": "1.2.1",
-    "ts-loader": "7.0.5",
+    "ts-loader": "8.0.1",
     "url-loader": "4.1.0",
     "webpack-subresource-integrity": "1.4.1",
     "worker-loader": "2.0.0"

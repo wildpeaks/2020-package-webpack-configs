@@ -2,7 +2,7 @@
 "use strict";
 const getConfig = require("@wildpeaks/webpack-config-web");
 
-module.exports = function() {
+module.exports = function () {
 	return getConfig({
 		mode: "development",
 		polyfills: [],
@@ -17,6 +17,6 @@ module.exports = function() {
 				chunks: ["app-scss-data-function"]
 			}
 		],
-		scss: () => "body{color: rgb(255, 0, 0)}"
+		scss: (content) => "body{color: rgb(255, 0, 0)}" + content
 	});
 };

@@ -354,12 +354,13 @@ module.exports = function getConfig({
 		cssLoaders.push({
 			loader: "sass-loader",
 			options: {
-				prependData: scss
+				additionalData: scss
 			}
 		});
 	} else {
 		cssLoaders.push("sass-loader");
 	}
+
 	loaders.push({
 		test: /\.(scss|css)$/,
 		use: cssLoaders

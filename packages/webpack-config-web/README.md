@@ -362,14 +362,11 @@ Examples:
 
 ```js
 // It can be a function too
+// See https://github.com/webpack-contrib/sass-loader#function-1
 {
-	scss: loaderContext => `
-		$primary: rgb(0, 255, 0);
-		$secondary: rgb(0, 128, 0);
-	`
+	scss: (content, loaderContext) => "$primary: rgb(0, 255, 0);" + content
 }
 ```
-
 
 See:
  - [CSS Custom Properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_variables) in MDN
