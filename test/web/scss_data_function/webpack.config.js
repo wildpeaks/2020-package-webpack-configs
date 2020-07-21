@@ -17,6 +17,6 @@ module.exports = function () {
 				chunks: ["app-scss-data-function"]
 			}
 		],
-		scss: (content) => content + "body{color: rgb(255, 0, 0)}"
+		scss: (content) => "body{color: rgb(255, 0, 0)}" + content
 	});
 };
