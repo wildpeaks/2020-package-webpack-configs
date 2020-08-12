@@ -40,7 +40,7 @@
     "ts-loader": "8.0.2",
     "url-loader": "4.1.0",
     "webpack-subresource-integrity": "1.4.1",
-    "worker-loader": "2.0.0"
+    "worker-loader": "3.0.1"
   },
   "peerDependencies": {
     "typescript": "*",
