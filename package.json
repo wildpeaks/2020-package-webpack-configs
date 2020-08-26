@@ -41,7 +41,7 @@
     "ts-loader": "8.0.3",
     "url-loader": "4.1.0",
     "webpack-subresource-integrity": "1.4.1",
-    "worker-loader": "3.0.2"
+    "worker-loader": "2.0.0"
   },
   "devDependencies": {
     "@types/node": "14.6.0",
