@@ -298,8 +298,7 @@ module.exports = function getConfig({
 			{
 				loader: "worker-loader",
 				options: {
-					inline: false,
-					name: actualWebworkerFilename
+					filename: actualWebworkerFilename
 				}
 			}
 		]
