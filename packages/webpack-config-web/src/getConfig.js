@@ -289,15 +289,13 @@ module.exports = function getConfig({
 			{
 				loader: "ts-loader",
 				options: {
-					transpileOnly: true,
-
-					// https://medium.com/@kenneth_chau/speeding-up-webpack-typescript-incremental-builds-by-7x-3912ba4c1d15
-					experimentalWatchApi: true
+					transpileOnly: true
 				}
 			},
 			{
 				loader: "worker-loader",
 				options: {
+					esModule: false,
 					filename: actualWebworkerFilename
 				}
 			}
