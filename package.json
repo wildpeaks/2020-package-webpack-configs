@@ -26,7 +26,7 @@
     "core-js": "3.6.5",
     "css-loader": "4.2.2",
     "cssnano": "4.1.10",
-    "file-loader": "6.0.0",
+    "file-loader": "6.1.0",
     "html-webpack-plugin": "4.4.1",
     "html-webpack-tags-plugin": "2.0.17",
     "loader-utils": "2.0.0",
