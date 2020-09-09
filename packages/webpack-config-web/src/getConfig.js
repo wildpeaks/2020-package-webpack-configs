@@ -341,8 +341,9 @@ module.exports = function getConfig({
 		{
 			loader: "postcss-loader",
 			options: {
-				ident: "postcss",
-				plugins: postcssPlugins
+				postcssOptions: {
+					plugins: postcssPlugins
+				}
 			}
 		}
 	];
