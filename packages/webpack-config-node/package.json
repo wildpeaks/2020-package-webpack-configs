@@ -1,6 +1,6 @@
 {
   "name": "@wildpeaks/webpack-config-node",
-  "version": "5.11.0",
+  "version": "5.12.0",
   "description": "Webpack 4 base config generator for bundling Node apps",
   "author": "Cecile Muller",
   "license": "MIT",
@@ -21,9 +21,9 @@
   "homepage": "https://github.com/wildpeaks/package-webpack-configs/tree/master/packages/webpack-config-node",
   "dependencies": {
     "clean-webpack-plugin": "3.0.0",
-    "copy-webpack-plugin": "6.2.1",
-    "source-map-loader": "1.1.1",
-    "ts-loader": "8.0.6"
+    "copy-webpack-plugin": "6.3.0",
+    "source-map-loader": "1.1.2",
+    "ts-loader": "8.0.10"
   },
   "peerDependencies": {
     "typescript": "*",
