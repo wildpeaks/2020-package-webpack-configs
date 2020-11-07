@@ -21,7 +21,7 @@
   "homepage": "https://github.com/wildpeaks/package-webpack-configs/tree/master/packages/webpack-config-node",
   "dependencies": {
     "clean-webpack-plugin": "3.0.0",
-    "copy-webpack-plugin": "6.2.1",
+    "copy-webpack-plugin": "6.3.0",
     "source-map-loader": "1.1.1",
     "ts-loader": "8.0.6"
   },
