@@ -37,7 +37,7 @@
     "sass-loader": "10.0.5",
     "source-map-loader": "1.1.2",
     "style-loader": "2.0.0",
-    "ts-loader": "8.0.10",
+    "ts-loader": "8.0.11",
     "url-loader": "4.1.1",
     "webpack-subresource-integrity": "1.5.2",
     "worker-loader": "3.0.5"
