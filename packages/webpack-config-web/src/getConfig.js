@@ -335,7 +335,7 @@ module.exports = function getConfig({
 			loader: MiniCssExtractPlugin.loader,
 			options: {
 				esModule: false
-			},
+			}
 		},
 		{
 			loader: "css-loader",
