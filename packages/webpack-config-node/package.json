@@ -1,6 +1,6 @@
 {
   "name": "@wildpeaks/webpack-config-node",
-  "version": "5.14.0",
+  "version": "5.15.0",
   "description": "Webpack 4 base config generator for bundling Node apps",
   "author": "Cecile Muller",
   "license": "MIT",
