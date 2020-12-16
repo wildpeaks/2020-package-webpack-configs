@@ -1,7 +1,0 @@
-/* eslint-env browser */
-const container = document.createElement("div");
-container.setAttribute("id", "mocha");
-container.innerText = "SKIP POSTPROCESSING";
-document.body.appendChild(container);
-
-export {};
