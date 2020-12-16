@@ -20,7 +20,7 @@
     "src"
   ],
   "scripts": {
-    "test": "mocha test/*.test.js --timeout 15000 --slow 10000"
+    "test": "mocha test/*.test.js --parallel --timeout 20000 --slow 15000"
   },
   "dependencies": {
     "clean-webpack-plugin": "3.0.0",
