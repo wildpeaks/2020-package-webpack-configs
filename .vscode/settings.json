@@ -9,8 +9,10 @@
 		"*.url": true,
 		".editorconfig": true,
 		".npmrc": true,
-		"package-lock.json": true,
 		"node_modules": true,
-		"tmp": true
+		"package-lock.json": true,
+		"packages/**/dist": true,
+		"packages/**/node_modules": true,
+		"packages/**/package-lock.json": true
 	}
 }

@@ -12,10 +12,13 @@
 !/.npmrc
 !/.prettierignore
 !/.vscode
-!/test
 !/packages
 !/package.json
 
+# TODELETE after restructuring
+!/test
+
 # But make sure to ignore those regardless:
-/test/tmp
-OLD *
+package-lock.json
+/packages/webpack-config-*/node_modules
+/packages/webpack-config-*/test/*/dist
