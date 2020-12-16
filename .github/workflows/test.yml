@@ -7,10 +7,11 @@ on:
     branches:
     - master
 jobs:
-  tests:
+
+  node:
     strategy:
       matrix:
-        node: [12.x, 14.x]
+        node: [14.x, 15.x]
     timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
@@ -18,10 +19,30 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node }}
-    - run: npm install
-    - run: npm run test:lint
-    - run: npm run test:params
-    - run: npm run test:setup
-    - run: npm run test:node
+    - run: |
+        npm install --prefer-offline --no-audit --no-fund
+        npm run lint:node
+    - working-directory: packages/webpack-config-node
+      run: |
+        npm install --prefer-offline --no-audit --no-fund
+        npm test
+
+  web:
+    strategy:
+      matrix:
+        node: [14.x, 15.x]
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node }}
     - uses: microsoft/playwright-github-action@v1
-    - run: npm run test:web
+    - run: |
+        npm install --prefer-offline --no-audit --no-fund
+        npm run lint:web
+    - working-directory: packages/webpack-config-web
+      run: |
+        npm install --prefer-offline --no-audit --no-fund
+        npm test
