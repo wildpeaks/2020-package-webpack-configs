@@ -19,10 +19,12 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node }}
-    - run: |
+    - name: Run lint
+      run: |
         npm install --prefer-offline --no-audit --no-fund
         npm run lint:node
-    - working-directory: packages/webpack-config-node
+    - name: Run tests
+      working-directory: packages/webpack-config-node
       run: |
         npm install --prefer-offline --no-audit --no-fund
         npm test
@@ -38,11 +40,14 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node }}
-    - uses: microsoft/playwright-github-action@v1
-    - run: |
+    - name: Run lint
+      run: |
         npm install --prefer-offline --no-audit --no-fund
         npm run lint:web
-    - working-directory: packages/webpack-config-web
+    - name: Install Playwright dependencies
+      uses: microsoft/playwright-github-action@v1
+    - name: Run tests
+      working-directory: packages/webpack-config-web
       run: |
         npm install --prefer-offline --no-audit --no-fund
         npm test
